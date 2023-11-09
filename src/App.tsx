@@ -73,13 +73,13 @@ export default function App() {
 
   return (
     <>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor="transparent"
-        hidden={false}
-        translucent={true}
-      />
       <SafeAreaProvider>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor="transparent"
+          hidden={false}
+          translucent={true}
+        />
         <Navigation />
       </SafeAreaProvider>
       <Toast config={toastConfig} topOffset={Device.getStatusBarHeight()} />

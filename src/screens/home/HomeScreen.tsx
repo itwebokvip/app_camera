@@ -1,7 +1,6 @@
 /* eslint-disable no-catch-shadow */
 import * as React from 'react';
 import {
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   View,
@@ -22,6 +21,7 @@ import GetLocation, {
 import {UploadImage} from '../../service ';
 import ShowToast from 'helpers/ShowToast';
 import Permissions from 'utils/Permissions';
+import {Style} from 'core';
 
 export default function TakeImageScreen() {
   const [response, setResponse] = React.useState<any>(null);
@@ -138,7 +138,7 @@ export default function TakeImageScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <DemoTitle>🌄 Desciption Image</DemoTitle>
       <ScrollView>
         <View style={styles.buttonContainer}>
@@ -212,7 +212,7 @@ export default function TakeImageScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
