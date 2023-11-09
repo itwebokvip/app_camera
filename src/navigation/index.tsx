@@ -1,53 +1,48 @@
-/**
- * If you are not familiar with React Navigation, refer to the "Fundamentals" guide:
- * https://reactnavigation.org/docs/getting-started
- *
- */
+import * as React from 'react';
 
-import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import * as React from "react";
-import Colors from "../constants/Colors";
-import LoginScreen from "../screens/LoginScreen";
-import RegisterScreen from "../screens/RegisterScreen";
-import Welcome from "../screens/WelcomeScreen";
+import {createStackNavigator} from '@react-navigation/stack';
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 
-import { RootStackParamList } from "../common/types";
-import TakeImageScreen from "../screens/TakeImageScreen";
+import {Loading} from 'components';
+
+import {colors} from 'core';
+import {screenOptionsStack} from 'common';
+import {RootStackParamList} from 'root-stack-params';
+import {setTopLevelNavigator} from 'helpers/navigation';
+
+import HomeNavigator from './MainStack';
+import AuthNavigator from './AuthNavigator';
 
 const theme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    background: Colors.background,
+    background: colors.backgroundScreen,
   },
 };
 
 export default function Navigation() {
   return (
-    <NavigationContainer theme={theme}>
-      <RootNavigator />
-    </NavigationContainer>
+    <>
+      <NavigationContainer
+        ref={navigatorRef => {
+          setTopLevelNavigator(navigatorRef);
+        }}
+        theme={theme}>
+        <RootNavigator />
+      </NavigationContainer>
+      <Loading ref={refs => Loading.setRef(refs)} />
+    </>
   );
 }
 
-/**
- * A root stack navigator is often used for displaying modals on top of all other content.
- * https://reactnavigation.org/docs/modal
- */
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="Welcome" component={Welcome} />
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="Home" component={TakeImageScreen} />
+    <Stack.Navigator screenOptions={screenOptionsStack}>
+      <Stack.Screen name="auth" component={AuthNavigator} />
+      <Stack.Screen name="main" component={HomeNavigator} />
     </Stack.Navigator>
   );
 }

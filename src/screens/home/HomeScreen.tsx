@@ -9,7 +9,7 @@ import {
   Platform,
   TouchableOpacity,
 } from 'react-native';
-import { DemoButton, DemoResponse, DemoTitle } from '../components';
+import {DemoButton, DemoResponse, DemoTitle} from '../../components';
 import moment from 'moment';
 import * as ImagePicker from 'react-native-image-picker';
 import axios from 'axios';
@@ -19,12 +19,11 @@ import GetLocation, {
   LocationErrorCode,
   isLocationError,
 } from 'react-native-get-location';
-import { SignIn, UploadImage } from '../service ';
+import {SignIn, UploadImage} from '../../service ';
 
 const includeExtra = true;
 
-export default function TakeImageScreen() {
-
+export default function HomeScreen() {
   const [isLoggedIn, setLoggedIn] = React.useState(false);
 
   const [response, setResponse] = React.useState<any>(null);
@@ -64,13 +63,18 @@ export default function TakeImageScreen() {
       .then(newLocation => {
         setLoading(false);
         setLocation(newLocation);
-        console.log("Location:  " + JSON.stringify(newLocation));
-        const mapUrl = 'https://maps.googleapis.com/maps/api/geocode/json?address=10.7599467,106.6828022&key=AIzaSyB7gB07dHR82m8K2wrknlDj0841xOaVSTU';
-        axios.get(mapUrl)
+        console.log('Location:  ' + JSON.stringify(newLocation));
+        const mapUrl =
+          'https://maps.googleapis.com/maps/api/geocode/json?address=10.7599467,106.6828022&key=AIzaSyB7gB07dHR82m8K2wrknlDj0841xOaVSTU';
+        axios
+          .get(mapUrl)
           .then(response => {
             // Lấy dữ liệu từ kết quả
             const data = response.data;
-            console.log('Kết quả:', JSON.stringify(data.results[0].formatted_address));
+            console.log(
+              'Kết quả:',
+              JSON.stringify(data.results[0].formatted_address),
+            );
             setAddress(data.results[0].formatted_address);
           })
           .catch(error => {
@@ -79,8 +83,8 @@ export default function TakeImageScreen() {
       })
       .catch(ex => {
         if (isLocationError(ex)) {
-          const { code, message } = ex;
-          console.warn("catch: " + code, message);
+          const {code, message} = ex;
+          console.warn('catch: ' + code, message);
           setError(code);
         } else {
           console.warn(ex);
@@ -107,7 +111,12 @@ export default function TakeImageScreen() {
 
     try {
       const [result] = await Promise.all([
-        UploadImage(response.assets[0].fileName, response.assets[0].fileSize, "Thành Phố HCM", (moment(response.assets[0].timestamp).format('MMMM DD, YYYY hh:mm A')),),
+        UploadImage(
+          response.assets[0].fileName,
+          response.assets[0].fileSize,
+          'Thành Phố HCM',
+          moment(response.assets[0].timestamp).format('MMMM DD, YYYY hh:mm A'),
+        ),
       ]);
       console.log('KetQua:  ' + JSON.stringify(result));
     } catch (error) {
@@ -143,8 +152,7 @@ export default function TakeImageScreen() {
     //   .catch(error => {
     //     console.error('Lỗi khi gửi yêu cầu:', error);
     //   });
-
-  }
+  };
 
   // const hasPermissionIOS = async () => {
   //   const openSetting = () => {
@@ -266,7 +274,7 @@ export default function TakeImageScreen() {
       <DemoTitle>🌄 Desciption Image</DemoTitle>
       <ScrollView>
         <View style={styles.buttonContainer}>
-          {actions.map(({ title, type, options }) => {
+          {actions.map(({title, type, options}) => {
             return (
               <DemoButton
                 key={title}
@@ -280,7 +288,7 @@ export default function TakeImageScreen() {
 
         {response?.assets &&
           response?.assets.map(
-            ({ uri }: { uri: string }) => (
+            ({uri}: {uri: string}) => (
               console.log('THONG TIN BUC ANH:  ' + JSON.stringify(response)),
               (
                 <View key={uri} style={styles.imageContainer}>
@@ -289,25 +297,24 @@ export default function TakeImageScreen() {
                       resizeMode="cover"
                       resizeMethod="scale"
                       style={styles.image}
-                      source={{ uri: uri }}>
+                      source={{uri: uri}}>
                       <View>
-                        <Text style={{ color: 'red', padding: 10 }}>
+                        <Text style={{color: 'red', padding: 10}}>
                           {moment(response.assets.timestamp).format(
                             'MMMM DD, YYYY hh:mm A',
                           )}
                         </Text>
-                        <Text style={{ color: 'red', padding: 10 }}>
+                        <Text style={{color: 'red', padding: 10}}>
                           LOCALTION
                         </Text>
                       </View>
                     </ImageBackground>
                   </View>
-
                 </View>
               )
             ),
           )}
-        <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
           <TouchableOpacity
             style={{
               justifyContent: 'center',
@@ -318,11 +325,12 @@ export default function TakeImageScreen() {
               marginHorizontal: 8,
               marginVertical: 4,
               borderRadius: 8,
-              backgroundColor: 'red'
+              backgroundColor: 'red',
             }}
             onPress={submitOnImageLocation}>
-            <Text style={{ color: 'white', fontSize: 14, textAlign: 'center' }}>Submit Image</Text>
-
+            <Text style={{color: 'white', fontSize: 14, textAlign: 'center'}}>
+              Submit Image
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

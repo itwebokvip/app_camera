@@ -1,17 +1,23 @@
 module.exports = {
   presets: ['module:metro-react-native-babel-preset'],
   plugins: [
-    // [
-    //   'module:react-native-dotenv',
-    //   {
-    //     moduleName: '@env',
-    //     path: '.env',
-    //     blacklist: null,
-    //     whitelist: null,
-    //     safe: true,
-    //     allowUndefined: true,
-    //   },
-    // ],
+    '@babel/plugin-transform-strict-mode',
     'react-native-reanimated/plugin',
+    [
+      'babel-plugin-inline-import',
+      {
+        extensions: ['.svg'],
+      },
+    ],
+    [
+      'module-resolver',
+      {
+        root: ['./src'],
+        extensions: ['.ts', '.tsx', '.js', '.ios.js', '.android.js'],
+        alias: {
+          '@': './src',
+        },
+      },
+    ],
   ],
 };
