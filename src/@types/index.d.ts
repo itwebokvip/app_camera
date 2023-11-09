@@ -1,3 +1,4 @@
+declare module 'react-native-settings';
 declare module 'root-stack-params' {
   export type RootStackParamList = {
     loading: undefined;

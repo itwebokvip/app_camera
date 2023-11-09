@@ -8,10 +8,12 @@ import {Loading} from 'components';
 import {colors} from 'core';
 import {screenOptionsStack} from 'common';
 import {RootStackParamList} from 'root-stack-params';
-import {setTopLevelNavigator} from 'helpers/navigation';
+import {goReset, setTopLevelNavigator} from 'helpers/navigation';
 
 import HomeNavigator from './MainStack';
 import AuthNavigator from './AuthNavigator';
+import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
+import {SetTokenToGetWay} from 'service /GetWay';
 
 const theme = {
   ...DefaultTheme,
@@ -22,13 +24,23 @@ const theme = {
 };
 
 export default function Navigation() {
+  const initScreen = async () => {
+    const token = await KeychainManager.getItem(STORAGE_KEYS.token);
+    if (token) {
+      SetTokenToGetWay({token});
+      goReset('main');
+    } else {
+      goReset('auth');
+    }
+  };
   return (
     <>
       <NavigationContainer
         ref={navigatorRef => {
           setTopLevelNavigator(navigatorRef);
         }}
-        theme={theme}>
+        theme={theme}
+        onReady={initScreen}>
         <RootNavigator />
       </NavigationContainer>
       <Loading ref={refs => Loading.setRef(refs)} />

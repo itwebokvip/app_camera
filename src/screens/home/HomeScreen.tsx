@@ -1,7 +1,6 @@
 /* eslint-disable no-catch-shadow */
 import * as React from 'react';
 import {
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   View,
@@ -9,7 +8,7 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from 'react-native';
-import { DemoButton, DemoResponse, DemoTitle } from 'components';
+import {DemoButton, DemoResponse, DemoTitle} from 'components';
 import moment from 'moment';
 import * as ImagePicker from 'react-native-image-picker';
 import axios from 'axios';
@@ -19,8 +18,10 @@ import GetLocation, {
   LocationErrorCode,
   isLocationError,
 } from 'react-native-get-location';
-import { UploadImage } from '../../service ';
+import {UploadImage} from '../../service ';
 import ShowToast from 'helpers/ShowToast';
+import Permissions from 'utils/Permissions';
+import {Style} from 'core';
 
 export default function TakeImageScreen() {
   const [response, setResponse] = React.useState<any>(null);
@@ -63,7 +64,7 @@ export default function TakeImageScreen() {
           .get(mapUrl)
           .then(response => {
             const data = response.data;
-
+            console.log('data: >>>', data);
             const currentAddress =
               data.results[0].address_components[2].long_name +
               ',' +
@@ -80,7 +81,7 @@ export default function TakeImageScreen() {
       })
       .catch(ex => {
         if (isLocationError(ex)) {
-          const { code, message } = ex;
+          const {code, message} = ex;
           console.warn('catch: ' + code, message);
           setError(code);
         } else {
@@ -95,7 +96,9 @@ export default function TakeImageScreen() {
   const onButtonPress = React.useCallback(
     async (type: String, options: ImagePicker.CameraOptions) => {
       if (type === 'capture') {
-        ImagePicker.launchCamera(options, setResponse);
+        Permissions.camera(() => {
+          ImagePicker.launchCamera(options, setResponse);
+        });
       } else {
         ImagePicker.launchImageLibrary(options, setResponse);
       }
@@ -135,11 +138,11 @@ export default function TakeImageScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <DemoTitle>🌄 Desciption Image</DemoTitle>
       <ScrollView>
         <View style={styles.buttonContainer}>
-          {actions.map(({ title, type, options }) => {
+          {actions.map(({title, type, options}) => {
             return (
               <DemoButton
                 key={title}
@@ -149,11 +152,11 @@ export default function TakeImageScreen() {
             );
           })}
         </View>
-        <DemoResponse>{response}</DemoResponse>
+        {/* <DemoResponse>{response}</DemoResponse> */}
 
         {response?.assets &&
           response?.assets.map(
-            ({ uri }: { uri: string }) => (
+            ({uri}: {uri: string}) => (
               console.log('THONG TIN BUC ANH:  ' + JSON.stringify(response)),
               (
                 <View key={uri} style={styles.imageContainer}>
@@ -162,7 +165,7 @@ export default function TakeImageScreen() {
                       resizeMode="cover"
                       resizeMethod="scale"
                       style={styles.image}
-                      source={{ uri: uri }}>
+                      source={{uri: uri}}>
                       <View>
                         <Text
                           style={{
@@ -189,7 +192,7 @@ export default function TakeImageScreen() {
               )
             ),
           )}
-        <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
           <TouchableOpacity
             style={{
               justifyContent: 'center',
@@ -203,13 +206,13 @@ export default function TakeImageScreen() {
               backgroundColor: 'red',
             }}
             onPress={submitOnImageLocation}>
-            <Text style={{ color: 'white', fontSize: 14, textAlign: 'center' }}>
+            <Text style={{color: 'white', fontSize: 14, textAlign: 'center'}}>
               Submit Image
             </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -251,13 +254,13 @@ const actions: Action[] = [
       maxWidth: 800,
     },
   },
-  {
-    title: 'Select Image',
-    type: 'library',
-    options: {
-      selectionLimit: 0,
-      mediaType: 'photo',
-      includeBase64: false,
-    },
-  },
+  // {
+  //   title: 'Select Image',
+  //   type: 'library',
+  //   options: {
+  //     selectionLimit: 0,
+  //     mediaType: 'photo',
+  //     includeBase64: false,
+  //   },
+  // },
 ];

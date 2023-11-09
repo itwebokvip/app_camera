@@ -14,6 +14,11 @@ import java.util.Arrays;
 import java.util.List;
 import com.oblador.vectoricons.VectorIconsPackage;
 
+//rn setting
+import io.rumors.reactnativesettings.RNSettingsPackage;
+import io.rumors.reactnativesettings.receivers.GpsLocationReceiver;
+import io.rumors.reactnativesettings.receivers.AirplaneModeReceiver;
+
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =

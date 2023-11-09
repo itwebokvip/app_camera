@@ -12,6 +12,7 @@ const AppTextInput: React.FC<TextInputProps> = ({...otherProps}) => {
       placeholderTextColor={colors.darkText}
       style={[
         {
+          color: colors.black,
           padding: sizes.s10,
           borderRadius: sizes.s10,
           marginVertical: sizes.s10,

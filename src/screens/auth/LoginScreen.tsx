@@ -1,49 +1,62 @@
-import React, { useCallback, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, {useCallback, useState} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-import { SignIn } from '../../service ';
+import {Loading, AppTextInput} from 'components';
 
-import { goReset } from 'helpers/navigation';
-import AppTextInput from 'components/AppTextInput';
-import { Style, colors, fonts, fontsizes, sizes } from 'core';
-import { Loading } from 'components';
+import {SignIn} from '../../service ';
+import ShowToast from 'helpers/ShowToast';
+import {goReset} from 'helpers/navigation';
+import {Style, colors, fonts, fontsizes, sizes} from 'core';
 
 const LoginScreen: React.FC = () => {
-  const [email, setEmail] = useState<string>('');
+  const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
-  const validationForm = useCallback(() => { }, []);
+  const validationForm = useCallback(() => {
+    if (username.length === 0) {
+      ShowToast('error', 'Notice', 'Please input your username!');
+      return false;
+    }
 
-  const handleLogin = async () => {
+    if (password.length === 0) {
+      ShowToast('error', 'Notice', 'Please input your password!');
+      return false;
+    }
+
+    return true;
+  }, [username, password.length]);
+
+  const handleLogin = useCallback(async () => {
     try {
+      const isValid = validationForm();
+      if (!isValid) return;
+
       Loading.show();
-      const [result] = await Promise.all([SignIn(email, password)]);
-      console.log('KetQua DangNhap:  ' + JSON.stringify(result.Success));
+
+      // const [result] = await Promise.all([SignIn('Admin', 'okvip@@')]);
+      const [result] = await Promise.all([SignIn(username, password)]);
+
       if (result.Success === true) {
         goReset('main');
+      } else {
+        ShowToast('error', 'Notice', result.errors);
       }
     } catch (error) {
-      console.log('[ERROR] Loi:  ' + error);
+      ShowToast('error', 'Notice', 'Something went wrong!');
     } finally {
       Loading.hide();
     }
-  };
+  }, [username, password, validationForm]);
 
   return (
     <View style={Style.container}>
       <Text style={styles.title}>Welcome back!</Text>
       <View style={Style.pv36}>
-        <AppTextInput
-          placeholder="Email"
-          onChangeText={text => {
-            setEmail(text);
-          }}
-        />
+        <AppTextInput placeholder="Username" onChangeText={setUsername} />
         <AppTextInput
           placeholder="Password"
-          onChangeText={text => {
-            setPassword(text);
-          }}
+          secureTextEntry
+          onChangeText={setPassword}
         />
       </View>
       <TouchableOpacity onPress={handleLogin} style={styles.btnSignIn}>
