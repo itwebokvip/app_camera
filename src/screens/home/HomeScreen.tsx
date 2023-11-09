@@ -9,7 +9,7 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from 'react-native';
-import {DemoButton, DemoResponse, DemoTitle} from 'components';
+import { DemoButton, DemoResponse, DemoTitle } from 'components';
 import moment from 'moment';
 import * as ImagePicker from 'react-native-image-picker';
 import axios from 'axios';
@@ -19,7 +19,7 @@ import GetLocation, {
   LocationErrorCode,
   isLocationError,
 } from 'react-native-get-location';
-import {UploadImage} from '../../service ';
+import { UploadImage } from '../../service ';
 import ShowToast from 'helpers/ShowToast';
 
 export default function TakeImageScreen() {
@@ -80,7 +80,7 @@ export default function TakeImageScreen() {
       })
       .catch(ex => {
         if (isLocationError(ex)) {
-          const {code, message} = ex;
+          const { code, message } = ex;
           console.warn('catch: ' + code, message);
           setError(code);
         } else {
@@ -117,9 +117,9 @@ export default function TakeImageScreen() {
       } else {
         const [result] = await Promise.all([
           UploadImage(
-            response.assets[0].fileName,
             response.assets[0].fileSize,
-            'Thành Phố HCM',
+            address,
+            response.assets[0].fileName,
             moment(response.assets[0].timestamp).format(
               'MMMM DD, YYYY hh:mm A',
             ),
@@ -139,7 +139,7 @@ export default function TakeImageScreen() {
       <DemoTitle>🌄 Desciption Image</DemoTitle>
       <ScrollView>
         <View style={styles.buttonContainer}>
-          {actions.map(({title, type, options}) => {
+          {actions.map(({ title, type, options }) => {
             return (
               <DemoButton
                 key={title}
@@ -153,7 +153,7 @@ export default function TakeImageScreen() {
 
         {response?.assets &&
           response?.assets.map(
-            ({uri}: {uri: string}) => (
+            ({ uri }: { uri: string }) => (
               console.log('THONG TIN BUC ANH:  ' + JSON.stringify(response)),
               (
                 <View key={uri} style={styles.imageContainer}>
@@ -162,7 +162,7 @@ export default function TakeImageScreen() {
                       resizeMode="cover"
                       resizeMethod="scale"
                       style={styles.image}
-                      source={{uri: uri}}>
+                      source={{ uri: uri }}>
                       <View>
                         <Text
                           style={{
@@ -189,7 +189,7 @@ export default function TakeImageScreen() {
               )
             ),
           )}
-        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
+        <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
           <TouchableOpacity
             style={{
               justifyContent: 'center',
@@ -203,7 +203,7 @@ export default function TakeImageScreen() {
               backgroundColor: 'red',
             }}
             onPress={submitOnImageLocation}>
-            <Text style={{color: 'white', fontSize: 14, textAlign: 'center'}}>
+            <Text style={{ color: 'white', fontSize: 14, textAlign: 'center' }}>
               Submit Image
             </Text>
           </TouchableOpacity>

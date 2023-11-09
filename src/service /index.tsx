@@ -56,16 +56,16 @@ export const SignIn = async (
 };
 
 export const UploadImage = async (
-    name: string,
     size: number,
     location: string,
+    path: string,
     shootTime: string,
 ): Promise<SignInResult> => {
     try {
         const response = await Api_1.post(ConstantUrl.postImage, {
-            name,
             size,
             location,
+            path,
             shootTime,
         });
 

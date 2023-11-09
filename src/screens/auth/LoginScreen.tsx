@@ -1,23 +1,23 @@
-import React, {useCallback, useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import {SignIn} from '../../service ';
+import { SignIn } from '../../service ';
 
-import {goReset} from 'helpers/navigation';
+import { goReset } from 'helpers/navigation';
 import AppTextInput from 'components/AppTextInput';
-import {Style, colors, fonts, fontsizes, sizes} from 'core';
-import {Loading} from 'components';
+import { Style, colors, fonts, fontsizes, sizes } from 'core';
+import { Loading } from 'components';
 
 const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
-  const validationForm = useCallback(() => {}, []);
+  const validationForm = useCallback(() => { }, []);
 
   const handleLogin = async () => {
     try {
       Loading.show();
-      const [result] = await Promise.all([SignIn('Admin', 'okvip@@')]);
+      const [result] = await Promise.all([SignIn(email, password)]);
       console.log('KetQua DangNhap:  ' + JSON.stringify(result.Success));
       if (result.Success === true) {
         goReset('main');
