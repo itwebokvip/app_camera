@@ -41,7 +41,10 @@ export default function App() {
     error: (props: any) => (
       <ErrorToast
         {...props}
-        style={[Style.toastStyle, {backgroundColor: '#FDE0DE'}]}
+        style={[
+          Style.toastStyle,
+          {backgroundColor: '#FDE0DE', height: sizes.s100},
+        ]}
         contentContainerStyle={{padding: sizes.s12}}
         renderLeadingIcon={() => (
           <Icon
@@ -60,6 +63,7 @@ export default function App() {
         onPress={() => Toast.hide()}
         text1Style={[Style.txt14, Style.bold, {color: colors.error}]}
         text2Style={[Style.txt14, Style.bold, {color: colors.error}]}
+        text2NumberOfLines={2}
       />
     ),
   };

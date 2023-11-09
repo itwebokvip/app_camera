@@ -1,33 +1,57 @@
 import React, {useCallback, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-import {SignIn} from '../../service ';
+import {Loading, AppTextInput} from 'components';
 
+import {SignIn} from '../../service ';
+import ShowToast from 'helpers/ShowToast';
 import {goReset} from 'helpers/navigation';
-import AppTextInput from 'components/AppTextInput';
 import {Style, colors, fonts, fontsizes, sizes} from 'core';
-import {Loading} from 'components';
+
+const EMAIL_REGEX =
+  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
-  const validationForm = useCallback(() => {}, []);
+  const validationForm = useCallback(() => {
+    if (email.length === 0) {
+      ShowToast('error', 'Notice', 'Please input your email!');
+      return false;
+    }
 
-  const handleLogin = async () => {
+    if (!email.match(EMAIL_REGEX)) {
+      ShowToast('error', 'Notice', 'Invalid Email ID!');
+      return false;
+    }
+
+    if (password.length === 0) {
+      ShowToast('error', 'Notice', 'Please input your password!');
+      return false;
+    }
+
+    return true;
+  }, [email, password.length]);
+
+  const handleLogin = useCallback(async () => {
     try {
+      const isValid = validationForm();
+      if (!isValid) return;
+
       Loading.show();
-      const [result] = await Promise.all([SignIn('Admin', 'okvip@@')]);
-      console.log('KetQua DangNhap:  ' + JSON.stringify(result.Success));
+      const [result] = await Promise.all([SignIn(email, password)]);
       if (result.Success === true) {
         goReset('main');
+      } else {
+        ShowToast('error', 'Notice', result.errors);
       }
     } catch (error) {
-      console.log('[ERROR] Loi:  ' + error);
+      ShowToast('error', 'Notice', 'Something went wrong!');
     } finally {
       Loading.hide();
     }
-  };
+  }, [email, password, validationForm]);
 
   return (
     <View style={Style.container}>

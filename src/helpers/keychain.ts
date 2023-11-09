@@ -5,12 +5,7 @@ import {LogUtils} from './log';
 const {tryStringify, tryParse} = PrototypeManager.json;
 
 export enum STORAGE_KEYS {
-  installed = 'installed',
-  account = 'account',
-  uuid = 'uuid',
   token = 'token',
-  refreshToken = 'refreshToken',
-  fcmToken = 'fcmToken',
 }
 
 const setItem = async (key: STORAGE_KEYS, value: any) => {

@@ -1,7 +1,8 @@
 export const ConstantUrl = {
-    login: 'api/users/login',
-    postImage: 'api/imageInfos',
+  login: 'api/users/login',
+  postImage: 'api/imageInfos',
 };
 export const StatusCode = {
-    OK: 200,
+  OK: 200,
+  Error: 403,
 };
