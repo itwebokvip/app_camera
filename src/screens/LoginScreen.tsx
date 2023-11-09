@@ -1,4 +1,5 @@
 import {
+  Alert,
   SafeAreaView,
   Text,
   TouchableOpacity,
@@ -25,13 +26,18 @@ const LoginScreen: React.FC<Props> = ({ navigation: { navigate } }) => {
     console.log(email);
     console.log(password);
     try {
-      const [result] = await Promise.all([
-        SignIn("Admin", "okvip@@"),
-      ]);
-      console.log('KetQua DangNhap:  ' + JSON.stringify(result.Success));
-      if (result.Success == true) {
-        navigate("Home");
+      if (email === null || password === null) {
+        Alert.alert("Không được rỗng");
+      } else {
+        const [result] = await Promise.all([
+          SignIn(email, password),
+        ]);
+        console.log('KetQua DangNhap:  ' + JSON.stringify(result.Success));
+        if (result.Success == true) {
+          navigate('Home');
+        }
       }
+
     } catch (error) {
       console.log('[ERROR] Loi:  ' + error);
     }

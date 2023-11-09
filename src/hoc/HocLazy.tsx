@@ -33,6 +33,7 @@ export default (WrappedComponent: FC) => {
             static ContainerHandler: any[] = [];
             static RootHoc: any = null;
             IsUnmount: boolean = false;
+            static propTypes: {};
 
             constructor(props: any) {
                 super(props);
