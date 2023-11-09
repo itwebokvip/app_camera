@@ -21,6 +21,7 @@ import GetLocation, {
 } from 'react-native-get-location';
 import {UploadImage} from '../../service ';
 import ShowToast from 'helpers/ShowToast';
+import Permissions from 'utils/Permissions';
 
 export default function TakeImageScreen() {
   const [response, setResponse] = React.useState<any>(null);
@@ -63,7 +64,7 @@ export default function TakeImageScreen() {
           .get(mapUrl)
           .then(response => {
             const data = response.data;
-
+            console.log('data: >>>', data);
             const currentAddress =
               data.results[0].address_components[2].long_name +
               ',' +
@@ -95,7 +96,9 @@ export default function TakeImageScreen() {
   const onButtonPress = React.useCallback(
     async (type: String, options: ImagePicker.CameraOptions) => {
       if (type === 'capture') {
-        ImagePicker.launchCamera(options, setResponse);
+        Permissions.camera(() => {
+          ImagePicker.launchCamera(options, setResponse);
+        });
       } else {
         ImagePicker.launchImageLibrary(options, setResponse);
       }
@@ -149,7 +152,7 @@ export default function TakeImageScreen() {
             );
           })}
         </View>
-        <DemoResponse>{response}</DemoResponse>
+        {/* <DemoResponse>{response}</DemoResponse> */}
 
         {response?.assets &&
           response?.assets.map(

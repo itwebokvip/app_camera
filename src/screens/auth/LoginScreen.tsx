@@ -8,21 +8,13 @@ import ShowToast from 'helpers/ShowToast';
 import {goReset} from 'helpers/navigation';
 import {Style, colors, fonts, fontsizes, sizes} from 'core';
 
-const EMAIL_REGEX =
-  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
 const LoginScreen: React.FC = () => {
-  const [email, setEmail] = useState<string>('');
+  const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
   const validationForm = useCallback(() => {
-    if (email.length === 0) {
-      ShowToast('error', 'Notice', 'Please input your email!');
-      return false;
-    }
-
-    if (!email.match(EMAIL_REGEX)) {
-      ShowToast('error', 'Notice', 'Invalid Email ID!');
+    if (username.length === 0) {
+      ShowToast('error', 'Notice', 'Please input your username!');
       return false;
     }
 
@@ -32,7 +24,7 @@ const LoginScreen: React.FC = () => {
     }
 
     return true;
-  }, [email, password.length]);
+  }, [username, password.length]);
 
   const handleLogin = useCallback(async () => {
     try {
@@ -40,7 +32,10 @@ const LoginScreen: React.FC = () => {
       if (!isValid) return;
 
       Loading.show();
-      const [result] = await Promise.all([SignIn(email, password)]);
+
+      // const [result] = await Promise.all([SignIn('Admin', 'okvip@@')]);
+      const [result] = await Promise.all([SignIn(username, password)]);
+
       if (result.Success === true) {
         goReset('main');
       } else {
@@ -51,24 +46,17 @@ const LoginScreen: React.FC = () => {
     } finally {
       Loading.hide();
     }
-  }, [email, password, validationForm]);
+  }, [username, password, validationForm]);
 
   return (
     <View style={Style.container}>
       <Text style={styles.title}>Welcome back!</Text>
       <View style={Style.pv36}>
-        <AppTextInput
-          placeholder="Email"
-          onChangeText={text => {
-            setEmail(text);
-          }}
-        />
+        <AppTextInput placeholder="Username" onChangeText={setUsername} />
         <AppTextInput
           placeholder="Password"
           secureTextEntry
-          onChangeText={text => {
-            setPassword(text);
-          }}
+          onChangeText={setPassword}
         />
       </View>
       <TouchableOpacity onPress={handleLogin} style={styles.btnSignIn}>

@@ -16,7 +16,10 @@ export default function App() {
     success: (props: any) => (
       <BaseToast
         {...props}
-        style={[Style.toastStyle, {backgroundColor: '#C4F2DD'}]}
+        style={[
+          Style.toastStyle,
+          {backgroundColor: '#C4F2DD', height: sizes.s100},
+        ]}
         contentContainerStyle={{padding: sizes.s12}}
         renderLeadingIcon={() => (
           <Icon
