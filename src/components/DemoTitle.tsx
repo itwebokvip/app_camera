@@ -1,7 +1,16 @@
-import {colors, sizes} from 'core';
+import {Style, colors, sizes} from 'core';
 import * as React from 'react';
-import {View, Text, StyleSheet, ViewStyle, TextStyle} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+  TouchableOpacity,
+} from 'react-native';
 import StatusBarView from './StatusBarView';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {goScreen} from 'helpers/navigation';
 
 interface Props {
   children: string;
@@ -11,7 +20,18 @@ export function DemoTitle({children}: Props) {
   return (
     <View style={styles.container}>
       <StatusBarView lightContent backgroundColor={colors.bluePrimary} />
-      <Text style={styles.text}>{children}</Text>
+      <View style={[Style.w100, Style.block_center]}>
+        <Text style={styles.text}>{children}</Text>
+        <TouchableOpacity
+          style={{position: 'absolute', right: sizes.s20}}
+          onPress={() => goScreen('createProgram')}>
+          <MaterialCommunityIcons
+            name="plus-box"
+            size={sizes.s30}
+            color={'white'}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -27,7 +47,7 @@ const styles = StyleSheet.create<Styles>({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: sizes.s10,
-    backgroundColor: 'steelblue',
+    backgroundColor: colors.bluePrimary,
   },
   text: {
     fontSize: 24,

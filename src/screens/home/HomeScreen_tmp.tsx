@@ -8,7 +8,7 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from 'react-native';
-import {DemoButton, DemoResponse, DemoTitle, Loading} from 'components';
+import {DemoButton, DemoTitle, Loading} from 'components';
 import moment from 'moment';
 import * as ImagePicker from 'react-native-image-picker';
 import axios from 'axios';
@@ -18,13 +18,11 @@ import GetLocation, {
   LocationErrorCode,
   isLocationError,
 } from 'react-native-get-location';
-import {ParseImageToUrl, UploadImage} from '../../service ';
 import ShowToast from 'helpers/ShowToast';
 import Permissions from 'utils/Permissions';
-import {Style} from 'core';
 import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
 
-export default function TakeImageScreen() {
+export default function HomeScreen() {
   const [response, setResponse] = React.useState<any>(null);
   const [locations, setLocation] = React.useState<Location | null>(null);
   const [address, setAddress] = React.useState<any>(null);

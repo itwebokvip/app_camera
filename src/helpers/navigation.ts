@@ -1,4 +1,8 @@
-import {AuthStackParamList, RootStackParamList} from 'root-stack-params';
+import {
+  AuthStackParamList,
+  MainStackParamList,
+  RootStackParamList,
+} from 'root-stack-params';
 import {CommonActions, NavigationContainerRef} from '@react-navigation/native';
 
 let _navigator: NavigationContainerRef<ReactNavigation.RootParamList> | null =
@@ -45,7 +49,10 @@ function goResetAndNavigation(
 }
 
 function goScreen(
-  name: keyof RootStackParamList | keyof AuthStackParamList,
+  name:
+    | keyof RootStackParamList
+    | keyof AuthStackParamList
+    | keyof MainStackParamList,
   params = {},
 ) {
   if (_navigator && _navigator.dispatch) {
