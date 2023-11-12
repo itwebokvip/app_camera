@@ -344,3 +344,39 @@ export const deleteProgram = async (id: string) => {
     };
   }
 };
+
+export const getProgrammesWithID = async (
+  id: string,
+  pageNumber: number,
+  pageSize: number,
+) => {
+  try {
+    const response = await Api_1.get(
+      `api/programmes/${id}/imageInfos?pageNumber=${pageNumber}&pageSize=${pageSize}&orderBy=1`,
+    );
+    if (response.status !== StatusCode.OK) {
+      return {
+        success: false,
+        error: 'Server error!',
+      };
+    }
+    const { status, message } = response.data;
+    if (status === StatusCode.OK || status === StatusCode.EMPTY) {
+      return {
+        success: true,
+        data: response.data,
+      };
+    } else {
+      return {
+        success: false,
+        errors: message,
+      };
+    }
+  } catch (error) {
+    console.error('ERROR ====> ', JSON.stringify(error));
+    return {
+      success: false,
+      error,
+    };
+  }
+};

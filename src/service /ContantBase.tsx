@@ -3,6 +3,7 @@ export const ConstantUrl = {
   postImage: 'api/imageInfos',
   parseImageLink: 'api/files/upload',
   getProgrammes: 'api/programmes',
+  getProgrammesImage: 'api/programmes',
 };
 export const StatusCode = {
   OK: 200,
