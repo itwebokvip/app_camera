@@ -10,6 +10,7 @@ import {images} from 'assets';
 import {Icon} from 'components';
 import Navigation from './navigation';
 import {Style, colors, sizes} from 'core';
+import {UserProvider} from 'contexts';
 
 export default function App() {
   const toastConfig = {
@@ -72,7 +73,7 @@ export default function App() {
   };
 
   return (
-    <>
+    <UserProvider>
       <SafeAreaProvider>
         <StatusBar
           barStyle="light-content"
@@ -83,6 +84,6 @@ export default function App() {
         <Navigation />
       </SafeAreaProvider>
       <Toast config={toastConfig} topOffset={Device.getStatusBarHeight()} />
-    </>
+    </UserProvider>
   );
 }

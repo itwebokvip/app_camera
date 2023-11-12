@@ -11,21 +11,24 @@ import {
 
 import axios from 'axios';
 import moment from 'moment';
-import GetLocation from 'react-native-get-location';
 import {
   Asset,
   ImagePickerResponse,
   launchCamera,
 } from 'react-native-image-picker';
+import GetLocation from 'react-native-get-location';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {AppTextInput, Button} from 'components';
+import {AppTextInput, Button, Loading} from 'components';
 
 import styles from './styles';
+import {ImageInfoPayload} from 'models';
 import {Style, colors, sizes} from 'core';
 import ShowToast from 'helpers/ShowToast';
+import {goBack} from 'helpers/navigation';
 import Permissions from 'utils/Permissions';
 import {ScreenProps} from 'root-stack-params';
+import {createProgram, uploadMultiFiles, uploadMultiImageInfo} from 'service ';
 
 const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
   const [data, setData] = useState<Asset[]>([]);
@@ -51,7 +54,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
           latitude +
           ',' +
           longitude +
-          '&key=AIzaSyA21JwqECJSJuIoHQ4nDZEaKI8Ol9KoDbg';
+          '&key=AIzaSyDLhd9XefFpeUg4IElB8o61-bltlA-oSzo';
         axios
           .get(mapUrl)
           .then(response => {
@@ -156,11 +159,55 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
     });
   }, [onImagePickerResult]);
 
-  const onSubmit = useCallback(() => {
-    if (name.length === 0) {
-      return ShowToast('error', 'Notice', 'Please input name');
+  const onSubmit = useCallback(async () => {
+    try {
+      Loading.show();
+      if (name.length === 0) {
+        return ShowToast('error', 'Notice', 'Please input name');
+      }
+      const programResponse = await createProgram(name);
+      if (!programResponse.success) {
+        return ShowToast('error', 'Notice', programResponse?.error);
+      }
+      // console.log('programResponse: >>>', programResponse);
+      // if (data.length > 0) {
+      //   const formData = new FormData();
+      //   for (let i = 0; i < data.length; i++) {
+      //     const curAsset = data[i];
+      //     formData.append('files', {
+      //       uri: curAsset.uri,
+      //       name: curAsset.fileName,
+      //       type: curAsset.type,
+      //     });
+      //   }
+      //   const uploadResponse = await uploadMultiFiles(formData);
+      //   const payload: ImageInfoPayload[] = [];
+      //   for (let i = 0; i < uploadResponse.data.length; i++) {
+      //     const uploadImage = uploadResponse.data[i];
+      //     payload.push({
+      //       location: address,
+      //       size: uploadImage.fileSizeInBytes,
+      //       path: uploadImage.url,
+      //       shootTime: moment(data[i].timestamp).format(
+      //         'MMMM DD, YYYY hh:mm A',
+      //       ),
+      //       programmeId: programResponse.data.id,
+      //     });
+      //     const imageInfoResponse = await uploadMultiImageInfo(payload);
+      //     console.log('imageInfoResponse: >>>', imageInfoResponse);
+      //   }
+      // }
+
+      ShowToast('success', 'Notice', 'Created program successfully!');
+      setTimeout(() => {
+        goBack();
+      }, 1000);
+    } catch (error) {
+      ShowToast('error', 'Notice', 'Something went wrong!');
+    } finally {
+      Loading.hide();
     }
-  }, [name.length]);
+  }, [name]);
 
   return (
     <View style={Style.container}>
@@ -170,16 +217,16 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
           placeholder="Please input program's name"
           onChangeText={setName}
         />
-        <Button title="Take Image" onPress={onTakeImage} />
+        {/* <Button title="Take Image" onPress={onTakeImage} /> */}
         <View style={{height: sizes.s10}} />
         <Button type="bluePrimary" title="Submit" onPress={onSubmit} />
       </View>
-      <FlatList
+      {/* <FlatList
         data={data}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
         ItemSeparatorComponent={renderSeparator}
-      />
+      /> */}
     </View>
   );
 };

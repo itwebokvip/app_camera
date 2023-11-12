@@ -6,6 +6,7 @@ const {tryStringify, tryParse} = PrototypeManager.json;
 
 export enum STORAGE_KEYS {
   token = 'token',
+  account = 'account',
 }
 
 const setItem = async (key: STORAGE_KEYS, value: any) => {

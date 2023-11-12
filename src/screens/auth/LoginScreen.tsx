@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useContext, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 import {Loading, AppTextInput} from 'components';
@@ -7,8 +7,10 @@ import {SignIn} from '../../service ';
 import ShowToast from 'helpers/ShowToast';
 import {goReset} from 'helpers/navigation';
 import {Style, colors, fonts, fontsizes, sizes} from 'core';
+import {UserContext} from 'contexts';
 
 const LoginScreen: React.FC = () => {
+  const {loginUser} = useContext(UserContext);
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
@@ -32,12 +34,11 @@ const LoginScreen: React.FC = () => {
       if (!isValid) return;
 
       Loading.show();
-
-      // const [result] = await Promise.all([SignIn('Admin', 'okvip@@')]);
       const [result] = await Promise.all([SignIn(username, password)]);
 
       if (result.Success === true) {
         goReset('main');
+        result?.data && loginUser(result?.data);
       } else {
         ShowToast('error', 'Notice', result.errors);
       }
@@ -46,7 +47,7 @@ const LoginScreen: React.FC = () => {
     } finally {
       Loading.hide();
     }
-  }, [username, password, validationForm]);
+  }, [validationForm, username, password, loginUser]);
 
   return (
     <View style={Style.container}>
