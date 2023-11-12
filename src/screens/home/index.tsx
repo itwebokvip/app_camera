@@ -22,7 +22,7 @@ import ShowToast from 'helpers/ShowToast';
 import { goScreen } from 'helpers/navigation';
 import { deleteProgram, getProgrammes } from 'service ';
 
-const PAGE_SIZE = 1;
+const PAGE_SIZE = 10;
 
 const FuncComponent: React.FC = () => {
   const isFocused = useIsFocused();
