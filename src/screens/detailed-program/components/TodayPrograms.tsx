@@ -7,8 +7,6 @@ const TodayPrograms: React.FC<any> = ({ route }: any) => {
   console.log('TodayProgram:: ' + JSON.stringify(route));
 
 
-
-
   return <View style={styles.container}></View>;
 };
 
