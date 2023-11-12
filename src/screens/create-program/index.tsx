@@ -35,54 +35,54 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
   const [name, setName] = useState<string>('');
   const [address, setAddress] = React.useState<any>(null);
 
-  const requestLocation = () => {
-    GetLocation.getCurrentPosition({
-      enableHighAccuracy: true,
-      timeout: 30000,
-      rationale: {
-        title: 'Location permission',
-        message: 'The app needs the permission to request your location.',
-        buttonPositive: 'Ok',
-      },
-    })
-      .then(coordinates => {
-        console.log('coordinates:  ' + JSON.stringify(coordinates));
-        const longitude = coordinates.longitude;
-        const latitude = coordinates.latitude;
-        const mapUrl =
-          'https://maps.googleapis.com/maps/api/geocode/json?address=' +
-          latitude +
-          ',' +
-          longitude +
-          '&key=AIzaSyA21JwqECJSJuIoHQ4nDZEaKI8Ol9KoDbg';
-        axios
-          .get(mapUrl)
-          .then(response => {
-            const mapData = response.data;
-            console.log('mapData: >>>', mapData);
-            const currentAddress =
-              mapData.results[0].address_components[2].long_name +
-              ',' +
-              mapData.results[0].address_components[3].long_name +
-              ',' +
-              mapData.results[0].address_components[4].long_name;
-            console.log('Kết quả:', currentAddress);
-            setAddress(currentAddress);
-          })
-          .catch((error: any) => {
-            console.error('Lỗi khi gửi yêu cầu:', error);
-            ShowToast('error', 'Notice', 'Error get location current!');
-          });
-      })
-      .catch((error: any) => {
-        console.error('Lỗi khi gửi yêu cầu:', error);
-        ShowToast('error', 'Notice', 'Error get location current!');
-      });
-  };
+  // const requestLocation = () => {
+  //   GetLocation.getCurrentPosition({
+  //     enableHighAccuracy: true,
+  //     timeout: 30000,
+  //     rationale: {
+  //       title: 'Location permission',
+  //       message: 'The app needs the permission to request your location.',
+  //       buttonPositive: 'Ok',
+  //     },
+  //   })
+  //     .then(coordinates => {
+  //       console.log('coordinates:  ' + JSON.stringify(coordinates));
+  //       const longitude = coordinates.longitude;
+  //       const latitude = coordinates.latitude;
+  //       const mapUrl =
+  //         'https://maps.googleapis.com/maps/api/geocode/json?address=' +
+  //         latitude +
+  //         ',' +
+  //         longitude +
+  //         '&key=AIzaSyA21JwqECJSJuIoHQ4nDZEaKI8Ol9KoDbg';
+  //       axios
+  //         .get(mapUrl)
+  //         .then(response => {
+  //           const mapData = response.data;
+  //           console.log('mapData: >>>', mapData);
+  //           const currentAddress =
+  //             mapData.results[0].address_components[2].long_name +
+  //             ',' +
+  //             mapData.results[0].address_components[3].long_name +
+  //             ',' +
+  //             mapData.results[0].address_components[4].long_name;
+  //           console.log('Kết quả:', currentAddress);
+  //           setAddress(currentAddress);
+  //         })
+  //         .catch((error: any) => {
+  //           console.error('Lỗi khi gửi yêu cầu:', error);
+  //           ShowToast('error', 'Notice', 'Error get location current!');
+  //         });
+  //     })
+  //     .catch((error: any) => {
+  //       console.error('Lỗi khi gửi yêu cầu:', error);
+  //       ShowToast('error', 'Notice', 'Error get location current!');
+  //     });
+  // };
 
-  useEffect(() => {
-    requestLocation();
-  }, []);
+  // useEffect(() => {
+  //   requestLocation();
+  // }, []);
 
   const onDeleteImg = (index: number) => {
     setData(oldData => oldData.filter((_, i) => i !== index));
