@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
   FlatList,
@@ -19,13 +19,15 @@ import {
 } from 'react-native-image-picker';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {AppTextInput, Button} from 'components';
+import { AppTextInput, Button, Loading } from 'components';
 
 import styles from './styles';
-import {Style, colors, sizes} from 'core';
+import { Style, colors, sizes } from 'core';
 import ShowToast from 'helpers/ShowToast';
 import Permissions from 'utils/Permissions';
-import {ScreenProps} from 'root-stack-params';
+import { ScreenProps } from 'root-stack-params';
+import { KeychainManager, STORAGE_KEYS } from 'helpers/keychain';
+import { UploadImage, postProgrammesName } from 'service ';
 
 const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
   const [data, setData] = useState<Asset[]>([]);
@@ -87,7 +89,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
 
   const renderItem = useCallback(
     (info: ListRenderItemInfo<Asset>) => {
-      const {index, item} = info;
+      const { index, item } = info;
       return (
         <View key={index} style={styles.imageContainer}>
           <View style={styles.container}>
@@ -95,7 +97,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
               resizeMode="cover"
               resizeMethod="scale"
               style={styles.image}
-              source={{uri: item.uri}}>
+              source={{ uri: item.uri }}>
               <View>
                 <Text style={styles.detailedImageTxt}>
                   {moment(item.timestamp).format('MMMM DD, YYYY hh:mm A')}
@@ -122,9 +124,52 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
   );
 
   const renderSeparator = useCallback(
-    () => <View style={{height: sizes.s24}} />,
+    () => <View style={{ height: sizes.s24 }} />,
     [],
   );
+
+  const uploadImage = async (imageAssert: Asset[]): Promise<void> => {
+    const base_url: string = 'https://api-camera.okvip.dev/api/files/upload';
+    const formData: FormData = new FormData();
+    console.log('JSON:  ' + JSON.stringify(imageAssert));
+    if (imageAssert.length > 0) {
+      imageAssert.forEach((image) => {
+        console.log(image);
+        formData.append('files', {
+          uri: image.uri,
+          name: image.fileName,
+          type: 'image/jpg',
+        });
+      });
+
+      console.log('TEST:  ' + JSON.stringify(formData));
+      const token = await KeychainManager.getItem(STORAGE_KEYS.token);
+
+      try {
+        const res = await fetch(base_url, {
+          method: 'post',
+          body: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}  `,
+          },
+        });
+
+        const result = await res.json();
+
+        if (result?.status === 200) {
+          return result?.data.url;
+        }
+        console.log('Ket quả trả về ' + JSON.stringify(result));
+        return undefined;
+      } catch (error) {
+        console.log('Networking Failed!', error);
+        return undefined;
+      } finally {
+        console.log('finally Failed!', Error);
+      }
+    }
+  };
 
   const onImagePickerResult = useCallback(
     (response: ImagePickerResponse) => {
@@ -156,9 +201,47 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
     });
   }, [onImagePickerResult]);
 
-  const onSubmit = useCallback(() => {
+  const inputNameProgram = useCallback(async () => {
+    if (name.length > 0) {
+      await Promise.all([postProgrammesName(name)]);
+      console.log('done');
+    }
+  }, [name]);
+
+  const onSubmit = useCallback(async () => {
     if (name.length === 0) {
       return ShowToast('error', 'Notice', 'Please input name');
+    } else {
+      try {
+        Loading.show();
+        await inputNameProgram();
+        const image = await uploadImage(data);
+        console.log('Image:  ' + image);
+        if (image == null) {
+          ShowToast(
+            'error',
+            'Notice',
+            'Can not upload Image Because of Invalid Param!',
+          );
+        } else {
+          await Promise.all([
+            UploadImage(
+              data[0].fileSize!,
+              'TP.HCM, Viet Nam',
+              image,
+              moment(data[0].timestamp).format(
+                'MMMM DD, YYYY hh:mm A',
+              ),
+            ),
+          ]);
+          ShowToast('success', 'Notice', 'Upload Image Successful');
+        }
+      } catch (error) {
+        console.log('Error:  ' + JSON.stringify(error));
+        ShowToast('error', 'Notice', 'Upload Image Failed!');
+      } finally {
+        Loading.hide();
+      }
     }
   }, [name.length]);
 
@@ -171,7 +254,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
           onChangeText={setName}
         />
         <Button title="Take Image" onPress={onTakeImage} />
-        <View style={{height: sizes.s10}} />
+        <View style={{ height: sizes.s10 }} />
         <Button type="bluePrimary" title="Submit" onPress={onSubmit} />
       </View>
       <FlatList

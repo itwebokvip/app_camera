@@ -4,7 +4,7 @@ import { Api_1, SetTokenToGetWay } from './GetWay';
 
 interface SignInResult {
   Success: boolean;
-  errors?: any; // Thay thế any bằng kiểu dữ liệu chính xác của bạn nếu có
+  errors?: any;
 }
 
 interface SignInResponse {
@@ -17,11 +17,6 @@ interface SignInData {
   token: string;
   expired: string;
 }
-
-const catchError = error => {
-  console.log('check console.log:  ' + JSON.stringify(error.response));
-  throw error.response;
-};
 
 export const SignIn = async (
   username: string,
@@ -104,22 +99,51 @@ export const UploadImage = async (
   }
 };
 
-export const ParseImageToUrl = async (
-  ImageInfoId: string,
-  File: string,
-): Promise<SignInResult> => {
+export const getProgrammes = async (
+  pageNumber: number,
+  pageSize: number,
+  textSearch: string,
+  orderBy: number,
+): Promise<any> => {
   try {
-    const response = await Api_1.post(ConstantUrl.parseImageLink, {
-      ImageInfoId,
-      File,
+    const response = await Api_1.get(ConstantUrl.getProgrammes, {
+      params: {
+        pageNumber, pageSize, textSearch, orderBy,
+      }
     });
 
-    console.log('====> ', JSON.stringify(response));
+    console.log('====> ', JSON.stringify(response.data));
 
     if (response.status === StatusCode.OK) {
+      return response.data;
+    } else {
+      console.error('ERROR ====> ', JSON.stringify(response));
       return {
-        Success: true,
+        Success: false,
+        errors: response,
       };
+    }
+  } catch (error) {
+    console.error('ERROR ====> ', JSON.stringify(error));
+    return {
+      Success: false,
+      errors: error,
+    };
+  }
+};
+
+export const postProgrammesName = async (
+  name: string,
+): Promise<SignInResult> => {
+  try {
+    const response = await Api_1.post(ConstantUrl.postProgrammes, {
+      name,
+    });
+
+    console.log('====> ', JSON.stringify(response.data));
+
+    if (response.status === StatusCode.OK) {
+      return response.data;
     } else {
       console.error('ERROR ====> ', JSON.stringify(response));
       return {

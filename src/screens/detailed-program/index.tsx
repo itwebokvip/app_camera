@@ -1,22 +1,22 @@
 import React from 'react';
-import {View} from 'react-native';
+import { View } from 'react-native';
 
-import {useIsFocused} from '@react-navigation/native';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import { useIsFocused } from '@react-navigation/native';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 import MyTabBar from './components/CustomJobTabBar';
 
 import styles from './styles';
-import {ProgramTabParamList} from './types';
-import {ScreenProps} from 'root-stack-params';
+import { ProgramTabParamList } from './types';
+import { ScreenProps } from 'root-stack-params';
 import TodayPrograms from './components/TodayPrograms';
 import History from './components/History';
 
 const Stack = createMaterialTopTabNavigator<ProgramTabParamList>();
 
-const FuncComponent: React.FC<ScreenProps<'detailedProgram'>> = () => {
+const FuncComponent: React.FC<ScreenProps<'detailedProgram'>> = ({ route }) => {
   const isFocused = useIsFocused();
-
+  console.log('Received:  ' + JSON.stringify(route));
   return (
     <View style={styles.container}>
       <Stack.Navigator
@@ -29,16 +29,16 @@ const FuncComponent: React.FC<ScreenProps<'detailedProgram'>> = () => {
         <Stack.Screen
           name={'today'}
           component={TodayPrograms}
-          options={{tabBarLabel: 'Today Programs'}}
+          options={{ tabBarLabel: 'Today Programs' }}
           //@ts-ignore
-          // initialParams={}
+          initialParams={route.params}
         />
         <Stack.Screen
           name={'history'}
           component={History}
           //@ts-ignore
           // initialParams={{}}
-          options={{tabBarLabel: 'History'}}
+          options={{ tabBarLabel: 'History' }}
         />
       </Stack.Navigator>
     </View>

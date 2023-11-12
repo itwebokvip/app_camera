@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   FlatList,
   ListRenderItemInfo,
@@ -8,14 +8,15 @@ import {
   View,
 } from 'react-native';
 
-import {useIsFocused} from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {DemoTitle, EmptyList} from 'components';
+import { DemoTitle, EmptyList } from 'components';
 
 import ShowToast from 'helpers/ShowToast';
-import {Style, colors, sizes} from 'core';
-import {goScreen} from 'helpers/navigation';
+import { Style, colors, sizes } from 'core';
+import { goScreen } from 'helpers/navigation';
+import { getProgrammes } from 'service ';
 
 const FuncComponent: React.FC = () => {
   const isFocused = useIsFocused();
@@ -23,9 +24,11 @@ const FuncComponent: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  const getData = useCallback((page: number = 1) => {
+  const getData = useCallback(async (page: number = 1) => {
     try {
       setRefreshing(true);
+      const [res] = await Promise.all([getProgrammes(page, 1, '', 0)]);
+      setData(res?.data);
     } catch (error) {
       ShowToast('error', 'Notice', 'Something went wrong!');
     } finally {
@@ -39,31 +42,31 @@ const FuncComponent: React.FC = () => {
     }
   }, [getData, isFocused]);
 
-  const onLoadMore = useCallback(() => {}, []);
+  const onLoadMore = useCallback(() => { }, []);
 
   const renderItem = useCallback((info: ListRenderItemInfo<any>) => {
-    const {index, item} = info;
+    const { index, item } = info;
     return (
       <TouchableOpacity
         style={styles.itemList}
         key={index}
-        onPress={() => goScreen('detailedProgram')}>
+        onPress={() => goScreen('detailedProgram', { item })}>
         <View style={[Style.flex, Style.left10]}>
           <Text numberOfLines={2} style={Style.txt14_blue}>
-            Nhưng nó là ecommerce web side Nhưng nó là ecommerce web side
+            {item.name}
           </Text>
         </View>
-        <View style={[Style.row, Style.ph10, {gap: sizes.s10}]}>
+        <View style={[Style.row, Style.ph10, { gap: sizes.s10 }]}>
           <TouchableOpacity onPress={() => goScreen('detailedProgram')}>
             <MaterialCommunityIcons
-              size={sizes.s25}
+              size={sizes.s18}
               name="pencil"
               color={colors.gray1000}
             />
           </TouchableOpacity>
           <TouchableOpacity hitSlop={Style.hitSlop4}>
             <MaterialCommunityIcons
-              size={sizes.s25}
+              size={sizes.s18}
               name="delete"
               color={colors.error}
             />
@@ -74,7 +77,7 @@ const FuncComponent: React.FC = () => {
   }, []);
 
   const renderSeparator = useCallback(
-    () => <View style={{height: sizes.s24}} />,
+    () => <View style={{ height: sizes.s24 }} />,
     [],
   );
 
