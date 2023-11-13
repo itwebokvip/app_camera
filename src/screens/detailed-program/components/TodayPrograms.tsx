@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Alert,
   FlatList,
@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
 import styles from '../styles';
-import { getProgrammesWithID } from 'service ';
+import {getProgrammesWithID} from 'service ';
 import ShowToast from 'helpers/ShowToast';
 
 import axios from 'axios';
@@ -23,14 +23,16 @@ import {
 } from 'react-native-image-picker';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Permissions from 'utils/Permissions';
-import { KeychainManager, STORAGE_KEYS } from 'helpers/keychain';
-import { UploadImage } from 'service ';
+import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
+import {UploadImage} from 'service ';
 
-import { Button, Loading } from 'components';
-import { Style, colors, sizes } from 'core';
+import {Button, Loading} from 'components';
+import {Style, colors, sizes} from 'core';
+import {GOOGLE_MAP_API_KEY} from 'helpers/common';
 
-const TodayPrograms: React.FC<any> = ({ route }: any) => {
+const TodayPrograms: React.FC<any> = ({route}: any) => {
   const isFocused = useIsFocused();
+
   const [data, setData] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
@@ -39,18 +41,18 @@ const TodayPrograms: React.FC<any> = ({ route }: any) => {
 
   const PAGE_SIZE = 10;
 
-  useEffect(() => {
-    if (isFocused) {
-      getData();
-    }
-  }, [getData, isFocused]);
-
   const getData = useCallback(
     async (page: number = 1) => {
       try {
+        if (!route.params?.item) return;
+
         setName(route.params.item.name);
         setRefreshing(true);
-        const response: any = await getProgrammesWithID(route.params.item.id, page, PAGE_SIZE);
+        const response: any = await getProgrammesWithID(
+          route.params.item.id,
+          page,
+          PAGE_SIZE,
+        );
         console.log(JSON.stringify(response));
       } catch (error) {
         ShowToast('error', 'Notice', 'Something went wrong!');
@@ -58,9 +60,14 @@ const TodayPrograms: React.FC<any> = ({ route }: any) => {
         setRefreshing(false);
       }
     },
-    [],
+    [route.params?.item],
   );
 
+  useEffect(() => {
+    if (isFocused) {
+      getData();
+    }
+  }, [getData, isFocused]);
 
   const requestLocation = () => {
     GetLocation.getCurrentPosition({
@@ -81,12 +88,12 @@ const TodayPrograms: React.FC<any> = ({ route }: any) => {
           latitude +
           ',' +
           longitude +
-          '&key=AIzaSyA21JwqECJSJuIoHQ4nDZEaKI8Ol9KoDbg';
+          '&key=' +
+          GOOGLE_MAP_API_KEY;
         axios
           .get(mapUrl)
           .then(response => {
             const mapData = response.data;
-            console.log('mapData: >>>', mapData);
             const currentAddress =
               mapData.results[0].address_components[2].long_name +
               ',' +
@@ -117,7 +124,7 @@ const TodayPrograms: React.FC<any> = ({ route }: any) => {
 
   const renderItem = useCallback(
     (info: ListRenderItemInfo<Asset>) => {
-      const { index, item } = info;
+      const {index, item} = info;
       return (
         <View key={index} style={styles.imageContainer}>
           <View style={styles.container}>
@@ -125,7 +132,7 @@ const TodayPrograms: React.FC<any> = ({ route }: any) => {
               resizeMode="cover"
               resizeMethod="scale"
               style={styles.image}
-              source={{ uri: item.uri }}>
+              source={{uri: item.uri}}>
               <View>
                 <Text style={styles.detailedImageTxt}>
                   {moment(item.timestamp).format('MMMM DD, YYYY hh:mm A')}
@@ -152,7 +159,7 @@ const TodayPrograms: React.FC<any> = ({ route }: any) => {
   );
 
   const renderSeparator = useCallback(
-    () => <View style={{ height: sizes.s24 }} />,
+    () => <View style={{height: sizes.s24}} />,
     [],
   );
 
@@ -161,7 +168,7 @@ const TodayPrograms: React.FC<any> = ({ route }: any) => {
     const formData: FormData = new FormData();
     console.log('JSON:  ' + JSON.stringify(imageAssert));
     if (imageAssert.length > 0) {
-      imageAssert.forEach((image) => {
+      imageAssert.forEach(image => {
         console.log(image);
         formData.append('files', {
           uri: image.uri,
@@ -182,7 +189,6 @@ const TodayPrograms: React.FC<any> = ({ route }: any) => {
             Authorization: `Bearer ${token}`,
           },
         });
-
 
         if (res?.status === 200) {
           const result = await res.json();
@@ -208,7 +214,6 @@ const TodayPrograms: React.FC<any> = ({ route }: any) => {
     },
     [data],
   );
-
 
   const onTakeImage = useCallback(() => {
     Permissions.camera(() => {
@@ -245,10 +250,8 @@ const TodayPrograms: React.FC<any> = ({ route }: any) => {
               data[0].fileSize!,
               'TP.HCM, Viet Nam',
               image,
-              route.params.item.id,
-              moment(data[0].timestamp).format(
-                'MMMM DD, YYYY hh:mm A',
-              ),
+              route.params?.item?.id,
+              moment(data[0].timestamp).format('MMMM DD, YYYY hh:mm A'),
             ),
           ]);
           ShowToast('success', 'Notice', 'Upload Image Successful');
@@ -260,17 +263,16 @@ const TodayPrograms: React.FC<any> = ({ route }: any) => {
         Loading.hide();
       }
     }
-  }, [name.length]);
+  }, [data, name.length, route.params?.item?.id]);
 
   return (
     <View style={Style.container}>
       <View style={Style.top20}>
-        <Text style={{
-          paddingVertical: 15,
-          fontSize: 18,
-        }}> PROGRAM NAME:  {name}</Text>
+        <Text style={[Style.txt24_primary, Style.bottom20]}>
+          PROGRAM NAME: {name}
+        </Text>
         <Button title="Take Image" onPress={onTakeImage} />
-        <View style={{ height: sizes.s10 }} />
+        <View style={{height: sizes.s10}} />
         <Button type="bluePrimary" title="Submit" onPress={onSubmit} />
       </View>
       <FlatList
@@ -282,6 +284,5 @@ const TodayPrograms: React.FC<any> = ({ route }: any) => {
     </View>
   );
 };
-
 
 export default TodayPrograms;

@@ -1,7 +1,7 @@
-import { KeychainManager, STORAGE_KEYS } from 'helpers/keychain';
-import { ConstantUrl, StatusCode } from './ContantBase';
-import { Api_1, SetTokenToGetWay } from './GetWay';
-import { ImageInfoPayload, User } from 'models';
+import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
+import {ConstantUrl, StatusCode} from './ContantBase';
+import {Api_1, SetTokenToGetWay} from './GetWay';
+import {ImageInfoPayload, User} from 'models';
 
 interface SignInResult {
   Success: boolean;
@@ -12,7 +12,7 @@ interface SignInResult {
 interface SignInResponse {
   status: number;
   error?: any;
-  data: { data: SignInData; message?: string; status?: number };
+  data: {data: SignInData; message?: string; status?: number};
 }
 
 interface SignInData {
@@ -39,9 +39,9 @@ export const SignIn = async (
     });
 
     if (response.status === StatusCode.OK) {
-      const { status, message, data } = response.data;
+      const {status, message, data} = response.data;
       if (status === StatusCode.OK) {
-        SetTokenToGetWay({ token: data.token });
+        SetTokenToGetWay({token: data.token});
         await KeychainManager.multiSet([
           [STORAGE_KEYS.token, data.token],
           [STORAGE_KEYS.account, JSON.stringify(data.logedInUser)],
@@ -155,7 +155,7 @@ export const getProgrammes = async (
         error: 'Server error!',
       };
     }
-    const { status, message } = response.data;
+    const {status, message} = response.data;
     if (status === StatusCode.OK || status === StatusCode.EMPTY) {
       return {
         success: true,
@@ -178,7 +178,7 @@ export const getProgrammes = async (
 
 export const createProgram = async (name: string) => {
   try {
-    const response = await Api_1.post('api/programmes', { name });
+    const response = await Api_1.post('api/programmes', {name});
 
     if (response.status !== StatusCode.OK) {
       return {
@@ -187,12 +187,12 @@ export const createProgram = async (name: string) => {
       };
     }
 
-    const { status, message } = response.data;
+    const {status, message} = response.data;
 
     if (status === StatusCode.OK) {
       return {
         success: true,
-        data: response.data,
+        data: response.data.data,
       };
     } else {
       return {
@@ -224,14 +224,13 @@ export const uploadMultiFiles = async (formData: FormData) => {
     const response = await res.json();
 
     if (response.status !== StatusCode.OK) {
-
       return {
         success: false,
         error: 'Server error!',
       };
     }
 
-    const { status, message } = response;
+    const {status, message} = response;
 
     if (status === StatusCode.OK) {
       return {
@@ -263,7 +262,7 @@ export const uploadMultiImageInfo = async (data: ImageInfoPayload[]) => {
       };
     }
 
-    const { status, message } = response.data;
+    const {status, message} = response.data;
 
     if (status === StatusCode.OK) {
       return {
@@ -295,7 +294,7 @@ export const deleteProgram = async (id: string) => {
       };
     }
 
-    const { status, message } = response.data;
+    const {status, message} = response.data;
 
     if (status === StatusCode.OK) {
       return {
@@ -331,7 +330,7 @@ export const getProgrammesWithID = async (
         error: 'Server error!',
       };
     }
-    const { status, message } = response.data;
+    const {status, message} = response.data;
     if (status === StatusCode.OK || status === StatusCode.EMPTY) {
       return {
         success: true,
@@ -367,7 +366,7 @@ export const updateImageInfos = async (
       path,
       programmeId,
       shootTime,
-      id
+      id,
     });
 
     console.log('====> ', JSON.stringify(response));

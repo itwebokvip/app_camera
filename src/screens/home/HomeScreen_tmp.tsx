@@ -21,6 +21,7 @@ import GetLocation, {
 import ShowToast from 'helpers/ShowToast';
 import Permissions from 'utils/Permissions';
 import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
+import {GOOGLE_MAP_API_KEY} from 'helpers/common';
 
 export default function HomeScreen() {
   const [response, setResponse] = React.useState<any>(null);
@@ -58,7 +59,8 @@ export default function HomeScreen() {
           latitude +
           ',' +
           longitude +
-          '&key=AIzaSyA21JwqECJSJuIoHQ4nDZEaKI8Ol9KoDbg';
+          '&key=' +
+          GOOGLE_MAP_API_KEY;
         axios
           .get(mapUrl)
           .then(response => {

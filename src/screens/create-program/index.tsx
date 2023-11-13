@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Alert,
   FlatList,
@@ -19,70 +19,72 @@ import {
 import GetLocation from 'react-native-get-location';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { AppTextInput, Button, Loading } from 'components';
+import {AppTextInput, Button, Loading} from 'components';
 
 import styles from './styles';
-import { ImageInfoPayload } from 'models';
-import { Style, colors, sizes } from 'core';
+import {ImageInfoPayload} from 'models';
+import {Style, colors, sizes} from 'core';
 import ShowToast from 'helpers/ShowToast';
-import { goBack } from 'helpers/navigation';
+import {goBack} from 'helpers/navigation';
 import Permissions from 'utils/Permissions';
-import { ScreenProps } from 'root-stack-params';
-import { createProgram, uploadMultiFiles, uploadMultiImageInfo } from 'service ';
+import {ScreenProps} from 'root-stack-params';
+import {createProgram, uploadMultiFiles, uploadMultiImageInfo} from 'service ';
+import {GOOGLE_MAP_API_KEY} from 'helpers/common';
 
 const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
   const [data, setData] = useState<Asset[]>([]);
   const [name, setName] = useState<string>('');
   const [address, setAddress] = React.useState<any>(null);
 
-  // const requestLocation = () => {
-  //   GetLocation.getCurrentPosition({
-  //     enableHighAccuracy: true,
-  //     timeout: 30000,
-  //     rationale: {
-  //       title: 'Location permission',
-  //       message: 'The app needs the permission to request your location.',
-  //       buttonPositive: 'Ok',
-  //     },
-  //   })
-  //     .then(coordinates => {
-  //       console.log('coordinates:  ' + JSON.stringify(coordinates));
-  //       const longitude = coordinates.longitude;
-  //       const latitude = coordinates.latitude;
-  //       const mapUrl =
-  //         'https://maps.googleapis.com/maps/api/geocode/json?address=' +
-  //         latitude +
-  //         ',' +
-  //         longitude +
-  //         '&key=AIzaSyA21JwqECJSJuIoHQ4nDZEaKI8Ol9KoDbg';
-  //       axios
-  //         .get(mapUrl)
-  //         .then(response => {
-  //           const mapData = response.data;
-  //           console.log('mapData: >>>', mapData);
-  //           const currentAddress =
-  //             mapData.results[0].address_components[2].long_name +
-  //             ',' +
-  //             mapData.results[0].address_components[3].long_name +
-  //             ',' +
-  //             mapData.results[0].address_components[4].long_name;
-  //           console.log('Kết quả:', currentAddress);
-  //           setAddress(currentAddress);
-  //         })
-  //         .catch((error: any) => {
-  //           console.error('Lỗi khi gửi yêu cầu:', error);
-  //           ShowToast('error', 'Notice', 'Error get location current!');
-  //         });
-  //     })
-  //     .catch((error: any) => {
-  //       console.error('Lỗi khi gửi yêu cầu:', error);
-  //       ShowToast('error', 'Notice', 'Error get location current!');
-  //     });
-  // };
+  const requestLocation = () => {
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 30000,
+      rationale: {
+        title: 'Location permission',
+        message: 'The app needs the permission to request your location.',
+        buttonPositive: 'Ok',
+      },
+    })
+      .then(coordinates => {
+        console.log('coordinates:  ' + JSON.stringify(coordinates));
+        const longitude = coordinates.longitude;
+        const latitude = coordinates.latitude;
+        const mapUrl =
+          'https://maps.googleapis.com/maps/api/geocode/json?address=' +
+          latitude +
+          ',' +
+          longitude +
+          '&key=' +
+          GOOGLE_MAP_API_KEY;
+        axios
+          .get(mapUrl)
+          .then(response => {
+            const mapData = response.data;
+            console.log('mapData: >>>', mapData);
+            const currentAddress =
+              mapData.results[0].address_components[2].long_name +
+              ',' +
+              mapData.results[0].address_components[3].long_name +
+              ',' +
+              mapData.results[0].address_components[4].long_name;
+            console.log('Kết quả:', currentAddress);
+            setAddress(currentAddress);
+          })
+          .catch((error: any) => {
+            console.error('Lỗi khi gửi yêu cầu:', error);
+            ShowToast('error', 'Notice', 'Error get location current!');
+          });
+      })
+      .catch((error: any) => {
+        console.error('Lỗi khi gửi yêu cầu:', error);
+        ShowToast('error', 'Notice', 'Error get location current!');
+      });
+  };
 
-  // useEffect(() => {
-  //   requestLocation();
-  // }, []);
+  useEffect(() => {
+    requestLocation();
+  }, []);
 
   const onDeleteImg = (index: number) => {
     setData(oldData => oldData.filter((_, i) => i !== index));
@@ -90,7 +92,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
 
   const renderItem = useCallback(
     (info: ListRenderItemInfo<Asset>) => {
-      const { index, item } = info;
+      const {index, item} = info;
       return (
         <View key={index} style={styles.imageContainer}>
           <View style={styles.container}>
@@ -98,7 +100,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
               resizeMode="cover"
               resizeMethod="scale"
               style={styles.image}
-              source={{ uri: item.uri }}>
+              source={{uri: item.uri}}>
               <View>
                 <Text style={styles.detailedImageTxt}>
                   {moment(item.timestamp).format('MMMM DD, YYYY hh:mm A')}
@@ -125,52 +127,9 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
   );
 
   const renderSeparator = useCallback(
-    () => <View style={{ height: sizes.s24 }} />,
+    () => <View style={{height: sizes.s24}} />,
     [],
   );
-
-  const uploadImage = async (imageAssert: Asset[]): Promise<void> => {
-    const base_url: string = 'https://api-camera.okvip.dev/api/files/upload';
-    const formData: FormData = new FormData();
-    console.log('JSON:  ' + JSON.stringify(imageAssert));
-    if (imageAssert.length > 0) {
-      imageAssert.forEach((image) => {
-        console.log(image);
-        formData.append('files', {
-          uri: image.uri,
-          name: image.fileName,
-          type: 'image/jpg',
-        });
-      });
-
-      console.log('TEST:  ' + JSON.stringify(formData));
-      const token = await KeychainManager.getItem(STORAGE_KEYS.token);
-
-      try {
-        const res = await fetch(base_url, {
-          method: 'post',
-          body: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}  `,
-          },
-        });
-
-        const result = await res.json();
-
-        if (result?.status === 200) {
-          return result?.data.url;
-        }
-        console.log('Ket quả trả về ' + JSON.stringify(result));
-        return undefined;
-      } catch (error) {
-        console.log('Networking Failed!', error);
-        return undefined;
-      } finally {
-        console.log('finally Failed!', Error);
-      }
-    }
-  };
 
   const onImagePickerResult = useCallback(
     (response: ImagePickerResponse) => {
@@ -212,34 +171,34 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
       if (!programResponse.success) {
         return ShowToast('error', 'Notice', programResponse?.error);
       }
-      // console.log('programResponse: >>>', programResponse);
-      // if (data.length > 0) {
-      //   const formData = new FormData();
-      //   for (let i = 0; i < data.length; i++) {
-      //     const curAsset = data[i];
-      //     formData.append('files', {
-      //       uri: curAsset.uri,
-      //       name: curAsset.fileName,
-      //       type: curAsset.type,
-      //     });
-      //   }
-      //   const uploadResponse = await uploadMultiFiles(formData);
-      //   const payload: ImageInfoPayload[] = [];
-      //   for (let i = 0; i < uploadResponse.data.length; i++) {
-      //     const uploadImage = uploadResponse.data[i];
-      //     payload.push({
-      //       location: address,
-      //       size: uploadImage.fileSizeInBytes,
-      //       path: uploadImage.url,
-      //       shootTime: moment(data[i].timestamp).format(
-      //         'MMMM DD, YYYY hh:mm A',
-      //       ),
-      //       programmeId: programResponse.data.id,
-      //     });
-      //     const imageInfoResponse = await uploadMultiImageInfo(payload);
-      //     console.log('imageInfoResponse: >>>', imageInfoResponse);
-      //   }
-      // }
+
+      if (data.length > 0) {
+        const formData = new FormData();
+        for (let i = 0; i < data.length; i++) {
+          const curAsset = data[i];
+          formData.append('files', {
+            uri: curAsset.uri,
+            name: curAsset.fileName,
+            type: curAsset.type,
+          });
+        }
+        const uploadResponse = await uploadMultiFiles(formData);
+        const payload: ImageInfoPayload[] = [];
+        for (let i = 0; i < uploadResponse.data.length; i++) {
+          const curUploadImage = uploadResponse.data[i];
+          payload.push({
+            location: address,
+            size: curUploadImage.fileSizeInBytes,
+            path: curUploadImage.url,
+            shootTime: moment(data[i].timestamp).format(
+              'MMMM DD, YYYY hh:mm A',
+            ),
+            programmeId: programResponse.data.id,
+          });
+          const imageInfoResponse = await uploadMultiImageInfo(payload);
+          console.log('imageInfoResponse: >>>', imageInfoResponse);
+        }
+      }
 
       ShowToast('success', 'Notice', 'Created program successfully!');
       setTimeout(() => {
@@ -250,7 +209,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
     } finally {
       Loading.hide();
     }
-  }, [name]);
+  }, [address, data, name]);
 
   return (
     <View style={Style.container}>
@@ -260,16 +219,16 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
           placeholder="Please input program's name"
           onChangeText={setName}
         />
-        {/* <Button title="Take Image" onPress={onTakeImage} /> */}
-        <View style={{ height: sizes.s10 }} />
+        <Button title="Take Image" onPress={onTakeImage} />
+        <View style={{height: sizes.s10}} />
         <Button type="bluePrimary" title="Submit" onPress={onSubmit} />
       </View>
-      {/* <FlatList
+      <FlatList
         data={data}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
         ItemSeparatorComponent={renderSeparator}
-      /> */}
+      />
     </View>
   );
 };
