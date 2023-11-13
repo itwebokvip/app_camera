@@ -19,21 +19,19 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {EmptyList} from 'components';
 import {IMAGE_DOMAIN} from 'helpers/common';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 30;
 
 const History: React.FC<any> = ({route}: any) => {
   const isFocused = useIsFocused();
   const [data, setData] = useState<Histories[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  console.log('ROUTE HISTORY:  ' + JSON.stringify(route));
-
   const getData = useCallback(
     async (page: number = 1) => {
       try {
         setRefreshing(true);
         const response: any = await getProgrammesWithID(
-          route.params?.item.id,
+          route.params?.item?.id,
           page,
           PAGE_SIZE,
         );
@@ -58,7 +56,7 @@ const History: React.FC<any> = ({route}: any) => {
     (info: ListRenderItemInfo<Histories>) => {
       const {index, item} = info;
       const dataUpdate = {
-        programId: route.params?.item.id,
+        programId: route.params?.item?.id,
         name: route.params?.item.name,
         data: item,
       };
@@ -103,7 +101,7 @@ const History: React.FC<any> = ({route}: any) => {
         </TouchableOpacity>
       );
     },
-    [route.params?.item.id, route.params?.item.name],
+    [route.params?.item?.id, route.params?.item?.name],
   );
 
   const renderSeparator = useCallback(
