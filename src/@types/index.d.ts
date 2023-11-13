@@ -15,6 +15,7 @@ declare module 'root-stack-params' {
     home: undefined;
     createProgram: undefined;
     detailedProgram: undefined;
+    editProgramImage: undefined;
   };
 
   export type CombinedStackParamList = RootStackParamList &

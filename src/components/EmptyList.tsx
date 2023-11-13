@@ -1,9 +1,9 @@
-import {images} from 'assets';
-import {Button} from 'components';
-import {colors, sizes, Style} from 'core/index';
-import {goScreen} from 'helpers/navigation';
+import { images } from 'assets';
+import { Button } from 'components';
+import { colors, sizes, Style } from 'core/index';
+import { goScreen } from 'helpers/navigation';
 import React from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 interface IProps {
   title: string;
   imagesEmpty?: any;
@@ -36,7 +36,7 @@ const EmptyList: React.FC<IProps> = ({
           type="bluePrimary"
           onPress={onCreateRequest}
           title="Create a program"
-          style={{width: '100%'}}
+          style={{ width: '100%' }}
         />
       )}
     </View>

@@ -27,6 +27,24 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: sizes.s12,
     backgroundColor: colors.bluePrimary,
   },
+  imageContainer: {
+    alignItems: 'center',
+    marginVertical: sizes.s14,
+  },
+  image: {
+    width: 300,
+    height: 300,
+  },
+  detailedImageTxt: {
+    color: 'red',
+    padding: sizes.s10,
+    fontWeight: '600',
+  },
+  btnDelete: {
+    top: sizes.s10,
+    right: sizes.s10,
+    position: 'absolute',
+  },
 });
 
 export default styles;

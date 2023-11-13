@@ -16,7 +16,6 @@ const Stack = createMaterialTopTabNavigator<ProgramTabParamList>();
 
 const FuncComponent: React.FC<ScreenProps<'detailedProgram'>> = ({ route }) => {
   const isFocused = useIsFocused();
-  console.log('Received:  ' + JSON.stringify(route));
   return (
     <View style={styles.container}>
       <Stack.Navigator
@@ -30,15 +29,13 @@ const FuncComponent: React.FC<ScreenProps<'detailedProgram'>> = ({ route }) => {
           name={'today'}
           component={TodayPrograms}
           options={{ tabBarLabel: 'Today Programs' }}
-          //@ts-ignore
           initialParams={route.params}
         />
         <Stack.Screen
           name={'history'}
           component={History}
-          //@ts-ignore
-          // initialParams={{}}
           options={{ tabBarLabel: 'History' }}
+          initialParams={route.params}
         />
       </Stack.Navigator>
     </View>

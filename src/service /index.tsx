@@ -78,6 +78,7 @@ export const UploadImage = async (
   size: number,
   location: string,
   path: string,
+  programmeId: string,
   shootTime: string,
 ): Promise<SignInResult> => {
   try {
@@ -85,6 +86,7 @@ export const UploadImage = async (
       size,
       location,
       path,
+      programmeId,
       shootTime,
     });
 
@@ -94,39 +96,6 @@ export const UploadImage = async (
       return {
         Success: true,
       };
-    } else {
-      console.error('ERROR ====> ', JSON.stringify(response));
-      return {
-        Success: false,
-        errors: response,
-      };
-    }
-  } catch (error) {
-    console.error('ERROR ====> ', JSON.stringify(error));
-    return {
-      Success: false,
-      errors: error,
-    };
-  }
-};
-
-export const getProgrammes = async (
-  pageNumber: number,
-  pageSize: number,
-  textSearch: string,
-  orderBy: number,
-): Promise<any> => {
-  try {
-    const response = await Api_1.get(ConstantUrl.getProgrammes, {
-      params: {
-        pageNumber, pageSize, textSearch, orderBy,
-      }
-    });
-
-    console.log('====> ', JSON.stringify(response.data));
-
-    if (response.status === StatusCode.OK) {
-      return response.data;
     } else {
       console.error('ERROR ====> ', JSON.stringify(response));
       return {
@@ -253,7 +222,9 @@ export const uploadMultiFiles = async (formData: FormData) => {
     });
 
     const response = await res.json();
+
     if (response.status !== StatusCode.OK) {
+
       return {
         success: false,
         error: 'Server error!',
@@ -377,6 +348,46 @@ export const getProgrammesWithID = async (
     return {
       success: false,
       error,
+    };
+  }
+};
+
+export const updateImageInfos = async (
+  size: number,
+  location: string,
+  path: string,
+  programmeId: string,
+  shootTime: string,
+  id: string,
+): Promise<SignInResult> => {
+  try {
+    const response = await Api_1.put(ConstantUrl.postImage, {
+      size,
+      location,
+      path,
+      programmeId,
+      shootTime,
+      id
+    });
+
+    console.log('====> ', JSON.stringify(response));
+
+    if (response.status === StatusCode.OK) {
+      return {
+        Success: true,
+      };
+    } else {
+      console.error('ERROR ====> ', JSON.stringify(response));
+      return {
+        Success: false,
+        errors: response,
+      };
+    }
+  } catch (error) {
+    console.error('ERROR ====> ', JSON.stringify(error));
+    return {
+      Success: false,
+      errors: error,
     };
   }
 };

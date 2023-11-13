@@ -1,10 +1,10 @@
 import React from 'react';
 
-import {CreateProgram, DetailedProgram, Home} from 'screens';
+import { CreateProgram, DetailedProgram, Home, UpdateImageProgram } from 'screens';
 
-import {headerDefaultOptions, screenOptionsStack} from 'common';
-import {MainStackParamList} from 'root-stack-params';
-import {createStackNavigator} from '@react-navigation/stack';
+import { headerDefaultOptions, screenOptionsStack } from 'common';
+import { MainStackParamList } from 'root-stack-params';
+import { createStackNavigator } from '@react-navigation/stack';
 
 const MainNavigator = () => {
   const MainStack = createStackNavigator<MainStackParamList>();
@@ -20,12 +20,17 @@ const MainNavigator = () => {
       <MainStack.Screen
         name={'detailedProgram'}
         component={DetailedProgram}
-        options={{headerTitle: 'Detailed Program'}}
+        options={{ headerTitle: 'Detailed Program' }}
+      />
+      <MainStack.Screen
+        name={'editProgramImage'}
+        component={UpdateImageProgram}
+        options={{ headerTitle: 'UpdateImageProgram' }}
       />
       <MainStack.Screen
         name={'createProgram'}
         component={CreateProgram}
-        options={{headerTitle: 'Create Program'}}
+        options={{ headerTitle: 'Create Program' }}
       />
     </MainStack.Navigator>
   );

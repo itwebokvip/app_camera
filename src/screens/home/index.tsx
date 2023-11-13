@@ -104,7 +104,7 @@ const FuncComponent: React.FC = () => {
         <TouchableOpacity
           style={styles.itemList}
           key={index}
-          onPress={() => goScreen('detailedProgram')}>
+          onPress={() => goScreen('detailedProgram', { item })}>
           <View style={[Style.flex, Style.left10]}>
             <Text numberOfLines={2} style={Style.txt14_blue}>
               {item.name}
