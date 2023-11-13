@@ -35,7 +35,6 @@ const History: React.FC<any> = ({route}: any) => {
           page,
           PAGE_SIZE,
         );
-        console.log('[HISTORY] Response:  ' + JSON.stringify(response));
         setData(response.data?.data);
       } catch (error) {
         ShowToast('error', 'Notice', 'Something went wrong!');
@@ -81,6 +80,7 @@ const History: React.FC<any> = ({route}: any) => {
                 marginTop: sizes.s10,
               }}
               source={{uri: IMAGE_DOMAIN + '/' + item.path}}
+              resizeMode="contain"
             />
             <Text style={[Style.txt10_gray600, Style.pv8]}>
               {moment(item.createdTime).format('MMMM DD, YYYY hh:mm A')}
