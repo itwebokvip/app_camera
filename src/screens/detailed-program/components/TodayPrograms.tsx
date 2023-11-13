@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
   FlatList,
@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useIsFocused} from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import styles from '../styles';
-import {getProgrammesWithID} from 'service ';
+import { getProgrammesWithID, uploadMultiImageInfo } from 'service ';
 import ShowToast from 'helpers/ShowToast';
 
 import axios from 'axios';
@@ -23,19 +23,27 @@ import {
 } from 'react-native-image-picker';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Permissions from 'utils/Permissions';
-import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
-import {UploadImage} from 'service ';
+import { KeychainManager, STORAGE_KEYS } from 'helpers/keychain';
+import { UploadImage } from 'service ';
 
-import {Button, Loading} from 'components';
-import {Style, colors, sizes} from 'core';
-import {GOOGLE_MAP_API_KEY} from 'helpers/common';
+import { Button, Loading } from 'components';
+import { Style, colors, sizes } from 'core';
+import { GOOGLE_MAP_API_KEY } from 'helpers/common';
+import { ImageInfoPayload } from 'models';
 
-const TodayPrograms: React.FC<any> = ({route}: any) => {
+interface ImageInfo {
+  fileName: string;
+  fileSizeInBytes: number;
+  url: string;
+}
+
+const TodayPrograms: React.FC<any> = ({ route }: any) => {
   const isFocused = useIsFocused();
-
+  const [imageInfos, setImageInfos] = useState<ImageInfo[]>([]);
   const [data, setData] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-
+  const [dataImage, setDataImage] = useState<any[]>([]);
+  const [infoPayload, setInfoPayload] = useState<ImageInfoPayload[]>([]);
   const [name, setName] = useState<string>('');
   const [address, setAddress] = React.useState<any>(null);
 
@@ -48,12 +56,12 @@ const TodayPrograms: React.FC<any> = ({route}: any) => {
 
         setName(route.params.item.name);
         setRefreshing(true);
-        const response: any = await getProgrammesWithID(
-          route.params.item.id,
-          page,
-          PAGE_SIZE,
-        );
-        console.log(JSON.stringify(response));
+        // const response: any = await getProgrammesWithID(
+        //   route.params.item.id,
+        //   page,
+        //   PAGE_SIZE,
+        // );
+        // console.log(JSON.stringify(response));
       } catch (error) {
         ShowToast('error', 'Notice', 'Something went wrong!');
       } finally {
@@ -124,7 +132,7 @@ const TodayPrograms: React.FC<any> = ({route}: any) => {
 
   const renderItem = useCallback(
     (info: ListRenderItemInfo<Asset>) => {
-      const {index, item} = info;
+      const { index, item } = info;
       return (
         <View key={index} style={styles.imageContainer}>
           <View style={styles.container}>
@@ -132,7 +140,7 @@ const TodayPrograms: React.FC<any> = ({route}: any) => {
               resizeMode="cover"
               resizeMethod="scale"
               style={styles.image}
-              source={{uri: item.uri}}>
+              source={{ uri: item.uri }}>
               <View>
                 <Text style={styles.detailedImageTxt}>
                   {moment(item.timestamp).format('MMMM DD, YYYY hh:mm A')}
@@ -159,14 +167,13 @@ const TodayPrograms: React.FC<any> = ({route}: any) => {
   );
 
   const renderSeparator = useCallback(
-    () => <View style={{height: sizes.s24}} />,
+    () => <View style={{ height: sizes.s24 }} />,
     [],
   );
 
   const uploadImage = async (imageAssert: Asset[]): Promise<void> => {
     const base_url: string = 'https://api-camera.okvip.dev/api/files/upload';
     const formData: FormData = new FormData();
-    console.log('JSON:  ' + JSON.stringify(imageAssert));
     if (imageAssert.length > 0) {
       imageAssert.forEach(image => {
         console.log(image);
@@ -177,7 +184,6 @@ const TodayPrograms: React.FC<any> = ({route}: any) => {
         });
       });
 
-      console.log('TEST:  ' + JSON.stringify(formData));
       const token = await KeychainManager.getItem(STORAGE_KEYS.token);
 
       try {
@@ -192,7 +198,9 @@ const TodayPrograms: React.FC<any> = ({route}: any) => {
 
         if (res?.status === 200) {
           const result = await res.json();
-          return result?.data[0]?.url;
+          console.log('[RESULT] ' + JSON.stringify(result.data));
+          setDataImage(result.data);
+          return result;
         }
       } catch (error) {
         console.log('Networking Failed!', error);
@@ -231,30 +239,38 @@ const TodayPrograms: React.FC<any> = ({route}: any) => {
   }, [onImagePickerResult]);
 
   const onSubmit = useCallback(async () => {
+    let myArray: ImageInfoPayload[] = [];
     if (name.length === 0) {
       return ShowToast('error', 'Notice', 'Please input name');
     } else {
       try {
         Loading.show();
-        const image = await uploadImage(data);
-        console.log('Image:  ' + image);
-        if (image == null) {
+        await uploadImage(data);
+        console.log('DATA IMAGE:  ' + JSON.stringify(dataImage));
+
+        if (address == null) {
           ShowToast(
             'error',
             'Notice',
             'Can not upload Image Because of Invalid Param!',
           );
         } else {
+          dataImage.forEach((value) => {
+            console.log('GIA TRI Value: ' + JSON.stringify(value));
+            let commentData = {} as ImageInfoPayload;
+            commentData.location = address;
+            commentData.path = value.fileName;
+            commentData.shootTime = moment(data[0].timestamp).format('MMMM DD, YYYY hh:mm A');
+            commentData.size = value.fileSizeInBytes;
+            commentData.programmeId = route.params?.item?.id;
+            myArray.push(commentData);
+          });
+          console.log('DATA IMAGs myArray: ' + JSON.stringify(myArray));
           await Promise.all([
-            UploadImage(
-              data[0].fileSize!,
-              'TP.HCM, Viet Nam',
-              image,
-              route.params?.item?.id,
-              moment(data[0].timestamp).format('MMMM DD, YYYY hh:mm A'),
-            ),
+            uploadMultiImageInfo(myArray),
           ]);
           ShowToast('success', 'Notice', 'Upload Image Successful');
+          setData([]);
         }
       } catch (error) {
         console.log('Error:  ' + JSON.stringify(error));
@@ -272,7 +288,7 @@ const TodayPrograms: React.FC<any> = ({route}: any) => {
           PROGRAM NAME: {name}
         </Text>
         <Button title="Take Image" onPress={onTakeImage} />
-        <View style={{height: sizes.s10}} />
+        <View style={{ height: sizes.s10 }} />
         <Button type="bluePrimary" title="Submit" onPress={onSubmit} />
       </View>
       <FlatList

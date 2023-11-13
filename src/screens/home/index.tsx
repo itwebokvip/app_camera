@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
   Alert,
   FlatList,
@@ -10,23 +10,23 @@ import {
 } from 'react-native';
 
 import moment from 'moment';
-import {useIsFocused} from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {DemoTitle, EmptyList} from 'components';
+import { DemoTitle, EmptyList } from 'components';
 
-import {Program} from 'models';
-import {UserContext} from 'contexts';
-import {Style, colors, sizes} from 'core';
+import { Program } from 'models';
+import { UserContext } from 'contexts';
+import { Style, colors, sizes } from 'core';
 import ShowToast from 'helpers/ShowToast';
-import {goScreen} from 'helpers/navigation';
-import {deleteProgram, getProgrammes} from 'service ';
+import { goScreen } from 'helpers/navigation';
+import { deleteProgram, getProgrammes } from 'service ';
 
 const PAGE_SIZE = 10;
 
 const FuncComponent: React.FC = () => {
   const isFocused = useIsFocused();
-  const {user, logoutUser} = useContext(UserContext);
+  const { user, logoutUser } = useContext(UserContext);
 
   const [data, setData] = useState<Program[]>([]);
   const [total, setTotal] = useState<number>(0);
@@ -43,6 +43,7 @@ const FuncComponent: React.FC = () => {
         setRefreshing(true);
         const response: any = await getProgrammes(page, PAGE_SIZE, user?.id);
         if (page === 1) {
+          // console.log('HOME ' + JSON.stringify(response));
           setData(response.data.data);
         } else {
           setData(oldData => [...oldData, ...response.data.data]);
@@ -91,7 +92,7 @@ const FuncComponent: React.FC = () => {
         },
         {
           text: 'Cancel',
-          onPress: () => {},
+          onPress: () => { },
         },
       ],
     );
@@ -99,12 +100,12 @@ const FuncComponent: React.FC = () => {
 
   const renderItem = useCallback(
     (info: ListRenderItemInfo<Program>) => {
-      const {index, item} = info;
+      const { index, item } = info;
       return (
         <TouchableOpacity
           style={styles.itemList}
           key={index}
-          onPress={() => goScreen('detailedProgram', {item})}>
+          onPress={() => goScreen('detailedProgram', { item })}>
           <View style={[Style.flex, Style.left10]}>
             <Text numberOfLines={2} style={Style.txt14_blue}>
               {item.name}
@@ -113,9 +114,9 @@ const FuncComponent: React.FC = () => {
               {moment(item.createdTime).format('MMMM DD, YYYY hh:mm A')}
             </Text>
           </View>
-          <View style={[Style.row, Style.ph10, {gap: sizes.s10}]}>
+          <View style={[Style.row, Style.ph10, { gap: sizes.s10 }]}>
             <TouchableOpacity
-              onPress={() => goScreen('detailedProgram', {item})}>
+              onPress={() => goScreen('detailedProgram', { item })}>
               <MaterialCommunityIcons
                 size={sizes.s25}
                 name="pencil"
@@ -139,7 +140,7 @@ const FuncComponent: React.FC = () => {
   );
 
   const renderSeparator = useCallback(
-    () => <View style={{height: sizes.s24}} />,
+    () => <View style={{ height: sizes.s24 }} />,
     [],
   );
 
