@@ -1,6 +1,8 @@
 declare module 'react-native-settings';
 declare module 'root-stack-params' {
+  import {Program} from 'models';
   import {StackScreenProps} from '@react-navigation/stack';
+
   export type RootStackParamList = {
     auth: undefined;
     main: undefined;
@@ -14,7 +16,9 @@ declare module 'root-stack-params' {
   export type MainStackParamList = {
     home: undefined;
     createProgram: undefined;
-    detailedProgram: undefined;
+    detailedProgram: {
+      detailedProgram: Program;
+    };
     editProgramImage: undefined;
   };
 

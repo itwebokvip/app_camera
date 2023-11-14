@@ -18,10 +18,13 @@ import moment from 'moment';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {EmptyList} from 'components';
 import {IMAGE_DOMAIN} from 'helpers/common';
+import {ScreenProps} from 'root-stack-params';
 
-const PAGE_SIZE = 30;
+const PAGE_SIZE = 10;
 
-const History: React.FC<any> = ({route}: any) => {
+const History: React.FC<ScreenProps<'detailedProgram'>> = ({route}) => {
+  const {detailedProgram} = route?.params;
+
   const isFocused = useIsFocused();
   const [data, setData] = useState<Histories[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -31,10 +34,11 @@ const History: React.FC<any> = ({route}: any) => {
       try {
         setRefreshing(true);
         const response: any = await getProgrammesWithID(
-          route.params?.item?.id,
+          detailedProgram?.id,
           page,
           PAGE_SIZE,
         );
+
         setData(response.data?.data);
       } catch (error) {
         ShowToast('error', 'Notice', 'Something went wrong!');
@@ -42,7 +46,7 @@ const History: React.FC<any> = ({route}: any) => {
         setRefreshing(false);
       }
     },
-    [route],
+    [detailedProgram?.id],
   );
 
   useEffect(() => {
@@ -55,8 +59,8 @@ const History: React.FC<any> = ({route}: any) => {
     (info: ListRenderItemInfo<Histories>) => {
       const {index, item} = info;
       const dataUpdate = {
-        programId: route.params?.item?.id,
-        name: route.params?.item.name,
+        programId: detailedProgram?.id,
+        name: detailedProgram?.name,
         data: item,
       };
 
@@ -101,7 +105,7 @@ const History: React.FC<any> = ({route}: any) => {
         </TouchableOpacity>
       );
     },
-    [route.params?.item?.id, route.params?.item?.name],
+    [detailedProgram?.id, detailedProgram?.name],
   );
 
   const renderSeparator = useCallback(

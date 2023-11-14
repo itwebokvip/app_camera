@@ -1,8 +1,13 @@
 import {RouteProp} from '@react-navigation/native';
+import {Program} from 'models';
 
 export type ProgramTabParamList = {
-  today: undefined;
-  history: undefined;
+  today: {
+    detailedProgram: Program;
+  };
+  history: {
+    detailedProgram: Program;
+  };
 };
 
 export type TabNavigationProp = RouteProp<

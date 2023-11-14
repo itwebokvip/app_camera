@@ -195,9 +195,9 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
             ),
             programmeId: programResponse.data.id,
           });
-          const imageInfoResponse = await uploadMultiImageInfo(payload);
-          console.log('imageInfoResponse: >>>', imageInfoResponse);
         }
+        const imageInfoResponse = await uploadMultiImageInfo(payload);
+        console.log('imageInfoResponse: >>>', imageInfoResponse);
       }
 
       ShowToast('success', 'Notice', 'Created program successfully!');
