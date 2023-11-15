@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
   Text,
@@ -7,6 +7,7 @@ import {
   ImageBackground,
   TouchableOpacity,
   ListRenderItemInfo,
+  TextInput,
 } from 'react-native';
 
 import axios from 'axios';
@@ -20,33 +21,73 @@ import GetLocation from 'react-native-get-location';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import styles from '../styles';
-import {ImageInfoPayload} from 'models';
-import {Style, colors, sizes} from 'core';
+import { ImageInfoPayload } from 'models';
+import { Style, colors, sizes } from 'core';
 import ShowToast from 'helpers/ShowToast';
-import {Button, Loading} from 'components';
+import { Button, Loading } from 'components';
 import Permissions from 'utils/Permissions';
-import {ScreenProps} from 'root-stack-params';
-import {GOOGLE_MAP_API_KEY} from 'helpers/common';
-import {uploadMultiFiles, uploadMultiImageInfo} from 'service ';
+import { ScreenProps } from 'root-stack-params';
+import { GOOGLE_MAP_API_KEY } from 'helpers/common';
+import { updateProgrammes, uploadMultiFiles, uploadMultiImageInfo } from 'service ';
+import SubmitDate from 'common/submitDate';
 
-const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({route}) => {
-  const {detailedProgram} = route?.params;
+const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({ route }) => {
+  const { detailedProgram } = route?.params;
 
   const [data, setData] = useState<Asset[]>([]);
   const [address, setAddress] = React.useState<any>(null);
 
+  // Edit Program
+  const [isEditing, setIsEditing] = useState(false);
+  const [programName, setProgramName] = useState<string | null>(null);
+  const [newProgramName, setNewProgramName] = useState<string>('');
+
+  //
+
+  const handleEditPress = () => {
+    if (isEditing) {
+      if (newProgramName.trim() !== '') {
+        saveProgramName(newProgramName);
+        setProgramName(newProgramName);
+        setIsEditing(false);
+      }
+    } else {
+      setIsEditing(true);
+      setNewProgramName(programName || '');
+    }
+  };
+
+  const handleInputChange = (text: string) => {
+    setNewProgramName(text);
+  };
+
+  const saveProgramName = async (value: string) => {
+    try {
+      const [result] = await Promise.all([
+        updateProgrammes(value, detailedProgram?.id, true),
+      ]);
+      console.log('====>  ' + JSON.stringify(result));
+      if (result.Success) {
+        ShowToast('success', 'Lưu ý', 'Cập nhật chương trình thành công!');
+      }
+    } catch (error) {
+      console.log('[ERROR] ' + error);
+    }
+  };
+
+  //
   const requestLocation = () => {
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 30000,
       rationale: {
-        title: 'Location permission',
-        message: 'The app needs the permission to request your location.',
+        title: 'Quyền vị trí',
+        message: 'Ứng dụng cần có quyền để yêu cầu vị trí của bạn.',
         buttonPositive: 'Ok',
       },
     })
       .then(coordinates => {
-        console.log('coordinates:  ' + JSON.stringify(coordinates));
+        //console.log('coordinates:  ' + JSON.stringify(coordinates));
         const longitude = coordinates.longitude;
         const latitude = coordinates.latitude;
         const mapUrl =
@@ -66,23 +107,24 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({route}) => {
               mapData.results[0].address_components[3].long_name +
               ',' +
               mapData.results[0].address_components[4].long_name;
-            console.log('Kết quả:', currentAddress);
+            //console.log('Kết quả:', currentAddress);
             setAddress(currentAddress);
           })
           .catch((error: any) => {
             console.error('Lỗi khi gửi yêu cầu:', error);
-            ShowToast('error', 'Notice', 'Error get location current!');
+            ShowToast('error', 'Lưu ý', 'Lỗi lấy vị trí hiện tại!');
           });
       })
       .catch((error: any) => {
         console.error('Lỗi khi gửi yêu cầu:', error);
-        ShowToast('error', 'Notice', 'Error get location current!');
+        ShowToast('error', 'Lưu ý', 'Lỗi lấy vị trí hiện tại!');
       });
   };
 
   useEffect(() => {
     requestLocation();
-  }, []);
+    setProgramName(detailedProgram.name);
+  }, [detailedProgram.name]);
 
   const onDeleteImg = (index: number) => {
     setData(oldData => oldData.filter((_, i) => i !== index));
@@ -90,7 +132,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({route}) => {
 
   const renderItem = useCallback(
     (info: ListRenderItemInfo<Asset>) => {
-      const {index, item} = info;
+      const { index, item } = info;
       return (
         <View key={index} style={styles.imageContainer}>
           <View style={styles.container}>
@@ -98,8 +140,8 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({route}) => {
               resizeMode="cover"
               resizeMethod="scale"
               style={styles.image}
-              source={{uri: item.uri}}>
-              <View>
+              source={{ uri: item.uri }}>
+              <View style={Style.p8}>
                 <Text style={styles.detailedImageTxt}>
                   {moment(item.timestamp).format('MMMM DD, YYYY hh:mm A')}
                 </Text>
@@ -125,7 +167,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({route}) => {
   );
 
   const renderSeparator = useCallback(
-    () => <View style={{height: sizes.s24}} />,
+    () => <View style={{ height: sizes.s24 }} />,
     [],
   );
 
@@ -136,9 +178,9 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({route}) => {
         newData = newData.concat(response?.assets);
         setData(newData);
       } else if (response.errorCode) {
-        Alert.alert('Notice', response.errorCode);
+        Alert.alert('Lưu ý', response.errorCode);
       } else if (response.errorMessage) {
-        Alert.alert('Notice', response.errorMessage);
+        Alert.alert('Lưu ý', response.errorMessage);
       }
     },
     [data],
@@ -161,7 +203,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({route}) => {
 
   const onSubmit = useCallback(async () => {
     if (data.length === 0) {
-      return ShowToast('error', 'Notice', 'Nothing to susbmit!');
+      return ShowToast('error', 'Lưu ý', 'Không có gì để gửi!');
     } else {
       try {
         Loading.show();
@@ -192,11 +234,13 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({route}) => {
           console.log('imageInfoResponse: >>>', imageInfoResponse);
         }
 
-        ShowToast('success', 'Notice', 'Updated programme successfully!');
+        ShowToast('success', 'Lưu ý', 'Gửi thành công!');
+        const submittedTime = new Date();
+        SubmitDate.getInstance().setSubmittedTime(submittedTime);
         setData([]);
       } catch (error) {
         console.log('Error:  ' + JSON.stringify(error));
-        ShowToast('error', 'Notice', 'Upload Image Failed!');
+        ShowToast('error', 'Lưu ý', 'Tải hình ảnh lên không thành công!');
       } finally {
         Loading.hide();
       }
@@ -206,12 +250,46 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({route}) => {
   return (
     <View style={Style.container}>
       <View style={Style.top20}>
-        <Text style={[Style.txt24_primary, Style.bottom20]}>
-          PROGRAM NAME: {detailedProgram?.name}
-        </Text>
-        <Button title="Take Image" onPress={onTakeImage} />
-        <View style={{height: sizes.s10}} />
-        <Button type="bluePrimary" title="Submit" onPress={onSubmit} />
+        {isEditing ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TextInput
+              style={[Style.txt24_primary, Style.bottom20, { flex: 1 }]}
+              value={newProgramName}
+              onChangeText={handleInputChange}
+            />
+            {newProgramName.trim() !== '' && (
+              <TouchableOpacity onPress={handleEditPress}>
+                <View style={{ borderColor: 'black', borderWidth: 1, paddingVertical: 5, paddingHorizontal: 10, borderRadius: 5 }}>
+                  <MaterialCommunityIcons
+                    size={sizes.s20}
+                    name="content-save-outline"
+                    color={colors.gray1000}
+                  />
+                </View>
+              </TouchableOpacity>
+            )}
+          </View>
+        ) : (
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+              <Text style={[Style.txt24_primary, Style.bottom20]}>
+                {programName}
+              </Text>
+            </View>
+            <TouchableOpacity onPress={handleEditPress}>
+              <View style={{ borderColor: 'black', borderWidth: 1, paddingVertical: 5, paddingHorizontal: 10, borderRadius: 5 }}>
+                <MaterialCommunityIcons
+                  size={sizes.s20}
+                  name="pencil"
+                  color={colors.gray1000}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
+        )}
+        <Button title="Chụp ảnh" onPress={onTakeImage} />
+        <View style={{ height: sizes.s10 }} />
+        <Button type="bluePrimary" title="Gửi" onPress={onSubmit} />
       </View>
       <FlatList
         data={data}

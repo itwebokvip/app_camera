@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
   FlatList,
@@ -19,17 +19,17 @@ import {
 import GetLocation from 'react-native-get-location';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {AppTextInput, Button, Loading} from 'components';
+import { AppTextInput, Button, Loading } from 'components';
 
 import styles from './styles';
-import {ImageInfoPayload} from 'models';
-import {Style, colors, sizes} from 'core';
+import { ImageInfoPayload } from 'models';
+import { Style, colors, sizes } from 'core';
 import ShowToast from 'helpers/ShowToast';
-import {goBack} from 'helpers/navigation';
+import { goBack } from 'helpers/navigation';
 import Permissions from 'utils/Permissions';
-import {ScreenProps} from 'root-stack-params';
-import {createProgram, uploadMultiFiles, uploadMultiImageInfo} from 'service ';
-import {GOOGLE_MAP_API_KEY} from 'helpers/common';
+import { ScreenProps } from 'root-stack-params';
+import { createProgram, uploadMultiFiles, uploadMultiImageInfo } from 'service ';
+import { GOOGLE_MAP_API_KEY } from 'helpers/common';
 
 const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
   const [data, setData] = useState<Asset[]>([]);
@@ -41,13 +41,13 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
       enableHighAccuracy: true,
       timeout: 30000,
       rationale: {
-        title: 'Location permission',
-        message: 'The app needs the permission to request your location.',
+        title: 'Quyền vị trí',
+        message: 'Ứng dụng cần có quyền để yêu cầu vị trí của bạn',
         buttonPositive: 'Ok',
       },
     })
       .then(coordinates => {
-        console.log('coordinates:  ' + JSON.stringify(coordinates));
+        //console.log('coordinates:  ' + JSON.stringify(coordinates));
         const longitude = coordinates.longitude;
         const latitude = coordinates.latitude;
         const mapUrl =
@@ -61,24 +61,24 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
           .get(mapUrl)
           .then(response => {
             const mapData = response.data;
-            console.log('mapData: >>>', mapData);
+            //console.log('mapData: >>>', mapData);
             const currentAddress =
               mapData.results[0].address_components[2].long_name +
               ',' +
               mapData.results[0].address_components[3].long_name +
               ',' +
               mapData.results[0].address_components[4].long_name;
-            console.log('Kết quả:', currentAddress);
+            //console.log('Kết quả:', currentAddress);
             setAddress(currentAddress);
           })
           .catch((error: any) => {
             console.error('Lỗi khi gửi yêu cầu:', error);
-            ShowToast('error', 'Notice', 'Error get location current!');
+            ShowToast('error', 'Lưu ý', 'Lỗi lấy vị trí hiện tại!');
           });
       })
       .catch((error: any) => {
         console.error('Lỗi khi gửi yêu cầu:', error);
-        ShowToast('error', 'Notice', 'Error get location current!');
+        ShowToast('error', 'Lưu ý', 'Lỗi lấy vị trí hiện tại!');
       });
   };
 
@@ -92,7 +92,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
 
   const renderItem = useCallback(
     (info: ListRenderItemInfo<Asset>) => {
-      const {index, item} = info;
+      const { index, item } = info;
       return (
         <View key={index} style={styles.imageContainer}>
           <View style={styles.container}>
@@ -100,7 +100,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
               resizeMode="cover"
               resizeMethod="scale"
               style={styles.image}
-              source={{uri: item.uri}}>
+              source={{ uri: item.uri }}>
               <View>
                 <Text style={styles.detailedImageTxt}>
                   {moment(item.timestamp).format('MMMM DD, YYYY hh:mm A')}
@@ -127,7 +127,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
   );
 
   const renderSeparator = useCallback(
-    () => <View style={{height: sizes.s24}} />,
+    () => <View style={{ height: sizes.s24 }} />,
     [],
   );
 
@@ -138,9 +138,9 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
         newData = newData.concat(response?.assets);
         setData(newData);
       } else if (response.errorCode) {
-        Alert.alert('Notice', response.errorCode);
+        Alert.alert('Lưu ý', response.errorCode);
       } else if (response.errorMessage) {
-        Alert.alert('Notice', response.errorMessage);
+        Alert.alert('Lưu ý', response.errorMessage);
       }
     },
     [data],
@@ -165,11 +165,11 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
     try {
       Loading.show();
       if (name.length === 0) {
-        return ShowToast('error', 'Notice', 'Please input name');
+        return ShowToast('error', 'Lưu ý', 'Vui lòng nhập thông tin!');
       }
       const programResponse = await createProgram(name);
       if (!programResponse.success) {
-        return ShowToast('error', 'Notice', programResponse?.error);
+        return ShowToast('error', 'Lưu ý', programResponse?.error);
       }
 
       if (data.length > 0) {
@@ -200,12 +200,12 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
         console.log('imageInfoResponse: >>>', imageInfoResponse);
       }
 
-      ShowToast('success', 'Notice', 'Created program successfully!');
+      ShowToast('success', 'Lưu ý', 'Tạo chương trình thành công!');
       setTimeout(() => {
         goBack();
       }, 1000);
     } catch (error) {
-      ShowToast('error', 'Notice', 'Something went wrong!');
+      ShowToast('error', 'Lưu ý', 'Đã xảy ra lỗi!');
     } finally {
       Loading.hide();
     }
@@ -216,12 +216,12 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
       <View style={Style.top20}>
         <AppTextInput
           autoFocus
-          placeholder="Please input program's name"
+          placeholder="Vui lòng nhập tên chương trình"
           onChangeText={setName}
         />
-        <Button title="Take Image" onPress={onTakeImage} />
-        <View style={{height: sizes.s10}} />
-        <Button type="bluePrimary" title="Submit" onPress={onSubmit} />
+        <Button title="Chụp ảnh" onPress={onTakeImage} />
+        <View style={{ height: sizes.s10 }} />
+        <Button type="bluePrimary" title="Gửi" onPress={onSubmit} />
       </View>
       <FlatList
         data={data}

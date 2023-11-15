@@ -8,7 +8,7 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from 'react-native';
-import {DemoButton, DemoTitle, Loading} from 'components';
+import { DemoButton, DemoTitle, Loading } from 'components';
 import moment from 'moment';
 import * as ImagePicker from 'react-native-image-picker';
 import axios from 'axios';
@@ -20,8 +20,8 @@ import GetLocation, {
 } from 'react-native-get-location';
 import ShowToast from 'helpers/ShowToast';
 import Permissions from 'utils/Permissions';
-import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
-import {GOOGLE_MAP_API_KEY} from 'helpers/common';
+import { KeychainManager, STORAGE_KEYS } from 'helpers/keychain';
+import { GOOGLE_MAP_API_KEY } from 'helpers/common';
 
 export default function HomeScreen() {
   const [response, setResponse] = React.useState<any>(null);
@@ -72,7 +72,7 @@ export default function HomeScreen() {
               data.results[0].address_components[3].long_name +
               ',' +
               data.results[0].address_components[4].long_name;
-            console.log('Kết quả:', currentAddress);
+            //console.log('Kết quả:', currentAddress);
             setAddress(currentAddress);
           })
           .catch(error => {
@@ -82,7 +82,7 @@ export default function HomeScreen() {
       })
       .catch(ex => {
         if (isLocationError(ex)) {
-          const {code, message} = ex;
+          const { code, message } = ex;
           console.warn('catch: ' + code, message);
           setError(code);
         } else {
@@ -179,7 +179,7 @@ export default function HomeScreen() {
       <DemoTitle>🌄 Desciption Image</DemoTitle>
       <ScrollView>
         <View style={styles.buttonContainer}>
-          {actions.map(({title, type, options}) => {
+          {actions.map(({ title, type, options }) => {
             return (
               <DemoButton
                 key={title}
@@ -193,7 +193,7 @@ export default function HomeScreen() {
 
         {response?.assets &&
           response?.assets.map(
-            ({uri}: {uri: string}) => (
+            ({ uri }: { uri: string }) => (
               console.log('THONG TIN BUC ANH:  ' + JSON.stringify(response)),
               (
                 <View key={uri} style={styles.imageContainer}>
@@ -202,7 +202,7 @@ export default function HomeScreen() {
                       resizeMode="cover"
                       resizeMethod="scale"
                       style={styles.image}
-                      source={{uri: uri}}>
+                      source={{ uri: uri }}>
                       <View>
                         <Text
                           style={{
@@ -229,7 +229,7 @@ export default function HomeScreen() {
               )
             ),
           )}
-        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
+        <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
           <TouchableOpacity
             style={{
               justifyContent: 'center',
@@ -243,7 +243,7 @@ export default function HomeScreen() {
               backgroundColor: 'red',
             }}
             onPress={submitOnImageLocation}>
-            <Text style={{color: 'white', fontSize: 14, textAlign: 'center'}}>
+            <Text style={{ color: 'white', fontSize: 14, textAlign: 'center' }}>
               Submit Image
             </Text>
           </TouchableOpacity>

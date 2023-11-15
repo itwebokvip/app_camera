@@ -8,13 +8,13 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import {images} from 'assets';
-import {Style, colors, fonts, fontsizes, screenHeight, sizes} from 'core';
-import {goScreen} from 'helpers/navigation';
+import { images } from 'assets';
+import { Style, colors, fonts, fontsizes, screenHeight, sizes } from 'core';
+import { goScreen } from 'helpers/navigation';
 
 const WelcomeScreen: React.FC = () => {
   return (
-    <SafeAreaView style={{flex: 1, justifyContent: 'center'}}>
+    <SafeAreaView style={{ flex: 1, justifyContent: 'center' }}>
       <View>
         <ImageBackground
           style={{
@@ -28,10 +28,9 @@ const WelcomeScreen: React.FC = () => {
             paddingTop: sizes.s40,
             paddingHorizontal: sizes.s20,
           }}>
-          <Text style={styles.title}>Take Camera Description</Text>
+          <Text style={styles.title}>Marketing</Text>
           <Text style={[Style.txt14, Style.txtCenter]}>
-            Explore all the existing job roles based or your interest and study
-            major
+            Khám phá tất cả các vai trò công việc hiện có dựa trên sở thích và nghiên cứu của bạn lớn lao
           </Text>
         </View>
         <View
@@ -43,7 +42,7 @@ const WelcomeScreen: React.FC = () => {
           <TouchableOpacity
             onPress={() => goScreen('login')}
             style={styles.btnContinue}>
-            <Text style={styles.continueTxt}>Continue</Text>
+            <Text style={styles.continueTxt}>Tiếp tục</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Text,
   View,
@@ -8,22 +8,26 @@ import {
   TouchableOpacity,
   ListRenderItemInfo,
 } from 'react-native';
-import {useIsFocused} from '@react-navigation/native';
-import {getProgrammesWithID} from 'service ';
+import { useIsFocused } from '@react-navigation/native';
+import { getProgrammesWithID } from 'service ';
 import ShowToast from 'helpers/ShowToast';
-import {Histories} from 'models';
-import {Style, sizes, colors} from 'core';
-import {goScreen} from 'helpers/navigation';
+import { Histories } from 'models';
+import { Style, sizes, colors } from 'core';
+import { goScreen } from 'helpers/navigation';
 import moment from 'moment';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {EmptyList} from 'components';
-import {IMAGE_DOMAIN} from 'helpers/common';
-import {ScreenProps} from 'root-stack-params';
+import { EmptyList } from 'components';
+import { IMAGE_DOMAIN } from 'helpers/common';
+import { ScreenProps } from 'root-stack-params';
+// import SubmitDate from 'common/submitDate';
 
 const PAGE_SIZE = 10;
 
-const History: React.FC<ScreenProps<'detailedProgram'>> = ({route}) => {
-  const {detailedProgram} = route?.params;
+const History: React.FC<ScreenProps<'detailedProgram'>> = ({ route }) => {
+
+  //const submittedTime = SubmitDate.getInstance().getSubmittedTime();
+  //console.log('HISTORIES:  ' + submittedTime);
+  const { detailedProgram } = route?.params;
 
   const isFocused = useIsFocused();
   const [data, setData] = useState<Histories[]>([]);
@@ -38,10 +42,11 @@ const History: React.FC<ScreenProps<'detailedProgram'>> = ({route}) => {
           page,
           PAGE_SIZE,
         );
-
         setData(response.data?.data);
+
+        console.log('HISTORIES:  ' + JSON.stringify(response.data?.data));
       } catch (error) {
-        ShowToast('error', 'Notice', 'Something went wrong!');
+        ShowToast('error', 'Chú ý', 'Đã xảy ra lỗi!');
       } finally {
         setRefreshing(false);
       }
@@ -57,7 +62,7 @@ const History: React.FC<ScreenProps<'detailedProgram'>> = ({route}) => {
 
   const renderItem = useCallback(
     (info: ListRenderItemInfo<Histories>) => {
-      const {index, item} = info;
+      const { index, item } = info;
       const dataUpdate = {
         programId: detailedProgram?.id,
         name: detailedProgram?.name,
@@ -83,15 +88,17 @@ const History: React.FC<ScreenProps<'detailedProgram'>> = ({route}) => {
                 height: sizes.s100,
                 marginTop: sizes.s10,
               }}
-              source={{uri: IMAGE_DOMAIN + '/' + item.path}}
+              source={{ uri: IMAGE_DOMAIN + '/' + item.path }}
               resizeMode="contain"
             />
             <Text style={[Style.txt10_gray600, Style.pv8]}>
-              {moment(item.createdTime).format('MMMM DD, YYYY hh:mm A')}
+              Thời gian: {moment(item.createdTime).format('MMMM DD, YYYY hh:mm A')}
             </Text>
+            {/* {submittedTime && (<Text style={[Style.txt10_gray600, Style.pv8]}>Thời gian gửi: {moment(item.shootTime).format('MMMM DD, YYYY hh:mm A')}</Text>)} */}
+            <Text style={[Style.txt10_gray600, Style.pv8]}>Thời gian gửi: {moment(item.shootTime).format('MMMM DD, YYYY hh:mm:ss A')}</Text>
           </View>
           {isEditable && (
-            <View style={[Style.row, Style.ph8, {gap: sizes.s15}]}>
+            <View style={[Style.row, Style.ph8, { gap: sizes.s15 }]}>
               <TouchableOpacity
                 onPress={() => goScreen('editProgramImage', dataUpdate)}>
                 <MaterialCommunityIcons
@@ -109,7 +116,7 @@ const History: React.FC<ScreenProps<'detailedProgram'>> = ({route}) => {
   );
 
   const renderSeparator = useCallback(
-    () => <View style={{height: sizes.s24}} />,
+    () => <View style={{ height: sizes.s24 }} />,
     [],
   );
 
@@ -120,13 +127,12 @@ const History: React.FC<ScreenProps<'detailedProgram'>> = ({route}) => {
           data={data}
           refreshing={refreshing}
           renderItem={renderItem}
-          //onEndReached={onLoadMore}
           onRefresh={() => getData()}
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={renderSeparator}
           ListEmptyComponent={
             <EmptyList
-              title={`Not found`}
+              title={`Không tìm thấy`}
               hideSubMessage={true}
               hideButton={true}
             />

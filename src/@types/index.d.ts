@@ -20,6 +20,7 @@ declare module 'root-stack-params' {
       detailedProgram: Program;
     };
     editProgramImage: undefined;
+    profileScreen: undefined;
   };
 
   export type CombinedStackParamList = RootStackParamList &

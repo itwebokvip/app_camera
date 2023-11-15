@@ -1,14 +1,14 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
 import moment from 'moment';
 
-import {Style} from 'core';
+import { Style } from 'core';
 import Resubmit from './ResubmitImage';
 
-const UpdateImageProgram: React.FC<any> = ({route}: any) => {
+const UpdateImageProgram: React.FC<any> = ({ route }: any) => {
   return (
-    <View style={Style.container}>
+    <ScrollView style={Style.container}>
       <View style={styles.itemContainer}>
         <View style={styles.infoContainer}>
           <Text style={[Style.txt14_bold_green, Style.p8]}>
@@ -26,7 +26,7 @@ const UpdateImageProgram: React.FC<any> = ({route}: any) => {
         </View>
       </View>
       <Resubmit params={route.params} />
-    </View>
+    </ScrollView>
   );
 };
 

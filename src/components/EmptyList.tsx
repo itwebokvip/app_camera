@@ -25,7 +25,7 @@ const EmptyList: React.FC<IProps> = ({
         <React.Fragment />
       ) : (
         <Text style={styles.subTitle}>
-          Create a program in a few steps, really simple!
+          Tạo một chương trình trong một vài bước, thực sự đơn giản!
         </Text>
       )}
 
@@ -35,7 +35,7 @@ const EmptyList: React.FC<IProps> = ({
         <Button
           type="bluePrimary"
           onPress={onCreateRequest}
-          title="Create a program"
+          title="Tạo chương trình"
           style={{ width: '100%' }}
         />
       )}

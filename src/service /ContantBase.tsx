@@ -5,7 +5,8 @@ export const ConstantUrl = {
   parseImageLink: 'api/files/upload',
   getProgrammes: 'api/programmes',
   getProgrammesImage: 'api/programmes',
-  postProgrammes: 'api/programmes'
+  postProgrammes: 'api/programmes',
+  updateProgrammes: 'api/programmes',
 };
 export const StatusCode = {
   OK: 200,

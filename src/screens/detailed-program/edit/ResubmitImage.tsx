@@ -1,7 +1,7 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {Alert, Text, View, ImageBackground} from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Alert, Text, View, ImageBackground } from 'react-native';
 import styles from '../styles';
-import {updateImageInfos} from 'service ';
+import { updateImageInfos } from 'service ';
 import ShowToast from 'helpers/ShowToast';
 
 import moment from 'moment';
@@ -11,16 +11,16 @@ import {
   launchCamera,
 } from 'react-native-image-picker';
 import Permissions from 'utils/Permissions';
-import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
+import { KeychainManager, STORAGE_KEYS } from 'helpers/keychain';
 
-import {Button, Loading} from 'components';
-import {Style, sizes} from 'core';
-import {goBack} from 'helpers/navigation';
-import {GOOGLE_MAP_API_KEY, IMAGE_DOMAIN} from 'helpers/common';
+import { Button, Loading } from 'components';
+import { Style, sizes } from 'core';
+import { goBack } from 'helpers/navigation';
+import { GOOGLE_MAP_API_KEY, IMAGE_DOMAIN } from 'helpers/common';
 import GetLocation from 'react-native-get-location';
 import axios from 'axios';
 
-const Resubmit: React.FC<any> = ({params}: any) => {
+const Resubmit: React.FC<any> = ({ params }: any) => {
   const [data, setData] = useState<Asset>();
 
   const [address, setAddress] = React.useState<any>(null);
@@ -30,13 +30,13 @@ const Resubmit: React.FC<any> = ({params}: any) => {
       enableHighAccuracy: true,
       timeout: 30000,
       rationale: {
-        title: 'Location permission',
-        message: 'The app needs the permission to request your location.',
+        title: 'Quyền vị trí',
+        message: 'Ứng dụng cần có quyền để yêu cầu vị trí của bạn.',
         buttonPositive: 'Ok',
       },
     })
       .then(coordinates => {
-        console.log('coordinates:  ' + JSON.stringify(coordinates));
+        //console.log('coordinates:  ' + JSON.stringify(coordinates));
         const longitude = coordinates.longitude;
         const latitude = coordinates.latitude;
         const mapUrl =
@@ -50,24 +50,24 @@ const Resubmit: React.FC<any> = ({params}: any) => {
           .get(mapUrl)
           .then(response => {
             const mapData = response.data;
-            console.log('mapData: >>>', mapData);
+            //console.log('mapData: >>>', mapData);
             const currentAddress =
               mapData.results[0].address_components[2].long_name +
               ',' +
               mapData.results[0].address_components[3].long_name +
               ',' +
               mapData.results[0].address_components[4].long_name;
-            console.log('Kết quả:', currentAddress);
+            //console.log('Kết quả:', currentAddress);
             setAddress(currentAddress);
           })
           .catch((error: any) => {
             console.error('Lỗi khi gửi yêu cầu:', error);
-            ShowToast('error', 'Notice', 'Error get location current!');
+            ShowToast('error', 'Lưu ý', 'Lỗi lấy vị trí hiện tại!');
           });
       })
       .catch((error: any) => {
         console.error('Lỗi khi gửi yêu cầu:', error);
-        ShowToast('error', 'Notice', 'Error get location current!');
+        ShowToast('error', 'Lưu ý', 'Lỗi lấy vị trí hiện tại!');
       });
   };
 
@@ -136,13 +136,13 @@ const Resubmit: React.FC<any> = ({params}: any) => {
 
   const onSubmit = useCallback(async () => {
     if (params.name.length === 0) {
-      return ShowToast('error', 'Notice', 'Please input name');
+      return ShowToast('error', 'Lưu ý', 'Vui lòng nhập thông tin!');
     } else {
       try {
         Loading.show();
         const image = await uploadImage(data);
         if (data == null) {
-          ShowToast('error', 'Notice', 'Nothing to change!');
+          ShowToast('error', 'Lưu ý', 'Không gì thay đổi!');
         } else {
           await Promise.all([
             updateImageInfos(
@@ -154,12 +154,12 @@ const Resubmit: React.FC<any> = ({params}: any) => {
               params.data.id,
             ),
           ]);
-          ShowToast('success', 'Notice', 'Upload Image Successful');
+          ShowToast('success', 'Lưu ý', 'Tải ảnh thành công!');
           goBack();
         }
       } catch (error) {
         console.log('Error:  ' + JSON.stringify(error));
-        ShowToast('error', 'Notice', 'Upload Image Failed!');
+        ShowToast('error', 'Lưu ý', 'Tải ảnh thất bại!');
       } finally {
         Loading.hide();
       }
@@ -169,8 +169,8 @@ const Resubmit: React.FC<any> = ({params}: any) => {
   return (
     <View style={Style.container}>
       <View style={Style.top20}>
-        <Button title="Change Image" onPress={onTakeImage} />
-        <View style={{height: sizes.s10}} />
+        <Button title="Thay đổi Hình Ảnh" onPress={onTakeImage} />
+        <View style={{ height: sizes.s10 }} />
         <Button type="bluePrimary" title="Submit" onPress={onSubmit} />
 
         <View style={styles.imageContainer}>

@@ -5,6 +5,7 @@ import { CreateProgram, DetailedProgram, Home, UpdateImageProgram } from 'screen
 import { headerDefaultOptions, screenOptionsStack } from 'common';
 import { MainStackParamList } from 'root-stack-params';
 import { createStackNavigator } from '@react-navigation/stack';
+import ProfileScreen from 'screens/profile';
 
 const MainNavigator = () => {
   const MainStack = createStackNavigator<MainStackParamList>();
@@ -20,17 +21,22 @@ const MainNavigator = () => {
       <MainStack.Screen
         name={'detailedProgram'}
         component={DetailedProgram}
-        options={{ headerTitle: 'Detailed Program' }}
+        options={{ headerTitle: 'Chi tiết chương trình' }}
       />
       <MainStack.Screen
         name={'editProgramImage'}
         component={UpdateImageProgram}
-        options={{ headerTitle: 'UpdateImageProgram' }}
+        options={{ headerTitle: 'Cập nhật hình ảnh chương trình' }}
+      />
+      <MainStack.Screen
+        name={'profileScreen'}
+        component={ProfileScreen}
+        options={{ headerTitle: 'Thông tin người dùng' }}
       />
       <MainStack.Screen
         name={'createProgram'}
         component={CreateProgram}
-        options={{ headerTitle: 'Create Program' }}
+        options={{ headerTitle: 'Tạo chương trình' }}
       />
     </MainStack.Navigator>
   );

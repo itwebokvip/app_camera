@@ -1,6 +1,7 @@
 import {Style, colors, sizes} from 'core';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Dimensions} from 'react-native';
 
+const win = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -32,8 +33,8 @@ const styles = StyleSheet.create({
     marginVertical: sizes.s14,
   },
   image: {
-    width: 300,
-    height: 300,
+    width: 400,
+    height: win.width / 0.98,
   },
   detailedImageTxt: {
     color: 'red',
@@ -41,8 +42,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   btnDelete: {
-    top: sizes.s10,
-    right: sizes.s10,
+    top: sizes.s15,
+    right: sizes.s15,
     position: 'absolute',
   },
 });

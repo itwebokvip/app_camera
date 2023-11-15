@@ -1,16 +1,16 @@
-import React, {useCallback, useContext, useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, { useCallback, useContext, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import {Loading, AppTextInput} from 'components';
+import { Loading, AppTextInput } from 'components';
 
-import {SignIn} from '../../service ';
+import { SignIn } from '../../service ';
 import ShowToast from 'helpers/ShowToast';
-import {goReset} from 'helpers/navigation';
-import {Style, colors, fonts, fontsizes, sizes} from 'core';
-import {UserContext} from 'contexts';
+import { goReset } from 'helpers/navigation';
+import { Style, colors, fonts, fontsizes, sizes } from 'core';
+import { UserContext } from 'contexts';
 
 const LoginScreen: React.FC = () => {
-  const {loginUser} = useContext(UserContext);
+  const { loginUser } = useContext(UserContext);
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
@@ -50,18 +50,18 @@ const LoginScreen: React.FC = () => {
   }, [validationForm, username, password, loginUser]);
 
   return (
-    <View style={Style.container}>
-      <Text style={styles.title}>Welcome back!</Text>
+    <View style={[Style.container, styles.containerCenter]}>
+      <Text style={styles.title}>Đăng nhập</Text>
       <View style={Style.pv36}>
-        <AppTextInput placeholder="Username" onChangeText={setUsername} />
+        <AppTextInput placeholder="Tên đăng nhập" onChangeText={setUsername} />
         <AppTextInput
-          placeholder="Password"
+          placeholder="Mật khẩu"
           secureTextEntry
           onChangeText={setPassword}
         />
       </View>
       <TouchableOpacity onPress={handleLogin} style={styles.btnSignIn}>
-        <Text style={styles.signInTxt}>Sign in</Text>
+        <Text style={styles.signInTxt}>Đăng nhập</Text>
       </TouchableOpacity>
     </View>
   );
@@ -94,4 +94,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: sizes.s10,
   },
+  containerCenter: {
+    justifyContent: 'center'
+  }
 });
