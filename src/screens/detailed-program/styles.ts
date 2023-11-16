@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   },
   detailedImageTxt: {
     color: 'red',
-    padding: sizes.s10,
+    padding: sizes.s14,
     fontWeight: '600',
   },
   btnDelete: {

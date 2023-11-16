@@ -28,13 +28,15 @@ import { Button, Loading } from 'components';
 import Permissions from 'utils/Permissions';
 import { ScreenProps } from 'root-stack-params';
 import { GOOGLE_MAP_API_KEY } from 'helpers/common';
-import { updateProgrammes, uploadMultiFiles, uploadMultiImageInfo } from 'service ';
+import { getUTCTime, updateProgrammes, uploadMultiFiles, uploadMultiImageInfo } from 'service ';
 import SubmitDate from 'common/submitDate';
 
 const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({ route }) => {
   const { detailedProgram } = route?.params;
 
   const [data, setData] = useState<Asset[]>([]);
+  const [addressImage, setAddressImage] = useState<LocationGG>();
+  const [utcTime, setUtcTime] = useState<UTCTimeResponse>();
   const [address, setAddress] = React.useState<any>(null);
 
   // Edit Program
@@ -108,6 +110,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({ route }) => {
               ',' +
               mapData.results[0].address_components[4].long_name;
             //console.log('Kết quả:', currentAddress);
+            setAddressImage(mapData.results[0]);
             setAddress(currentAddress);
           })
           .catch((error: any) => {
@@ -142,12 +145,13 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({ route }) => {
               style={styles.image}
               source={{ uri: item.uri }}>
               <View style={Style.p8}>
-                <Text style={styles.detailedImageTxt}>
-                  {moment(item.timestamp).format('MMMM DD, YYYY hh:mm A')}
-                </Text>
-                {address && (
-                  <Text style={styles.detailedImageTxt}>{address}</Text>
+                {utcTime && <Text style={styles.detailedImageTxt}>
+                  {moment(utcTime.data.data).format('MMMM DD, YYYY hh:mm A')}
+                </Text>}
+                {addressImage && (
+                  <Text style={styles.detailedImageTxt}>{addressImage?.address_components[2].long_name}{'\n'}{'\n'}{addressImage?.address_components[3].long_name}{'\n'}{addressImage?.address_components[4].long_name}</Text>
                 )}
+
               </View>
               <TouchableOpacity
                 style={styles.btnDelete}
@@ -163,7 +167,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({ route }) => {
         </View>
       );
     },
-    [address],
+    [addressImage, utcTime],
   );
 
   const renderSeparator = useCallback(
@@ -176,6 +180,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({ route }) => {
       if (response?.assets) {
         let newData = [...data];
         newData = newData.concat(response?.assets);
+        loadTimeImage();
         setData(newData);
       } else if (response.errorCode) {
         Alert.alert('Lưu ý', response.errorCode);
@@ -185,6 +190,11 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({ route }) => {
     },
     [data],
   );
+
+  const loadTimeImage = async () => {
+    const uploadResponse = await getUTCTime();
+    setUtcTime(uploadResponse.data);
+  };
 
   const onTakeImage = useCallback(() => {
     Permissions.camera(() => {

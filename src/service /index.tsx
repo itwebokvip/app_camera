@@ -147,7 +147,7 @@ export const getProgrammes = async (
 ) => {
   try {
     const response = await Api_1.get(
-      `api/users/${userId}/programmes?page=${pageNumber}&pageSize=${pageSize}&orderBy=1`,
+      `api/users/${userId}/programmes?page=${pageNumber}&pageSize=${pageSize}&status=true&orderBy=1`,
     );
     if (response.status !== StatusCode.OK) {
       return {
@@ -421,6 +421,39 @@ export const updateProgrammes = async (
     return {
       Success: false,
       errors: error,
+    };
+  }
+};
+
+export const getUTCTime = async (
+) => {
+  try {
+    const response = await Api_1.get(
+      'api/utcTime',
+    );
+    if (response.status !== StatusCode.OK) {
+      return {
+        success: false,
+        error: 'Server error!',
+      };
+    }
+    const { status, message } = response.data;
+    if (status === StatusCode.OK || status === StatusCode.EMPTY) {
+      return {
+        success: true,
+        data: response.data,
+      };
+    } else {
+      return {
+        success: false,
+        errors: message,
+      };
+    }
+  } catch (error) {
+    console.error('ERROR ====> ', JSON.stringify(error));
+    return {
+      success: false,
+      error,
     };
   }
 };
