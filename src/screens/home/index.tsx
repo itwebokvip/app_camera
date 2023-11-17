@@ -42,7 +42,6 @@ const FuncComponent: React.FC = () => {
         const response: any = await getProgrammes(page, PAGE_SIZE, user?.id);
         if (page === 1) {
           setData(response.data.data);
-          console.log('JSON ' + JSON.stringify(response.data.data));
         } else {
           setData(oldData => [...oldData, ...response.data.data]);
         }

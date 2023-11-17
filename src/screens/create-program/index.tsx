@@ -209,6 +209,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
             programmeId: programResponse.data.id,
           });
         }
+        console.log('JSON FormData:  ', JSON.stringify(payload));
         const imageInfoResponse = await uploadMultiImageInfo(payload);
         console.log('imageInfoResponse: >>>', imageInfoResponse);
       }

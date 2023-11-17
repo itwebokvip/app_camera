@@ -19,14 +19,10 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { EmptyList } from 'components';
 import { IMAGE_DOMAIN } from 'helpers/common';
 import { ScreenProps } from 'root-stack-params';
-// import SubmitDate from 'common/submitDate';
 
 const PAGE_SIZE = 10;
 
 const History: React.FC<ScreenProps<'detailedProgram'>> = ({ route }) => {
-
-  //const submittedTime = SubmitDate.getInstance().getSubmittedTime();
-  //console.log('HISTORIES:  ' + submittedTime);
   const { detailedProgram } = route?.params;
 
   const isFocused = useIsFocused();
@@ -43,8 +39,6 @@ const History: React.FC<ScreenProps<'detailedProgram'>> = ({ route }) => {
           PAGE_SIZE,
         );
         setData(response.data?.data);
-
-        console.log('HISTORIES:  ' + JSON.stringify(response.data?.data));
       } catch (error) {
         ShowToast('error', 'Chú ý', 'Đã xảy ra lỗi!');
       } finally {

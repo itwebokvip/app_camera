@@ -74,7 +74,7 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
   };
 
   useEffect(() => {
-    requestLocation();
+    //requestLocation();
   }, []);
 
   const uploadImage = async (imageAssert?: Asset) => {
@@ -114,6 +114,7 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
   const onImagePickerResult = useCallback(async (response: ImagePickerResponse) => {
     if (response?.assets) {
       await loadTimeImage();
+      requestLocation();
       setData(response?.assets[0]);
     } else if (response.errorCode) {
       Alert.alert('Notice', response.errorCode);
@@ -174,7 +175,9 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
       }
     }
   }, [address, data, params.data.id, params.name.length, params.programId, utcTime]);
-
+  // const parts = params?.data.location.split(', ');
+  const parts = params?.data.location.split(',').map(part => part.trim());
+  console.log('[DATE HISTORIES]  ' + parts);
   return (
     <View style={Style.container}>
       <View style={Style.top20}>
@@ -192,22 +195,14 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
                 uri: data ? data.uri : IMAGE_DOMAIN + '/' + params?.data?.path,
               }}>
               <View>
-                {/* <Text style={styles.detailedImageTxt}>
-                  {moment(params?.data.timestamp).format(
-                    'MMMM DD, YYYY hh:mm A',
-                  )}
-                </Text>
-                {params?.data.location && (
-                  <Text style={styles.detailedImageTxt}>
-                    {data ? address : params?.data.location}
-                  </Text>
-                )} */}
-                {utcTime && <Text style={styles.detailedImageTxt}>
+                {utcTime ? (<Text style={styles.detailedImageTxt}>
                   {moment(utcTime.data.data).format('MMMM DD, YYYY hh:mm A')}
-                </Text>}
-                {addressImage && (
+                </Text>) : (<Text style={styles.detailedImageTxt}>
+                  {moment(params?.data?.createdTime).format('MMMM DD, YYYY hh:mm A')}
+                </Text>)}
+                {addressImage ? (
                   <Text style={styles.detailedImageTxt}>{addressImage?.address_components[2].long_name}{'\n'}{'\n'}{addressImage?.address_components[3].long_name}{'\n'}{addressImage?.address_components[4].long_name}</Text>
-                )}
+                ) : (<Text style={styles.detailedImageTxt}>{parts[0]}{'\n'}{'\n'}{parts[1]}{'\n'}{parts[2]}</Text>)}
               </View>
             </ImageBackground>
           </View>

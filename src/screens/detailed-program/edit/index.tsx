@@ -7,6 +7,7 @@ import { Style } from 'core';
 import Resubmit from './ResubmitImage';
 
 const UpdateImageProgram: React.FC<any> = ({ route }: any) => {
+
   return (
     <ScrollView style={Style.container}>
       <View style={styles.itemContainer}>
@@ -16,7 +17,7 @@ const UpdateImageProgram: React.FC<any> = ({ route }: any) => {
           </Text>
           <Text style={[Style.txt14_black, Style.p8]}>
             Created Time:{' '}
-            {moment(route.params.data.timestamp).format(
+            {moment(route.params.data.createdTime).format(
               'MMMM DD, YYYY hh:mm A',
             )}
           </Text>
