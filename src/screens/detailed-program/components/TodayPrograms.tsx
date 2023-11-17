@@ -235,9 +235,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({ route }) => {
             location: address,
             size: curUploadImage.fileSizeInBytes,
             path: curUploadImage.url,
-            shootTime: moment(data[i].timestamp).format(
-              'MMMM DD, YYYY hh:mm A',
-            ),
+            shootTime: moment(utcTime?.data.data).format('MMMM DD, YYYY hh:mm A'),
             programmeId: detailedProgram?.id,
           });
           const imageInfoResponse = await uploadMultiImageInfo(payload);
@@ -255,7 +253,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({ route }) => {
         Loading.hide();
       }
     }
-  }, [address, data, detailedProgram?.id]);
+  }, [address, data, detailedProgram?.id, utcTime]);
 
   return (
     <View style={Style.container}>

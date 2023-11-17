@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Text, View, ImageBackground } from 'react-native';
 import styles from '../styles';
-import { updateImageInfos } from 'service ';
+import { getUTCTime, updateImageInfos } from 'service ';
 import ShowToast from 'helpers/ShowToast';
 
 import moment from 'moment';
@@ -22,7 +22,8 @@ import axios from 'axios';
 
 const Resubmit: React.FC<any> = ({ params }: any) => {
   const [data, setData] = useState<Asset>();
-
+  const [addressImage, setAddressImage] = useState<LocationGG>();
+  const [utcTime, setUtcTime] = useState<UTCTimeResponse>();
   const [address, setAddress] = React.useState<any>(null);
 
   const requestLocation = () => {
@@ -58,6 +59,7 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
               ',' +
               mapData.results[0].address_components[4].long_name;
             //console.log('Kết quả:', currentAddress);
+            setAddressImage(mapData.results[0]);
             setAddress(currentAddress);
           })
           .catch((error: any) => {
@@ -109,8 +111,9 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
     }
   };
 
-  const onImagePickerResult = useCallback((response: ImagePickerResponse) => {
+  const onImagePickerResult = useCallback(async (response: ImagePickerResponse) => {
     if (response?.assets) {
+      await loadTimeImage();
       setData(response?.assets[0]);
     } else if (response.errorCode) {
       Alert.alert('Notice', response.errorCode);
@@ -118,6 +121,12 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
       Alert.alert('Notice', response.errorMessage);
     }
   }, []);
+
+  const loadTimeImage = async () => {
+    const uploadResponse = await getUTCTime();
+    setUtcTime(uploadResponse.data);
+  };
+
 
   const onTakeImage = useCallback(() => {
     Permissions.camera(() => {
@@ -150,7 +159,7 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
               address,
               image,
               params.programId,
-              moment(data.timestamp).format('MMMM DD, YYYY hh:mm A'),
+              moment(utcTime?.data.data).format('MMMM DD, YYYY hh:mm A'),
               params.data.id,
             ),
           ]);
@@ -164,7 +173,7 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
         Loading.hide();
       }
     }
-  }, [address, data, params.data.id, params.name.length, params.programId]);
+  }, [address, data, params.data.id, params.name.length, params.programId, utcTime]);
 
   return (
     <View style={Style.container}>
@@ -183,7 +192,7 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
                 uri: data ? data.uri : IMAGE_DOMAIN + '/' + params?.data?.path,
               }}>
               <View>
-                <Text style={styles.detailedImageTxt}>
+                {/* <Text style={styles.detailedImageTxt}>
                   {moment(params?.data.timestamp).format(
                     'MMMM DD, YYYY hh:mm A',
                   )}
@@ -192,6 +201,12 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
                   <Text style={styles.detailedImageTxt}>
                     {data ? address : params?.data.location}
                   </Text>
+                )} */}
+                {utcTime && <Text style={styles.detailedImageTxt}>
+                  {moment(utcTime.data.data).format('MMMM DD, YYYY hh:mm A')}
+                </Text>}
+                {addressImage && (
+                  <Text style={styles.detailedImageTxt}>{addressImage?.address_components[2].long_name}{'\n'}{'\n'}{addressImage?.address_components[3].long_name}{'\n'}{addressImage?.address_components[4].long_name}</Text>
                 )}
               </View>
             </ImageBackground>

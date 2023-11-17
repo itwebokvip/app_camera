@@ -141,12 +141,12 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
   );
 
   const onImagePickerResult = useCallback(
-    (response: ImagePickerResponse) => {
+    async (response: ImagePickerResponse) => {
       if (response?.assets) {
+        await loadTimeImage();
         let newData = [...data];
         newData = newData.concat(response?.assets);
         setData(newData);
-        loadTimeImage();
       } else if (response.errorCode) {
         Alert.alert('Lưu ý', response.errorCode);
       } else if (response.errorMessage) {
@@ -205,9 +205,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
             location: address,
             size: curUploadImage.fileSizeInBytes,
             path: curUploadImage.url,
-            shootTime: moment(data[i].timestamp).format(
-              'MMMM DD, YYYY hh:mm A',
-            ),
+            shootTime: moment(utcTime?.data.data).format('MMMM DD, YYYY hh:mm A'),
             programmeId: programResponse.data.id,
           });
         }
@@ -224,7 +222,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
     } finally {
       Loading.hide();
     }
-  }, [address, data, name]);
+  }, [address, data, name, utcTime]);
 
   return (
     <View style={Style.container}>
