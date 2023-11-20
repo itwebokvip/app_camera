@@ -1,27 +1,27 @@
-import React, { useCallback, useContext, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, {useCallback, useContext, useState} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-import { Loading, AppTextInput } from 'components';
+import {Loading, AppTextInput} from 'components';
 
-import { SignIn } from '../../service ';
+import {SignIn} from '../../service ';
 import ShowToast from 'helpers/ShowToast';
-import { goReset } from 'helpers/navigation';
-import { Style, colors, fonts, fontsizes, sizes } from 'core';
-import { UserContext } from 'contexts';
+import {goReset} from 'helpers/navigation';
+import {Style, colors, fonts, fontsizes, sizes} from 'core';
+import {UserContext} from 'contexts';
 
 const LoginScreen: React.FC = () => {
-  const { loginUser } = useContext(UserContext);
+  const {loginUser} = useContext(UserContext);
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
   const validationForm = useCallback(() => {
     if (username.length === 0) {
-      ShowToast('error', 'Notice', 'Please input your username!');
+      ShowToast('error', 'Thông báo', 'Xin hãy nhập tên đăng nhập!');
       return false;
     }
 
     if (password.length === 0) {
-      ShowToast('error', 'Notice', 'Please input your password!');
+      ShowToast('error', 'Thông báo', 'Xin hãy nhập mật khẩu!');
       return false;
     }
 
@@ -95,6 +95,6 @@ const styles = StyleSheet.create({
     shadowRadius: sizes.s10,
   },
   containerCenter: {
-    justifyContent: 'center'
-  }
+    justifyContent: 'center',
+  },
 });
