@@ -258,7 +258,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({ route }) => {
   return (
     <View style={Style.container}>
       <View style={Style.top20}>
-        {isEditing ? (
+        {/* {isEditing ? (
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <TextInput
               style={[Style.txt24_primary, Style.bottom20, { flex: 1 }]}
@@ -294,7 +294,23 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = ({ route }) => {
               </View>
             </TouchableOpacity>
           </View>
-        )}
+        )} */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <Text style={[Style.txt24_primary, Style.bottom20]}>
+              {programName}
+            </Text>
+          </View>
+          {/* <TouchableOpacity onPress={handleEditPress}>
+              <View style={{ borderColor: 'black', borderWidth: 1, paddingVertical: 5, paddingHorizontal: 10, borderRadius: 5 }}>
+                <MaterialCommunityIcons
+                  size={sizes.s20}
+                  name="pencil"
+                  color={colors.gray1000}
+                />
+              </View>
+            </TouchableOpacity> */}
+        </View>
         <Button title="Chụp ảnh" onPress={onTakeImage} />
         <View style={{ height: sizes.s10 }} />
         <Button type="bluePrimary" title="Gửi" onPress={onSubmit} />

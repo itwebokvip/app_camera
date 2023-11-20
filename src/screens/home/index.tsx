@@ -155,7 +155,7 @@ const FuncComponent: React.FC = () => {
           onRefresh={() => getData()}
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={renderSeparator}
-          ListEmptyComponent={<EmptyList title={`Không tìm thấy`} />}
+          ListEmptyComponent={<EmptyList title={`Không tìm thấy`} hideButton={true} />}
         />
       </View>
     </View>

@@ -44,7 +44,7 @@ export function DemoTitle({ children }: Props) {
       <StatusBarView lightContent backgroundColor={colors.bluePrimary} />
       <View style={[Style.w100, Style.block_center]}>
         <Text style={styles.text}>{children}</Text>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={{ position: 'absolute', right: sizes.s30 }}
           onPress={() => goScreen('createProgram')}>
           <MaterialCommunityIcons
@@ -52,7 +52,7 @@ export function DemoTitle({ children }: Props) {
             size={sizes.s30}
             color={'white'}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <View style={{ position: 'absolute', right: 2 }}>
           <Menu
             visible={isDropdownVisible}
