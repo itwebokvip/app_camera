@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Text, View, ImageBackground } from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {Alert, Text, View, ImageBackground} from 'react-native';
 import styles from '../styles';
-import { getUTCTime, updateImageInfos } from 'service ';
+import {getUTCTime, updateImageInfos} from 'service ';
 import ShowToast from 'helpers/ShowToast';
 
+import axios from 'axios';
 import moment from 'moment';
 import {
   Asset,
@@ -11,16 +12,15 @@ import {
   launchCamera,
 } from 'react-native-image-picker';
 import Permissions from 'utils/Permissions';
-import { KeychainManager, STORAGE_KEYS } from 'helpers/keychain';
+import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
 
-import { Button, Loading } from 'components';
-import { Style, sizes } from 'core';
-import { goBack } from 'helpers/navigation';
-import { GOOGLE_MAP_API_KEY, IMAGE_DOMAIN } from 'helpers/common';
+import {Button, Loading} from 'components';
+import {Style, sizes} from 'core';
+import {goBack} from 'helpers/navigation';
+import {GOOGLE_MAP_API_KEY, IMAGE_DOMAIN} from 'helpers/common';
 import GetLocation from 'react-native-get-location';
-import axios from 'axios';
 
-const Resubmit: React.FC<any> = ({ params }: any) => {
+const Resubmit: React.FC<any> = ({params}: any) => {
   const [data, setData] = useState<Asset>();
   const [addressImage, setAddressImage] = useState<LocationGG>();
   const [utcTime, setUtcTime] = useState<UTCTimeResponse>();
@@ -111,23 +111,25 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
     }
   };
 
-  const onImagePickerResult = useCallback(async (response: ImagePickerResponse) => {
-    if (response?.assets) {
-      await loadTimeImage();
-      requestLocation();
-      setData(response?.assets[0]);
-    } else if (response.errorCode) {
-      Alert.alert('Notice', response.errorCode);
-    } else if (response.errorMessage) {
-      Alert.alert('Notice', response.errorMessage);
-    }
-  }, []);
+  const onImagePickerResult = useCallback(
+    async (response: ImagePickerResponse) => {
+      if (response?.assets) {
+        await loadTimeImage();
+        requestLocation();
+        setData(response?.assets[0]);
+      } else if (response.errorCode) {
+        Alert.alert('Notice', response.errorCode);
+      } else if (response.errorMessage) {
+        Alert.alert('Notice', response.errorMessage);
+      }
+    },
+    [],
+  );
 
   const loadTimeImage = async () => {
     const uploadResponse = await getUTCTime();
     setUtcTime(uploadResponse.data);
   };
-
 
   const onTakeImage = useCallback(() => {
     Permissions.camera(() => {
@@ -145,36 +147,31 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
   }, [onImagePickerResult]);
 
   const onSubmit = useCallback(async () => {
-    if (params.name.length === 0) {
-      return ShowToast('error', 'Lưu ý', 'Vui lòng nhập thông tin!');
-    } else {
-      try {
-        Loading.show();
-        const image = await uploadImage(data);
-        if (data == null) {
-          ShowToast('error', 'Lưu ý', 'Không gì thay đổi!');
-        } else {
-          await Promise.all([
-            updateImageInfos(
-              data.fileSize!,
-              address,
-              image,
-              params.programId,
-              moment(utcTime?.data.data).format('MMMM DD, YYYY hh:mm A'),
-              params.data.id,
-            ),
-          ]);
-          ShowToast('success', 'Lưu ý', 'Tải ảnh thành công!');
-          goBack();
-        }
-      } catch (error) {
-        console.log('Error:  ' + JSON.stringify(error));
-        ShowToast('error', 'Lưu ý', 'Tải ảnh thất bại!');
-      } finally {
-        Loading.hide();
+    try {
+      Loading.show();
+      const image = await uploadImage(data);
+      if (data == null) {
+        ShowToast('error', 'Lưu ý', 'Không gì thay đổi!');
+      } else {
+        await Promise.all([
+          updateImageInfos(
+            data.fileSize!,
+            address,
+            image,
+            moment(utcTime?.data.data).format('MMMM DD, YYYY hh:mm A'),
+            params.data.id,
+          ),
+        ]);
+        ShowToast('success', 'Lưu ý', 'Tải ảnh thành công!');
+        goBack();
       }
+    } catch (error) {
+      console.log('Error:  ' + JSON.stringify(error));
+      ShowToast('error', 'Lưu ý', 'Tải ảnh thất bại!');
+    } finally {
+      Loading.hide();
     }
-  }, [address, data, params.data.id, params.name.length, params.programId, utcTime]);
+  }, [address, data, params.data.id, utcTime?.data.data]);
   // const parts = params?.data.location.split(', ');
   const parts = params?.data.location.split(',').map(part => part.trim());
   console.log('[DATE HISTORIES]  ' + parts);
@@ -182,7 +179,7 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
     <View style={Style.container}>
       <View style={Style.top20}>
         <Button title="Thay đổi Hình Ảnh" onPress={onTakeImage} />
-        <View style={{ height: sizes.s10 }} />
+        <View style={{height: sizes.s10}} />
         <Button type="bluePrimary" title="Submit" onPress={onSubmit} />
 
         <View style={styles.imageContainer}>
@@ -195,14 +192,36 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
                 uri: data ? data.uri : IMAGE_DOMAIN + '/' + params?.data?.path,
               }}>
               <View>
-                {utcTime ? (<Text style={styles.detailedImageTxt}>
-                  {moment(utcTime.data.data).format('MMMM DD, YYYY hh:mm A')}
-                </Text>) : (<Text style={styles.detailedImageTxt}>
-                  {moment(params?.data?.createdTime).format('MMMM DD, YYYY hh:mm A')}
-                </Text>)}
+                {utcTime ? (
+                  <Text style={styles.detailedImageTxt}>
+                    {moment(utcTime.data.data).format('MMMM DD, YYYY hh:mm A')}
+                  </Text>
+                ) : (
+                  <Text style={styles.detailedImageTxt}>
+                    {moment(params?.data?.createdTime).format(
+                      'MMMM DD, YYYY hh:mm A',
+                    )}
+                  </Text>
+                )}
                 {addressImage ? (
-                  <Text style={styles.detailedImageTxt}>{addressImage?.address_components[2].long_name}{'\n'}{'\n'}{addressImage?.address_components[3].long_name}{'\n'}{addressImage?.address_components[4].long_name}</Text>
-                ) : (<Text style={styles.detailedImageTxt}>{parts[0]}{'\n'}{'\n'}{parts[1]}{'\n'}{parts[2]}</Text>)}
+                  <Text style={styles.detailedImageTxt}>
+                    {addressImage?.address_components[2].long_name}
+                    {'\n'}
+                    {'\n'}
+                    {addressImage?.address_components[3].long_name}
+                    {'\n'}
+                    {addressImage?.address_components[4].long_name}
+                  </Text>
+                ) : (
+                  <Text style={styles.detailedImageTxt}>
+                    {parts[0]}
+                    {'\n'}
+                    {'\n'}
+                    {parts[1]}
+                    {'\n'}
+                    {parts[2]}
+                  </Text>
+                )}
               </View>
             </ImageBackground>
           </View>

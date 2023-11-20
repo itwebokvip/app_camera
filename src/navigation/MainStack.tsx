@@ -1,10 +1,15 @@
 import React from 'react';
 
-import { CreateProgram, DetailedProgram, Home, UpdateImageProgram } from 'screens';
+import {
+  Home,
+  CreateProgram,
+  DetailedProgram,
+  UpdateImageProgram,
+} from 'screens';
 
-import { headerDefaultOptions, screenOptionsStack } from 'common';
-import { MainStackParamList } from 'root-stack-params';
-import { createStackNavigator } from '@react-navigation/stack';
+import {headerDefaultOptions, screenOptionsStack} from 'common';
+import {MainStackParamList} from 'root-stack-params';
+import {createStackNavigator} from '@react-navigation/stack';
 import ProfileScreen from 'screens/profile';
 
 const MainNavigator = () => {
@@ -12,7 +17,7 @@ const MainNavigator = () => {
   return (
     <MainStack.Navigator
       screenOptions={headerDefaultOptions}
-      initialRouteName={'home'}>
+      initialRouteName={'detailedProgram'}>
       <MainStack.Screen
         options={screenOptionsStack}
         name={'home'}
@@ -21,22 +26,22 @@ const MainNavigator = () => {
       <MainStack.Screen
         name={'detailedProgram'}
         component={DetailedProgram}
-        options={{ headerTitle: 'Chi tiết chương trình' }}
+        options={{headerShown: false}}
       />
       <MainStack.Screen
         name={'editProgramImage'}
         component={UpdateImageProgram}
-        options={{ headerTitle: 'Cập nhật hình ảnh chương trình' }}
+        options={{headerTitle: 'Cập nhật hình ảnh chương trình'}}
       />
       <MainStack.Screen
         name={'profileScreen'}
         component={ProfileScreen}
-        options={{ headerTitle: 'Thông tin người dùng' }}
+        options={{headerTitle: 'Thông tin người dùng'}}
       />
       <MainStack.Screen
         name={'createProgram'}
         component={CreateProgram}
-        options={{ headerTitle: 'Tạo chương trình' }}
+        options={{headerTitle: 'Tạo chương trình'}}
       />
     </MainStack.Navigator>
   );
