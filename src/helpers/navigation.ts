@@ -55,7 +55,6 @@ function goScreen(
     | keyof MainStackParamList,
   params = {},
 ) {
-  console.log('params ' + JSON.stringify(params));
   if (_navigator && _navigator.dispatch) {
     _navigator.dispatch(
       CommonActions.navigate({

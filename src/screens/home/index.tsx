@@ -72,9 +72,9 @@ const FuncComponent: React.FC = () => {
     const response = await deleteProgram(id);
     if (response.success) {
       setData(oldData => oldData.filter(item => item.id !== id));
-      ShowToast('success', 'Lưu ý', 'Đã xóa chương trình thành công!');
+      ShowToast('success', 'Thông báo', 'Đã xóa chương trình thành công!');
     } else {
-      ShowToast('error', 'Lưu ý', response.error);
+      ShowToast('error', 'Thông báo', response.error);
     }
   };
 
@@ -155,7 +155,9 @@ const FuncComponent: React.FC = () => {
           onRefresh={() => getData()}
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={renderSeparator}
-          ListEmptyComponent={<EmptyList title={`Không tìm thấy`} />}
+          ListEmptyComponent={
+            <EmptyList title={`Không tìm thấy`} hideButton={true} />
+          }
         />
       </View>
     </View>

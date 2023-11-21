@@ -16,6 +16,7 @@ import {
   ImagePickerResponse,
   launchCamera,
 } from 'react-native-image-picker';
+import ViewShot from 'react-native-view-shot';
 import GetLocation from 'react-native-get-location';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -24,57 +25,25 @@ import { ImageInfoPayload } from 'models';
 import { Style, colors, sizes } from 'core';
 import ShowToast from 'helpers/ShowToast';
 import { Button, Loading } from 'components';
+import SubmitDate from 'common/submitDate';
 import Permissions from 'utils/Permissions';
 import { ScreenProps } from 'root-stack-params';
-import { GOOGLE_MAP_API_KEY } from 'helpers/common';
+import { GOOGLE_MAP_API_KEY, Sleep } from 'helpers/common';
 import { getUTCTime, uploadMultiFiles, uploadMultiImageInfo } from 'service ';
-import SubmitDate from 'common/submitDate';
 
 const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   const [data, setData] = useState<Asset[]>([]);
-  const [addressImage, setAddressImage] = useState<LocationGG>();
-  const [utcTime, setUtcTime] = useState<UTCTimeResponse>();
+
+  const [refsArray, setRefsArray] = useState<any>([]);
   const [address, setAddress] = React.useState<any>(null);
+  const [utcTime, setUtcTime] = useState<UTCTimeResponse>();
+  const [addressImage, setAddressImage] = useState<LocationGG>();
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
-  // Edit Program
-  // const [isEditing, setIsEditing] = useState(false);
-  // const [programName, setProgramName] = useState<string | null>(null);
-  // const [newProgramName, setNewProgramName] = useState<string>('');
+  useEffect(() => {
+    setRefsArray(data.map(() => React.createRef<any>()));
+  }, [data]);
 
-  //
-
-  // const handleEditPress = () => {
-  //   if (isEditing) {
-  //     if (newProgramName.trim() !== '') {
-  //       saveProgramName(newProgramName);
-  //       setProgramName(newProgramName);
-  //       setIsEditing(false);
-  //     }
-  //   } else {
-  //     setIsEditing(true);
-  //     setNewProgramName(programName || '');
-  //   }
-  // };
-
-  // const handleInputChange = (text: string) => {
-  //   setNewProgramName(text);
-  // };
-
-  // const saveProgramName = async (value: string) => {
-  //   try {
-  //     const [result] = await Promise.all([
-  //       updateProgrammes(value, detailedProgram?.id, true),
-  //     ]);
-  //     console.log('====>  ' + JSON.stringify(result));
-  //     if (result.Success) {
-  //       ShowToast('success', 'Lưu ý', 'Cập nhật chương trình thành công!');
-  //     }
-  //   } catch (error) {
-  //     console.log('[ERROR] ' + error);
-  //   }
-  // };
-
-  //
   const requestLocation = () => {
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
@@ -86,7 +55,6 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
       },
     })
       .then(coordinates => {
-        //console.log('coordinates:  ' + JSON.stringify(coordinates));
         const longitude = coordinates.longitude;
         const latitude = coordinates.latitude;
         const mapUrl =
@@ -112,18 +80,17 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
           })
           .catch((error: any) => {
             console.error('Lỗi khi gửi yêu cầu:', error);
-            ShowToast('error', 'Lưu ý', 'Lỗi lấy vị trí hiện tại!');
+            ShowToast('error', 'Thông báo', 'Lỗi lấy vị trí hiện tại!');
           });
       })
       .catch((error: any) => {
         console.error('Lỗi khi gửi yêu cầu:', error);
-        ShowToast('error', 'Lưu ý', 'Lỗi lấy vị trí hiện tại!');
+        ShowToast('error', 'Thông báo', 'Lỗi lấy vị trí hiện tại!');
       });
   };
 
   useEffect(() => {
     requestLocation();
-    //setProgramName(detailedProgram.name);
   }, []);
 
   const onDeleteImg = (index: number) => {
@@ -136,43 +103,51 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
       return (
         <View key={index} style={styles.imageContainer}>
           <View style={styles.container}>
-            <ImageBackground
-              resizeMode="cover"
-              resizeMethod="scale"
-              style={styles.image}
-              source={{ uri: item.uri }}>
-              <View style={Style.p8}>
-                {utcTime && (
-                  <Text style={styles.detailedImageTxt}>
-                    {moment(utcTime.data.data).format('MMMM DD, YYYY hh:mm A')}
-                  </Text>
+            <ViewShot
+              ref={refsArray[index]}
+              options={{ format: 'png', quality: 0.8 }}>
+              <ImageBackground
+                resizeMode="cover"
+                resizeMethod="scale"
+                style={styles.image}
+                source={{ uri: item.uri }}>
+                <View style={Style.p8}>
+                  {utcTime && (
+                    <Text style={styles.detailedImageTxt}>
+                      {moment(utcTime.data.data).format(
+                        'MMMM DD, YYYY hh:mm A',
+                      )}
+                    </Text>
+                  )}
+                  {addressImage && (
+                    <Text style={styles.detailedImageTxt}>
+                      {addressImage?.address_components[2].long_name}
+                      {'\n'}
+                      {'\n'}
+                      {addressImage?.address_components[3].long_name}
+                      {'\n'}
+                      {addressImage?.address_components[4].long_name}
+                    </Text>
+                  )}
+                </View>
+                {!isSubmitted && (
+                  <TouchableOpacity
+                    style={styles.btnDelete}
+                    onPress={() => onDeleteImg(index)}>
+                    <MaterialCommunityIcons
+                      name="delete-circle"
+                      size={sizes.s30}
+                      color={colors.error}
+                    />
+                  </TouchableOpacity>
                 )}
-                {addressImage && (
-                  <Text style={styles.detailedImageTxt}>
-                    {addressImage?.address_components[2].long_name}
-                    {'\n'}
-                    {'\n'}
-                    {addressImage?.address_components[3].long_name}
-                    {'\n'}
-                    {addressImage?.address_components[4].long_name}
-                  </Text>
-                )}
-              </View>
-              <TouchableOpacity
-                style={styles.btnDelete}
-                onPress={() => onDeleteImg(index)}>
-                <MaterialCommunityIcons
-                  name="delete-circle"
-                  size={sizes.s30}
-                  color={colors.error}
-                />
-              </TouchableOpacity>
-            </ImageBackground>
+              </ImageBackground>
+            </ViewShot>
           </View>
         </View>
       );
     },
-    [addressImage, utcTime],
+    [addressImage, isSubmitted, refsArray, utcTime],
   );
 
   const renderSeparator = useCallback(
@@ -188,9 +163,9 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
         loadTimeImage();
         setData(newData);
       } else if (response.errorCode) {
-        Alert.alert('Lưu ý', response.errorCode);
+        Alert.alert('Thông báo', response.errorCode);
       } else if (response.errorMessage) {
-        Alert.alert('Lưu ý', response.errorMessage);
+        Alert.alert('Thông báo', response.errorMessage);
       }
     },
     [data],
@@ -218,17 +193,27 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
 
   const onSubmit = useCallback(async () => {
     if (data.length === 0) {
-      return ShowToast('error', 'Lưu ý', 'Không có gì để gửi!');
+      return ShowToast('error', 'Thông báo', 'Không có gì để gửi!');
     } else {
       try {
         Loading.show();
+
+        setIsSubmitted(true);
+        await Sleep(1);
+        const uriArr: string[] = [];
+        for (let i = 0; i < refsArray.length; i++) {
+          const ref = refsArray[i];
+          const uri = await ref.current.capture();
+          uriArr.push(uri);
+        }
+
         const formData = new FormData();
-        for (let i = 0; i < data.length; i++) {
-          const curAsset = data[i];
+        for (let i = 0; i < uriArr.length; i++) {
+          const curUri = uriArr[i];
           formData.append('files', {
-            uri: curAsset.uri,
-            name: curAsset.fileName,
-            type: curAsset.type,
+            uri: curUri,
+            name: `${Date.now()}_${i}.png`,
+            type: 'image/png',
           });
         }
 
@@ -240,81 +225,35 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
             location: address,
             size: curUploadImage.fileSizeInBytes,
             path: curUploadImage.url,
-            shootTime: moment(utcTime?.data.data).format('MMMM DD, YYYY hh:mm A'),
+            shootTime: moment(utcTime?.data.data).format(
+              'MMMM DD, YYYY hh:mm A',
+            ),
           });
-          const imageInfoResponse = await uploadMultiImageInfo(payload);
-          console.log('imageInfoResponse: >>>', imageInfoResponse);
         }
+        const imageInfoResponse = await uploadMultiImageInfo(payload);
 
-        ShowToast('success', 'Lưu ý', 'Gửi thành công!');
+        if (!imageInfoResponse.success) {
+          ShowToast('error', 'Thông báo', imageInfoResponse.error);
+        } else {
+          ShowToast('success', 'Thông báo', 'Gửi thành công!');
+          setData([]);
+          setRefsArray([]);
+        }
         const submittedTime = new Date();
         SubmitDate.getInstance().setSubmittedTime(submittedTime);
-        setData([]);
       } catch (error) {
         console.log('Error:  ' + JSON.stringify(error));
-        ShowToast('error', 'Lưu ý', 'Tải hình ảnh lên không thành công!');
+        ShowToast('error', 'Thông báo', 'Tải hình ảnh lên không thành công!');
       } finally {
         Loading.hide();
+        setIsSubmitted(false);
       }
     }
-  }, [address, data, utcTime]);
+  }, [address, data, refsArray, utcTime?.data.data]);
 
   return (
     <View style={Style.container}>
       <View style={Style.top20}>
-        {/* {isEditing ? (
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TextInput
-              style={[Style.txt24_primary, Style.bottom20, { flex: 1 }]}
-              value={newProgramName}
-              onChangeText={handleInputChange}
-            />
-            {newProgramName.trim() !== '' && (
-              <TouchableOpacity onPress={handleEditPress}>
-                <View style={{ borderColor: 'black', borderWidth: 1, paddingVertical: 5, paddingHorizontal: 10, borderRadius: 5 }}>
-                  <MaterialCommunityIcons
-                    size={sizes.s20}
-                    name="content-save-outline"
-                    color={colors.gray1000}
-                  />
-                </View>
-              </TouchableOpacity>
-            )}
-          </View>
-        ) : (
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-            <View style={{ flex: 1, justifyContent: 'center' }}>
-              <Text style={[Style.txt24_primary, Style.bottom20]}>
-                {programName}
-              </Text>
-            </View>
-            <TouchableOpacity onPress={handleEditPress}>
-              <View style={{ borderColor: 'black', borderWidth: 1, paddingVertical: 5, paddingHorizontal: 10, borderRadius: 5 }}>
-                <MaterialCommunityIcons
-                  size={sizes.s20}
-                  name="pencil"
-                  color={colors.gray1000}
-                />
-              </View>
-            </TouchableOpacity>
-          </View>
-        )} */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-          <View style={{ flex: 1, justifyContent: 'center' }}>
-            <Text style={[Style.txt24_primary, Style.bottom20]}>
-              Program
-            </Text>
-          </View>
-          {/* <TouchableOpacity onPress={handleEditPress}>
-              <View style={{ borderColor: 'black', borderWidth: 1, paddingVertical: 5, paddingHorizontal: 10, borderRadius: 5 }}>
-                <MaterialCommunityIcons
-                  size={sizes.s20}
-                  name="pencil"
-                  color={colors.gray1000}
-                />
-              </View>
-            </TouchableOpacity> */}
-        </View>
         <Button title="Chụp ảnh" onPress={onTakeImage} />
         <View style={{ height: sizes.s10 }} />
         <Button type="bluePrimary" title="Gửi" onPress={onSubmit} />

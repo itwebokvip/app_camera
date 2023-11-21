@@ -128,7 +128,7 @@ const History: React.FC<ScreenProps<'detailedProgram'>> = () => {
           ItemSeparatorComponent={renderSeparator}
           ListEmptyComponent={
             <EmptyList
-              title={`Không tìm thấy`}
+              title={'Chưa có dữ liệu'}
               hideSubMessage={true}
               hideButton={true}
             />

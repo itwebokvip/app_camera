@@ -53,7 +53,11 @@ const LoginScreen: React.FC = () => {
     <View style={[Style.container, styles.containerCenter]}>
       <Text style={styles.title}>Đăng nhập</Text>
       <View style={Style.pv36}>
-        <AppTextInput placeholder="Tên đăng nhập" onChangeText={setUsername} />
+        <AppTextInput
+          autoCapitalize="none"
+          placeholder="Tên đăng nhập"
+          onChangeText={setUsername}
+        />
         <AppTextInput
           placeholder="Mật khẩu"
           secureTextEntry
