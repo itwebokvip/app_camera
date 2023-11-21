@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 400,
+    position: 'relative',
     height: win.width / 0.98,
   },
   detailedImageTxt: {
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
   },
   btnDelete: {
     top: sizes.s15,
-    right: sizes.s15,
+    right: sizes.s25,
     position: 'absolute',
   },
 });

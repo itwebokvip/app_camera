@@ -1,30 +1,33 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {Alert, Text, View, ImageBackground} from 'react-native';
-import styles from '../styles';
-import {getUTCTime, updateImageInfos} from 'service ';
-import ShowToast from 'helpers/ShowToast';
 
 import axios from 'axios';
 import moment from 'moment';
 import {
   Asset,
-  ImagePickerResponse,
   launchCamera,
+  ImagePickerResponse,
 } from 'react-native-image-picker';
-import Permissions from 'utils/Permissions';
-import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
+import ViewShot from 'react-native-view-shot';
+import GetLocation from 'react-native-get-location';
 
 import {Button, Loading} from 'components';
+
+import styles from '../styles';
 import {Style, sizes} from 'core';
+import ShowToast from 'helpers/ShowToast';
 import {goBack} from 'helpers/navigation';
+import Permissions from 'utils/Permissions';
+import {getUTCTime, updateImageInfos} from 'service ';
+import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
 import {GOOGLE_MAP_API_KEY, IMAGE_DOMAIN} from 'helpers/common';
-import GetLocation from 'react-native-get-location';
 
 const Resubmit: React.FC<any> = ({params}: any) => {
   const [data, setData] = useState<Asset>();
-  const [addressImage, setAddressImage] = useState<LocationGG>();
-  const [utcTime, setUtcTime] = useState<UTCTimeResponse>();
   const [address, setAddress] = React.useState<any>(null);
+  const [utcTime, setUtcTime] = useState<UTCTimeResponse>();
+  const [addressImage, setAddressImage] = useState<LocationGG>();
+  const viewShotRef = useRef<any>();
 
   const requestLocation = () => {
     GetLocation.getCurrentPosition({
@@ -37,7 +40,6 @@ const Resubmit: React.FC<any> = ({params}: any) => {
       },
     })
       .then(coordinates => {
-        //console.log('coordinates:  ' + JSON.stringify(coordinates));
         const longitude = coordinates.longitude;
         const latitude = coordinates.latitude;
         const mapUrl =
@@ -51,44 +53,36 @@ const Resubmit: React.FC<any> = ({params}: any) => {
           .get(mapUrl)
           .then(response => {
             const mapData = response.data;
-            //console.log('mapData: >>>', mapData);
             const currentAddress =
               mapData.results[0].address_components[2].long_name +
               ',' +
               mapData.results[0].address_components[3].long_name +
               ',' +
               mapData.results[0].address_components[4].long_name;
-            //console.log('Kết quả:', currentAddress);
             setAddressImage(mapData.results[0]);
             setAddress(currentAddress);
           })
           .catch((error: any) => {
             console.error('Lỗi khi gửi yêu cầu:', error);
-            ShowToast('error', 'Lưu ý', 'Lỗi lấy vị trí hiện tại!');
+            ShowToast('error', 'Thông báo', 'Lỗi lấy vị trí hiện tại!');
           });
       })
       .catch((error: any) => {
         console.error('Lỗi khi gửi yêu cầu:', error);
-        ShowToast('error', 'Lưu ý', 'Lỗi lấy vị trí hiện tại!');
+        ShowToast('error', 'Thông báo', 'Lỗi lấy vị trí hiện tại!');
       });
   };
 
-  useEffect(() => {
-    //requestLocation();
-  }, []);
-
-  const uploadImage = async (imageAssert?: Asset) => {
+  const uploadImage = async (uri?: string) => {
     const base_url: string = 'https://api-camera.okvip.dev/api/files/upload';
     const formData: FormData = new FormData();
-    console.log('JSON Nhan Duoc:  ' + JSON.stringify(imageAssert));
-    if (imageAssert) {
+    if (uri) {
       formData.append('files', {
-        uri: imageAssert.uri,
-        name: imageAssert.fileName,
+        uri,
+        name: `${Date.now()}.png`,
         type: 'image/jpg',
       });
 
-      console.log('TEST:  ' + JSON.stringify(formData));
       const token = await KeychainManager.getItem(STORAGE_KEYS.token);
 
       try {
@@ -149,10 +143,11 @@ const Resubmit: React.FC<any> = ({params}: any) => {
   const onSubmit = useCallback(async () => {
     try {
       Loading.show();
-      const image = await uploadImage(data);
       if (data == null) {
-        ShowToast('error', 'Lưu ý', 'Không gì thay đổi!');
+        ShowToast('error', 'Thông báo', 'Không gì thay đổi!');
       } else {
+        const uri = await viewShotRef.current.capture();
+        const image = await uploadImage(uri);
         await Promise.all([
           updateImageInfos(
             data.fileSize!,
@@ -162,19 +157,20 @@ const Resubmit: React.FC<any> = ({params}: any) => {
             params.data.id,
           ),
         ]);
-        ShowToast('success', 'Lưu ý', 'Tải ảnh thành công!');
+        ShowToast('success', 'Thông báo', 'Tải ảnh thành công!');
         goBack();
       }
     } catch (error) {
       console.log('Error:  ' + JSON.stringify(error));
-      ShowToast('error', 'Lưu ý', 'Tải ảnh thất bại!');
+      ShowToast('error', 'Thông báo', 'Tải ảnh thất bại!');
     } finally {
       Loading.hide();
     }
   }, [address, data, params.data.id, utcTime?.data.data]);
-  // const parts = params?.data.location.split(', ');
-  const parts = params?.data.location.split(',').map(part => part.trim());
-  console.log('[DATE HISTORIES]  ' + parts);
+
+  const parts = params?.data.location
+    .split(',')
+    .map((part: any) => part.trim());
   return (
     <View style={Style.container}>
       <View style={Style.top20}>
@@ -184,46 +180,54 @@ const Resubmit: React.FC<any> = ({params}: any) => {
 
         <View style={styles.imageContainer}>
           <View style={styles.container}>
-            <ImageBackground
-              resizeMode="cover"
-              resizeMethod="scale"
-              style={styles.image}
-              source={{
-                uri: data ? data.uri : IMAGE_DOMAIN + '/' + params?.data?.path,
-              }}>
-              <View>
-                {utcTime ? (
-                  <Text style={styles.detailedImageTxt}>
-                    {moment(utcTime.data.data).format('MMMM DD, YYYY hh:mm A')}
-                  </Text>
-                ) : (
-                  <Text style={styles.detailedImageTxt}>
-                    {moment(params?.data?.createdTime).format(
-                      'MMMM DD, YYYY hh:mm A',
+            <ViewShot ref={viewShotRef} options={{format: 'png', quality: 0.8}}>
+              <ImageBackground
+                resizeMode="cover"
+                resizeMethod="scale"
+                style={styles.image}
+                source={{
+                  uri: data
+                    ? data.uri
+                    : IMAGE_DOMAIN + '/' + params?.data?.path,
+                }}>
+                {data && (
+                  <View style={Style.p8}>
+                    {utcTime ? (
+                      <Text style={styles.detailedImageTxt}>
+                        {moment(utcTime.data.data).format(
+                          'MMMM DD, YYYY hh:mm A',
+                        )}
+                      </Text>
+                    ) : (
+                      <Text style={styles.detailedImageTxt}>
+                        {moment(params?.data?.createdTime).format(
+                          'MMMM DD, YYYY hh:mm A',
+                        )}
+                      </Text>
                     )}
-                  </Text>
+                    {addressImage ? (
+                      <Text style={styles.detailedImageTxt}>
+                        {addressImage?.address_components[2].long_name}
+                        {'\n'}
+                        {'\n'}
+                        {addressImage?.address_components[3].long_name}
+                        {'\n'}
+                        {addressImage?.address_components[4].long_name}
+                      </Text>
+                    ) : (
+                      <Text style={styles.detailedImageTxt}>
+                        {parts[0]}
+                        {'\n'}
+                        {'\n'}
+                        {parts[1]}
+                        {'\n'}
+                        {parts[2]}
+                      </Text>
+                    )}
+                  </View>
                 )}
-                {addressImage ? (
-                  <Text style={styles.detailedImageTxt}>
-                    {addressImage?.address_components[2].long_name}
-                    {'\n'}
-                    {'\n'}
-                    {addressImage?.address_components[3].long_name}
-                    {'\n'}
-                    {addressImage?.address_components[4].long_name}
-                  </Text>
-                ) : (
-                  <Text style={styles.detailedImageTxt}>
-                    {parts[0]}
-                    {'\n'}
-                    {'\n'}
-                    {parts[1]}
-                    {'\n'}
-                    {parts[2]}
-                  </Text>
-                )}
-              </View>
-            </ImageBackground>
+              </ImageBackground>
+            </ViewShot>
           </View>
         </View>
       </View>

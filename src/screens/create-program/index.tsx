@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Alert,
   FlatList,
@@ -19,17 +19,22 @@ import {
 import GetLocation from 'react-native-get-location';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { AppTextInput, Button, Loading } from 'components';
+import {AppTextInput, Button, Loading} from 'components';
 
 import styles from './styles';
-import { ImageInfoPayload } from 'models';
-import { Style, colors, sizes } from 'core';
+import {ImageInfoPayload} from 'models';
+import {Style, colors, sizes} from 'core';
 import ShowToast from 'helpers/ShowToast';
-import { goBack } from 'helpers/navigation';
+import {goBack} from 'helpers/navigation';
 import Permissions from 'utils/Permissions';
-import { ScreenProps } from 'root-stack-params';
-import { createProgram, getUTCTime, uploadMultiFiles, uploadMultiImageInfo } from 'service ';
-import { GOOGLE_MAP_API_KEY } from 'helpers/common';
+import {ScreenProps} from 'root-stack-params';
+import {
+  createProgram,
+  getUTCTime,
+  uploadMultiFiles,
+  uploadMultiImageInfo,
+} from 'service ';
+import {GOOGLE_MAP_API_KEY} from 'helpers/common';
 
 const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
   const [data, setData] = useState<Asset[]>([]);
@@ -76,12 +81,12 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
           })
           .catch((error: any) => {
             console.error('Lỗi khi gửi yêu cầu:', error);
-            ShowToast('error', 'Lưu ý', 'Lỗi lấy vị trí hiện tại!');
+            ShowToast('error', 'Thông báo', 'Lỗi lấy vị trí hiện tại!');
           });
       })
       .catch((error: any) => {
         console.error('Lỗi khi gửi yêu cầu:', error);
-        ShowToast('error', 'Lưu ý', 'Lỗi lấy vị trí hiện tại!');
+        ShowToast('error', 'Thông báo', 'Lỗi lấy vị trí hiện tại!');
       });
   };
 
@@ -95,7 +100,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
 
   const renderItem = useCallback(
     (info: ListRenderItemInfo<Asset>) => {
-      const { index, item } = info;
+      const {index, item} = info;
       return (
         <View key={index} style={styles.imageContainer}>
           <View style={styles.container}>
@@ -103,19 +108,28 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
               resizeMode="cover"
               resizeMethod="scale"
               style={styles.image}
-              source={{ uri: item.uri }}>
+              source={{uri: item.uri}}>
               <View>
                 {/* <Text style={styles.detailedImageTxt}>
                   {moment(item.timestamp).format('MMMM DD, YYYY hh:mm A')}
                 </Text> */}
-                {utcTime && <Text style={styles.detailedImageTxt}>
-                  {moment(utcTime.data.data).format('MMMM DD, YYYY hh:mm A')}
-                </Text>}
+                {utcTime && (
+                  <Text style={styles.detailedImageTxt}>
+                    {moment(utcTime.data.data).format('MMMM DD, YYYY hh:mm A')}
+                  </Text>
+                )}
                 {/* {address && (
                   <Text style={styles.detailedImageTxt}>{address}</Text>
                 )} */}
                 {addressImage && (
-                  <Text style={styles.detailedImageTxt}>{addressImage?.address_components[2].long_name}{'\n'}{'\n'}{addressImage?.address_components[3].long_name}{'\n'}{addressImage?.address_components[4].long_name}</Text>
+                  <Text style={styles.detailedImageTxt}>
+                    {addressImage?.address_components[2].long_name}
+                    {'\n'}
+                    {'\n'}
+                    {addressImage?.address_components[3].long_name}
+                    {'\n'}
+                    {addressImage?.address_components[4].long_name}
+                  </Text>
                 )}
               </View>
               <TouchableOpacity
@@ -136,7 +150,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
   );
 
   const renderSeparator = useCallback(
-    () => <View style={{ height: sizes.s24 }} />,
+    () => <View style={{height: sizes.s24}} />,
     [],
   );
 
@@ -148,9 +162,9 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
         newData = newData.concat(response?.assets);
         setData(newData);
       } else if (response.errorCode) {
-        Alert.alert('Lưu ý', response.errorCode);
+        Alert.alert('Thông báo', response.errorCode);
       } else if (response.errorMessage) {
-        Alert.alert('Lưu ý', response.errorMessage);
+        Alert.alert('Thông báo', response.errorMessage);
       }
     },
     [data],
@@ -180,11 +194,11 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
     try {
       Loading.show();
       if (name.length === 0) {
-        return ShowToast('error', 'Lưu ý', 'Vui lòng nhập thông tin!');
+        return ShowToast('error', 'Thông báo', 'Vui lòng nhập thông tin!');
       }
       const programResponse = await createProgram(name);
       if (!programResponse.success) {
-        return ShowToast('error', 'Lưu ý', programResponse?.error);
+        return ShowToast('error', 'Thông báo', programResponse?.error);
       }
 
       if (data.length > 0) {
@@ -205,8 +219,9 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
             location: address,
             size: curUploadImage.fileSizeInBytes,
             path: curUploadImage.url,
-            shootTime: moment(utcTime?.data.data).format('MMMM DD, YYYY hh:mm A'),
-            programmeId: programResponse.data.id,
+            shootTime: moment(utcTime?.data.data).format(
+              'MMMM DD, YYYY hh:mm A',
+            ),
           });
         }
         console.log('JSON FormData:  ', JSON.stringify(payload));
@@ -214,12 +229,12 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
         console.log('imageInfoResponse: >>>', imageInfoResponse);
       }
 
-      ShowToast('success', 'Lưu ý', 'Tạo chương trình thành công!');
+      ShowToast('success', 'Thông báo', 'Tạo chương trình thành công!');
       setTimeout(() => {
         goBack();
       }, 1000);
     } catch (error) {
-      ShowToast('error', 'Lưu ý', 'Đã xảy ra lỗi!');
+      ShowToast('error', 'Thông báo', 'Đã xảy ra lỗi!');
     } finally {
       Loading.hide();
     }
@@ -234,7 +249,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
           onChangeText={setName}
         />
         <Button title="Chụp ảnh" onPress={onTakeImage} />
-        <View style={{ height: sizes.s10 }} />
+        <View style={{height: sizes.s10}} />
         <Button type="bluePrimary" title="Gửi" onPress={onSubmit} />
       </View>
       <FlatList

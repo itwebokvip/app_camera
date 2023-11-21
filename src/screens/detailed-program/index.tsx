@@ -8,9 +8,9 @@ import MyTabBar from './components/CustomJobTabBar';
 import TodayPrograms from './components/TodayPrograms';
 
 import styles from './styles';
+import {DemoTitle} from 'components';
 import {ProgramTabParamList} from './types';
 import {ScreenProps} from 'root-stack-params';
-import {DemoTitle} from 'components';
 
 const Stack = createMaterialTopTabNavigator<ProgramTabParamList>();
 
