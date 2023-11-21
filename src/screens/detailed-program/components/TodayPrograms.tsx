@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
   Text,
@@ -20,14 +20,14 @@ import GetLocation from 'react-native-get-location';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import styles from '../styles';
-import {ImageInfoPayload} from 'models';
-import {Style, colors, sizes} from 'core';
+import { ImageInfoPayload } from 'models';
+import { Style, colors, sizes } from 'core';
 import ShowToast from 'helpers/ShowToast';
-import {Button, Loading} from 'components';
+import { Button, Loading } from 'components';
 import Permissions from 'utils/Permissions';
-import {ScreenProps} from 'root-stack-params';
-import {GOOGLE_MAP_API_KEY} from 'helpers/common';
-import {getUTCTime, uploadMultiFiles, uploadMultiImageInfo} from 'service ';
+import { ScreenProps } from 'root-stack-params';
+import { GOOGLE_MAP_API_KEY } from 'helpers/common';
+import { getUTCTime, uploadMultiFiles, uploadMultiImageInfo } from 'service ';
 import SubmitDate from 'common/submitDate';
 
 const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
@@ -36,6 +36,45 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   const [utcTime, setUtcTime] = useState<UTCTimeResponse>();
   const [address, setAddress] = React.useState<any>(null);
 
+  // Edit Program
+  // const [isEditing, setIsEditing] = useState(false);
+  // const [programName, setProgramName] = useState<string | null>(null);
+  // const [newProgramName, setNewProgramName] = useState<string>('');
+
+  //
+
+  // const handleEditPress = () => {
+  //   if (isEditing) {
+  //     if (newProgramName.trim() !== '') {
+  //       saveProgramName(newProgramName);
+  //       setProgramName(newProgramName);
+  //       setIsEditing(false);
+  //     }
+  //   } else {
+  //     setIsEditing(true);
+  //     setNewProgramName(programName || '');
+  //   }
+  // };
+
+  // const handleInputChange = (text: string) => {
+  //   setNewProgramName(text);
+  // };
+
+  // const saveProgramName = async (value: string) => {
+  //   try {
+  //     const [result] = await Promise.all([
+  //       updateProgrammes(value, detailedProgram?.id, true),
+  //     ]);
+  //     console.log('====>  ' + JSON.stringify(result));
+  //     if (result.Success) {
+  //       ShowToast('success', 'Lưu ý', 'Cập nhật chương trình thành công!');
+  //     }
+  //   } catch (error) {
+  //     console.log('[ERROR] ' + error);
+  //   }
+  // };
+
+  //
   const requestLocation = () => {
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
@@ -84,6 +123,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
 
   useEffect(() => {
     requestLocation();
+    //setProgramName(detailedProgram.name);
   }, []);
 
   const onDeleteImg = (index: number) => {
@@ -92,7 +132,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
 
   const renderItem = useCallback(
     (info: ListRenderItemInfo<Asset>) => {
-      const {index, item} = info;
+      const { index, item } = info;
       return (
         <View key={index} style={styles.imageContainer}>
           <View style={styles.container}>
@@ -100,7 +140,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
               resizeMode="cover"
               resizeMethod="scale"
               style={styles.image}
-              source={{uri: item.uri}}>
+              source={{ uri: item.uri }}>
               <View style={Style.p8}>
                 {utcTime && (
                   <Text style={styles.detailedImageTxt}>
@@ -136,7 +176,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   );
 
   const renderSeparator = useCallback(
-    () => <View style={{height: sizes.s24}} />,
+    () => <View style={{ height: sizes.s24 }} />,
     [],
   );
 
@@ -200,9 +240,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
             location: address,
             size: curUploadImage.fileSizeInBytes,
             path: curUploadImage.url,
-            shootTime: moment(utcTime?.data.data).format(
-              'MMMM DD, YYYY hh:mm A',
-            ),
+            shootTime: moment(utcTime?.data.data).format('MMMM DD, YYYY hh:mm A'),
           });
           const imageInfoResponse = await uploadMultiImageInfo(payload);
           console.log('imageInfoResponse: >>>', imageInfoResponse);
@@ -224,8 +262,61 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   return (
     <View style={Style.container}>
       <View style={Style.top20}>
+        {/* {isEditing ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TextInput
+              style={[Style.txt24_primary, Style.bottom20, { flex: 1 }]}
+              value={newProgramName}
+              onChangeText={handleInputChange}
+            />
+            {newProgramName.trim() !== '' && (
+              <TouchableOpacity onPress={handleEditPress}>
+                <View style={{ borderColor: 'black', borderWidth: 1, paddingVertical: 5, paddingHorizontal: 10, borderRadius: 5 }}>
+                  <MaterialCommunityIcons
+                    size={sizes.s20}
+                    name="content-save-outline"
+                    color={colors.gray1000}
+                  />
+                </View>
+              </TouchableOpacity>
+            )}
+          </View>
+        ) : (
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ flex: 1, justifyContent: 'center' }}>
+              <Text style={[Style.txt24_primary, Style.bottom20]}>
+                {programName}
+              </Text>
+            </View>
+            <TouchableOpacity onPress={handleEditPress}>
+              <View style={{ borderColor: 'black', borderWidth: 1, paddingVertical: 5, paddingHorizontal: 10, borderRadius: 5 }}>
+                <MaterialCommunityIcons
+                  size={sizes.s20}
+                  name="pencil"
+                  color={colors.gray1000}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
+        )} */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <Text style={[Style.txt24_primary, Style.bottom20]}>
+              Program
+            </Text>
+          </View>
+          {/* <TouchableOpacity onPress={handleEditPress}>
+              <View style={{ borderColor: 'black', borderWidth: 1, paddingVertical: 5, paddingHorizontal: 10, borderRadius: 5 }}>
+                <MaterialCommunityIcons
+                  size={sizes.s20}
+                  name="pencil"
+                  color={colors.gray1000}
+                />
+              </View>
+            </TouchableOpacity> */}
+        </View>
         <Button title="Chụp ảnh" onPress={onTakeImage} />
-        <View style={{height: sizes.s10}} />
+        <View style={{ height: sizes.s10 }} />
         <Button type="bluePrimary" title="Gửi" onPress={onSubmit} />
       </View>
       <FlatList

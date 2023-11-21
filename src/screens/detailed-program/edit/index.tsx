@@ -7,26 +7,23 @@ import { Style } from 'core';
 import Resubmit from './ResubmitImage';
 
 const UpdateImageProgram: React.FC<any> = ({ route }: any) => {
-
+  const { data } = route.params.dataUpdate;
   return (
     <ScrollView style={Style.container}>
       <View style={styles.itemContainer}>
         <View style={styles.infoContainer}>
-          <Text style={[Style.txt14_bold_green, Style.p8]}>
-            Program's Name: {route.params.name}
-          </Text>
           <Text style={[Style.txt14_black, Style.p8]}>
             Created Time:{' '}
-            {moment(route.params.data.createdTime).format(
+            {moment(data.createdTime).format(
               'MMMM DD, YYYY hh:mm A',
             )}
           </Text>
           <Text style={[Style.txt14_black, Style.p8]}>
-            Location: {route.params.data.location}
+            Location: {data.location}
           </Text>
         </View>
       </View>
-      <Resubmit params={route.params} />
+      <Resubmit params={data} />
     </ScrollView>
   );
 };

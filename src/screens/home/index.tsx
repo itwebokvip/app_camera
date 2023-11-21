@@ -39,7 +39,7 @@ const FuncComponent: React.FC = () => {
         }
 
         setRefreshing(true);
-        const response: any = await getProgrammes(page, PAGE_SIZE, user?.id);
+        const response: any = await getProgrammes(page, PAGE_SIZE);
         if (page === 1) {
           setData(response.data.data);
         } else {
@@ -155,7 +155,7 @@ const FuncComponent: React.FC = () => {
           onRefresh={() => getData()}
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={renderSeparator}
-          ListEmptyComponent={<EmptyList title={`Không tìm thấy`} hideButton={true} />}
+          ListEmptyComponent={<EmptyList title={`Không tìm thấy`} />}
         />
       </View>
     </View>

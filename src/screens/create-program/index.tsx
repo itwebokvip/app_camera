@@ -206,7 +206,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
             size: curUploadImage.fileSizeInBytes,
             path: curUploadImage.url,
             shootTime: moment(utcTime?.data.data).format('MMMM DD, YYYY hh:mm A'),
-            programmeId: programResponse.data.id,
+            // programmeId: programResponse.data.id,
           });
         }
         console.log('JSON FormData:  ', JSON.stringify(payload));
