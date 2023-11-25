@@ -108,7 +108,7 @@ const ProfileScreen: React.FC = () => {
 
       {isEditing && editedUserData && (
         <View>
-          <Text style={[Style.txt16_black_bold, Style.mv12]}>Edit Profile</Text>
+          <Text style={[Style.txt16_black_bold, Style.mv12]}>Chỉnh sửa thông tin</Text>
           <TextInput
             style={{
               marginBottom: 10,
@@ -166,13 +166,13 @@ const ProfileScreen: React.FC = () => {
                 borderRadius: 5,
                 alignItems: 'center',
               }}>
-              <Text style={{ color: 'white' }}>Save</Text>
+              <Text style={{ color: 'white' }}>Lưu</Text>
             </View>
           </TouchableOpacity>
         </View>
       )}
 
-      <TouchableOpacity onPress={handleEditPress}>
+      {dataUser?.listRole[0] === 'EMPLOYEE' ? (null) : (<TouchableOpacity onPress={handleEditPress}>
         <View
           style={{
             backgroundColor: 'green',
@@ -181,10 +181,11 @@ const ProfileScreen: React.FC = () => {
             alignItems: 'center',
           }}>
           <Text style={{ color: 'white' }}>
-            {isEditing ? 'Cancel' : 'Edit Profile'}
+            {isEditing ? 'Hủy' : 'Chỉnh sửa'}
           </Text>
         </View>
-      </TouchableOpacity>
+      </TouchableOpacity>)}
+
     </ScrollView>
   );
 };

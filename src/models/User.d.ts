@@ -5,4 +5,5 @@ export interface User {
   username: string;
   status: boolean;
   phoneNumber: string;
+  listRole: [string]
 }

@@ -491,7 +491,7 @@ export const updateProfileUser = async (
   email: string,
   fullname: string,
   phoneNumber: string,
-): Promise<SignInResult> => {
+) => {
   try {
     const response = await Api_1.put(ConstantUrl.updateProfileUser, {
       id,
@@ -501,16 +501,22 @@ export const updateProfileUser = async (
     });
 
     console.log('====> ', JSON.stringify(response));
-
-    if (response.status === StatusCode.OK) {
+    if (response.status !== StatusCode.OK) {
       return {
-        Success: true,
+        success: false,
+        error: 'Server error!',
+      };
+    }
+    const { status, message } = response.data;
+    if (status === StatusCode.OK || status === StatusCode.EMPTY) {
+      return {
+        success: true,
+        data: response.data,
       };
     } else {
-      console.error('ERROR ====> ', JSON.stringify(response));
       return {
-        Success: false,
-        errors: response,
+        success: false,
+        errors: message,
       };
     }
   } catch (error) {
