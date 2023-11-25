@@ -1,9 +1,12 @@
-import {Style} from 'core';
-import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
-import {User} from 'models';
-import React, {useState, useEffect} from 'react';
-import {View, Text, TextInput, TouchableOpacity} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Loading } from 'components';
+import { Style } from 'core';
+import ShowToast from 'helpers/ShowToast';
+import { KeychainManager, STORAGE_KEYS } from 'helpers/keychain';
+import { User } from 'models';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
+import { updateProfileUser } from 'service ';
 
 const ProfileScreen: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -17,7 +20,6 @@ const ProfileScreen: React.FC = () => {
   const fetchDataAndSetUserData = async () => {
     try {
       const data: any = await KeychainManager.multiGet([STORAGE_KEYS.account]);
-      console.log('Raw data from KeychainManager:', data);
 
       const [user] = data || [];
       console.log('Received user data:', user);
@@ -36,40 +38,66 @@ const ProfileScreen: React.FC = () => {
   };
 
   const handleSavePress = () => {
+    updateUser();
     setIsEditing(false);
   };
 
-  // const handleInputChange = (key: keyof User, value: string) => {
-  //     if (editedUserData) {
-  //         setEditedUserData((prevData) => ({
-  //             ...prevData,
-  //             [key]: value,
-  //         }));
-  //     }
-  // };
+  const updateUser = async () => {
+    Loading.show();
+    console.log('[USER]  ' + JSON.stringify(editedUserData));
+    if (editedUserData != null) {
+      try {
+        const [result] = await Promise.all([updateProfileUser(dataUser!.id, editedUserData!.email, editedUserData!.fullName, editedUserData!.phoneNumber)]);
+        console.log('KET QUA:  ' + JSON.stringify(result));
+        if (result.Success === false) {
+          ShowToast('error', 'Thông báo', 'Đã có lỗi xảy ra!');
+        } else {
+          ShowToast('success', 'Thông báo', 'Cập nhật thông tin thành công!');
+        }
+      } catch (error) {
+        ShowToast('error', 'Thông báo', 'Đã có lỗi xảy ra!');
+      } finally {
+        Loading.hide();
+      }
+    }
+  };
+
+  const handleInputChange = (key: keyof User, value: string) => {
+    if (editedUserData) {
+      setEditedUserData((prevData) => {
+        if (!prevData) {
+          return prevData;
+        }
+        return {
+          ...(prevData as User),
+          [key]: value,
+        };
+      });
+    }
+  };
 
   return (
-    <View style={Style.p20}>
+    <ScrollView style={Style.p20}>
       {dataUser && (
-        <View style={{marginBottom: 20}}>
-          <View style={{marginBottom: 10}}>
+        <View style={{ marginBottom: 20 }}>
+          <View style={{ marginBottom: 10 }}>
             <Text style={Style.txt14_black}>
               Tên đăng nhập:{' '}
               {isEditing ? editedUserData?.username : dataUser.username}
             </Text>
           </View>
-          <View style={{marginBottom: 10}}>
+          <View style={{ marginBottom: 10 }}>
             <Text style={Style.txt14_black}>
               Email: {isEditing ? editedUserData?.email : dataUser.email}
             </Text>
           </View>
-          <View style={{marginBottom: 10}}>
+          <View style={{ marginBottom: 10 }}>
             <Text style={Style.txt14_black}>
               Họ và tên:{' '}
               {isEditing ? editedUserData?.fullName : dataUser.fullName}
             </Text>
           </View>
-          <View style={{marginBottom: 10}}>
+          <View style={{ marginBottom: 10 }}>
             <Text style={Style.txt14_black}>
               Số điện thoại:{' '}
               {isEditing ? editedUserData?.phoneNumber : dataUser.phoneNumber}
@@ -78,7 +106,7 @@ const ProfileScreen: React.FC = () => {
         </View>
       )}
 
-      {/* {isEditing && editedUserData && (
+      {isEditing && editedUserData && (
         <View>
           <Text style={[Style.txt16_black_bold, Style.mv12]}>Edit Profile</Text>
           <TextInput
@@ -90,7 +118,7 @@ const ProfileScreen: React.FC = () => {
               color: 'grey',
             }}
             value={editedUserData.username}
-            //onChangeText={(text) => handleInputChange('username', text)}
+            onChangeText={(text) => handleInputChange('username', text)}
             placeholder="Username"
             placeholderTextColor={'black'}
           />
@@ -103,7 +131,7 @@ const ProfileScreen: React.FC = () => {
               color: 'grey',
             }}
             value={editedUserData.email}
-            //onChangeText={(text) => handleInputChange('email', text)}
+            onChangeText={(text) => handleInputChange('email', text)}
             placeholder="Email"
           />
           <TextInput
@@ -115,7 +143,7 @@ const ProfileScreen: React.FC = () => {
               color: 'grey',
             }}
             value={editedUserData.fullName}
-            //onChangeText={(text) => handleInputChange('fullName', text)}
+            onChangeText={(text) => handleInputChange('fullName', text)}
             placeholder="Full Name"
           />
           <TextInput
@@ -127,7 +155,7 @@ const ProfileScreen: React.FC = () => {
               color: 'grey',
             }}
             value={editedUserData.phoneNumber}
-            //onChangeText={(text) => handleInputChange('phoneNumber', text)}
+            onChangeText={(text) => handleInputChange('phoneNumber', text)}
             placeholder="Phone Number"
           />
           <TouchableOpacity onPress={handleSavePress} style={Style.mv10}>
@@ -138,7 +166,7 @@ const ProfileScreen: React.FC = () => {
                 borderRadius: 5,
                 alignItems: 'center',
               }}>
-              <Text style={{color: 'white'}}>Save</Text>
+              <Text style={{ color: 'white' }}>Save</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -152,12 +180,12 @@ const ProfileScreen: React.FC = () => {
             borderRadius: 5,
             alignItems: 'center',
           }}>
-          <Text style={{color: 'white'}}>
+          <Text style={{ color: 'white' }}>
             {isEditing ? 'Cancel' : 'Edit Profile'}
           </Text>
         </View>
-      </TouchableOpacity> */}
-    </View>
+      </TouchableOpacity>
+    </ScrollView>
   );
 };
 

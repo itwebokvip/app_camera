@@ -7,6 +7,7 @@ export const ConstantUrl = {
   getProgrammesImage: 'api/programmes',
   postProgrammes: 'api/programmes',
   updateProgrammes: 'api/programmes',
+  updateProfileUser: 'api/users/profile',
 };
 export const StatusCode = {
   OK: 200,

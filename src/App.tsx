@@ -1,27 +1,28 @@
 import React from 'react';
-import {StatusBar} from 'react-native';
+import { StatusBar } from 'react-native';
 
 import 'react-native-gesture-handler';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import Toast, {BaseToast, ErrorToast} from 'react-native-toast-message';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 
-import {Device} from 'utils';
-import {images} from 'assets';
-import {Icon} from 'components';
+import { Device } from 'utils';
+import { images } from 'assets';
+import { Icon } from 'components';
 import Navigation from './navigation';
-import {Style, colors, sizes} from 'core';
-import {UserProvider} from 'contexts';
+import { Style, colors, sizes } from 'core';
+import { UserProvider } from 'contexts';
 
 export default function App() {
   const toastConfig = {
+    // eslint-disable-next-line react/no-unstable-nested-components
     success: (props: any) => (
       <BaseToast
         {...props}
         style={[
           Style.toastStyle,
-          {backgroundColor: '#C4F2DD', height: sizes.s100},
+          { backgroundColor: '#C4F2DD', height: sizes.s100 },
         ]}
-        contentContainerStyle={{padding: sizes.s12}}
+        contentContainerStyle={{ padding: sizes.s12 }}
         renderLeadingIcon={() => (
           <Icon
             source={images.ic_comment_check}
@@ -37,19 +38,20 @@ export default function App() {
           />
         )}
         onPress={() => Toast.hide()}
-        text1Style={[Style.txt14, Style.bold, {color: colors.green900}]}
-        text2Style={[Style.txt14, {color: colors.green900}]}
+        text1Style={[Style.txt14, Style.bold, { color: colors.green900 }]}
+        text2Style={[Style.txt14, { color: colors.green900 }]}
       />
     ),
 
+    // eslint-disable-next-line react/no-unstable-nested-components
     error: (props: any) => (
       <ErrorToast
         {...props}
         style={[
           Style.toastStyle,
-          {backgroundColor: '#FDE0DE', height: sizes.s100},
+          { backgroundColor: '#FDE0DE', height: sizes.s100 },
         ]}
-        contentContainerStyle={{padding: sizes.s12}}
+        contentContainerStyle={{ padding: sizes.s12 }}
         renderLeadingIcon={() => (
           <Icon
             source={images.ic_shield_exclamation}
@@ -65,8 +67,8 @@ export default function App() {
           />
         )}
         onPress={() => Toast.hide()}
-        text1Style={[Style.txt14, Style.bold, {color: colors.error}]}
-        text2Style={[Style.txt14, Style.bold, {color: colors.error}]}
+        text1Style={[Style.txt14, Style.bold, { color: colors.error }]}
+        text2Style={[Style.txt14, Style.bold, { color: colors.error }]}
         text2NumberOfLines={2}
       />
     ),

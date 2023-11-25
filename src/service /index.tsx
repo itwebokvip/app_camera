@@ -39,6 +39,7 @@ export const SignIn = async (
         SetTokenToGetWay({ token: data.token });
         await KeychainManager.multiSet([
           [STORAGE_KEYS.token, data.token],
+          [STORAGE_KEYS.expired, data.expired],
           [STORAGE_KEYS.account, JSON.stringify(data.logedInUser)],
         ]);
 
@@ -481,6 +482,42 @@ export const getImageWithUserId = async (
     return {
       success: false,
       error,
+    };
+  }
+};
+
+export const updateProfileUser = async (
+  id: string,
+  email: string,
+  fullname: string,
+  phoneNumber: string,
+): Promise<SignInResult> => {
+  try {
+    const response = await Api_1.put(ConstantUrl.updateProfileUser, {
+      id,
+      email,
+      fullname,
+      phoneNumber,
+    });
+
+    console.log('====> ', JSON.stringify(response));
+
+    if (response.status === StatusCode.OK) {
+      return {
+        Success: true,
+      };
+    } else {
+      console.error('ERROR ====> ', JSON.stringify(response));
+      return {
+        Success: false,
+        errors: response,
+      };
+    }
+  } catch (error) {
+    console.error('ERROR ====> ', JSON.stringify(error));
+    return {
+      Success: false,
+      errors: error,
     };
   }
 };

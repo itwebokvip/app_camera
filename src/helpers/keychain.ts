@@ -1,11 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {PrototypeManager} from './prototype';
-import {LogUtils} from './log';
+import { PrototypeManager } from './prototype';
+import { LogUtils } from './log';
 
-const {tryStringify, tryParse} = PrototypeManager.json;
+const { tryStringify, tryParse } = PrototypeManager.json;
 
 export enum STORAGE_KEYS {
   token = 'token',
+  expired = 'expired',
   account = 'account',
 }
 
