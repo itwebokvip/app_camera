@@ -1,12 +1,12 @@
-import { Loading } from 'components';
-import { Style } from 'core';
+import {Loading} from 'components';
+import {Style} from 'core';
 import ShowToast from 'helpers/ShowToast';
-import { KeychainManager, STORAGE_KEYS } from 'helpers/keychain';
-import { User } from 'models';
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { updateProfileUser } from 'service ';
+import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
+import {User} from 'models';
+import React, {useState, useEffect} from 'react';
+import {View, Text, TextInput, TouchableOpacity} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
+import {updateProfileUser} from 'service ';
 
 const ProfileScreen: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -47,7 +47,14 @@ const ProfileScreen: React.FC = () => {
     console.log('[USER]  ' + JSON.stringify(editedUserData));
     if (editedUserData != null) {
       try {
-        const [result] = await Promise.all([updateProfileUser(dataUser!.id, editedUserData!.email, editedUserData!.fullName, editedUserData!.phoneNumber)]);
+        const [result] = await Promise.all([
+          updateProfileUser(
+            dataUser!.id,
+            editedUserData!.email,
+            editedUserData!.fullName,
+            editedUserData!.phoneNumber,
+          ),
+        ]);
         console.log('KET QUA:  ' + JSON.stringify(result));
         if (result.Success === false) {
           ShowToast('error', 'Thông báo', 'Đã có lỗi xảy ra!');
@@ -64,7 +71,7 @@ const ProfileScreen: React.FC = () => {
 
   const handleInputChange = (key: keyof User, value: string) => {
     if (editedUserData) {
-      setEditedUserData((prevData) => {
+      setEditedUserData(prevData => {
         if (!prevData) {
           return prevData;
         }
@@ -79,25 +86,25 @@ const ProfileScreen: React.FC = () => {
   return (
     <ScrollView style={Style.p20}>
       {dataUser && (
-        <View style={{ marginBottom: 20 }}>
-          <View style={{ marginBottom: 10 }}>
+        <View style={{marginBottom: 20}}>
+          <View style={{marginBottom: 10}}>
             <Text style={Style.txt14_black}>
               Tên đăng nhập:{' '}
               {isEditing ? editedUserData?.username : dataUser.username}
             </Text>
           </View>
-          <View style={{ marginBottom: 10 }}>
+          <View style={{marginBottom: 10}}>
             <Text style={Style.txt14_black}>
               Email: {isEditing ? editedUserData?.email : dataUser.email}
             </Text>
           </View>
-          <View style={{ marginBottom: 10 }}>
+          <View style={{marginBottom: 10}}>
             <Text style={Style.txt14_black}>
               Họ và tên:{' '}
               {isEditing ? editedUserData?.fullName : dataUser.fullName}
             </Text>
           </View>
-          <View style={{ marginBottom: 10 }}>
+          <View style={{marginBottom: 10}}>
             <Text style={Style.txt14_black}>
               Số điện thoại:{' '}
               {isEditing ? editedUserData?.phoneNumber : dataUser.phoneNumber}
@@ -108,7 +115,9 @@ const ProfileScreen: React.FC = () => {
 
       {isEditing && editedUserData && (
         <View>
-          <Text style={[Style.txt16_black_bold, Style.mv12]}>Chỉnh sửa thông tin</Text>
+          <Text style={[Style.txt16_black_bold, Style.mv12]}>
+            Chỉnh sửa thông tin
+          </Text>
           <TextInput
             style={{
               marginBottom: 10,
@@ -118,7 +127,7 @@ const ProfileScreen: React.FC = () => {
               color: 'grey',
             }}
             value={editedUserData.username}
-            onChangeText={(text) => handleInputChange('username', text)}
+            onChangeText={text => handleInputChange('username', text)}
             placeholder="Username"
             placeholderTextColor={'black'}
           />
@@ -131,7 +140,7 @@ const ProfileScreen: React.FC = () => {
               color: 'grey',
             }}
             value={editedUserData.email}
-            onChangeText={(text) => handleInputChange('email', text)}
+            onChangeText={text => handleInputChange('email', text)}
             placeholder="Email"
           />
           <TextInput
@@ -143,7 +152,7 @@ const ProfileScreen: React.FC = () => {
               color: 'grey',
             }}
             value={editedUserData.fullName}
-            onChangeText={(text) => handleInputChange('fullName', text)}
+            onChangeText={text => handleInputChange('fullName', text)}
             placeholder="Full Name"
           />
           <TextInput
@@ -155,7 +164,7 @@ const ProfileScreen: React.FC = () => {
               color: 'grey',
             }}
             value={editedUserData.phoneNumber}
-            onChangeText={(text) => handleInputChange('phoneNumber', text)}
+            onChangeText={text => handleInputChange('phoneNumber', text)}
             placeholder="Phone Number"
           />
           <TouchableOpacity onPress={handleSavePress} style={Style.mv10}>
@@ -166,26 +175,27 @@ const ProfileScreen: React.FC = () => {
                 borderRadius: 5,
                 alignItems: 'center',
               }}>
-              <Text style={{ color: 'white' }}>Lưu</Text>
+              <Text style={{color: 'white'}}>Lưu</Text>
             </View>
           </TouchableOpacity>
         </View>
       )}
 
-      {dataUser?.listRole[0] === 'EMPLOYEE' ? (null) : (<TouchableOpacity onPress={handleEditPress}>
-        <View
-          style={{
-            backgroundColor: 'green',
-            padding: 15,
-            borderRadius: 5,
-            alignItems: 'center',
-          }}>
-          <Text style={{ color: 'white' }}>
-            {isEditing ? 'Hủy' : 'Chỉnh sửa'}
-          </Text>
-        </View>
-      </TouchableOpacity>)}
-
+      {dataUser?.listRole[0] === 'EMPLOYEE' ? null : (
+        <TouchableOpacity onPress={handleEditPress}>
+          <View
+            style={{
+              backgroundColor: 'green',
+              padding: 15,
+              borderRadius: 5,
+              alignItems: 'center',
+            }}>
+            <Text style={{color: 'white'}}>
+              {isEditing ? 'Hủy' : 'Chỉnh sửa'}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      )}
     </ScrollView>
   );
 };
