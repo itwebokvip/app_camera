@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Alert,
   FlatList,
@@ -19,22 +19,22 @@ import {
 import GetLocation from 'react-native-get-location';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { AppTextInput, Button, Loading } from 'components';
+import {AppTextInput, Button, Loading} from 'components';
 
 import styles from './styles';
-import { ImageInfoPayload } from 'models';
-import { Style, colors, sizes } from 'core';
+import {ImageInfoPayload} from 'models';
+import {Style, colors, sizes} from 'core';
 import ShowToast from 'helpers/ShowToast';
-import { goBack } from 'helpers/navigation';
+import {goBack} from 'helpers/navigation';
 import Permissions from 'utils/Permissions';
-import { ScreenProps } from 'root-stack-params';
+import {ScreenProps} from 'root-stack-params';
 import {
   createProgram,
   getUTCTime,
   uploadMultiFiles,
   uploadMultiImageInfo,
 } from 'service ';
-import { GOOGLE_MAP_API_KEY } from 'helpers/common';
+import {GOOGLE_MAP_API_KEY} from 'helpers/common';
 
 const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
   const [data, setData] = useState<Asset[]>([]);
@@ -100,7 +100,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
 
   const renderItem = useCallback(
     (info: ListRenderItemInfo<Asset>) => {
-      const { index, item } = info;
+      const {index, item} = info;
       return (
         <View key={index} style={styles.imageContainer}>
           <View style={styles.container}>
@@ -108,7 +108,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
               resizeMode="cover"
               resizeMethod="scale"
               style={styles.image}
-              source={{ uri: item.uri }}>
+              source={{uri: item.uri}}>
               <View>
                 {/* <Text style={styles.detailedImageTxt}>
                   {moment(item.timestamp).format('MMMM DD, YYYY hh:mm A')}
@@ -150,7 +150,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
   );
 
   const renderSeparator = useCallback(
-    () => <View style={{ height: sizes.s24 }} />,
+    () => <View style={{height: sizes.s24}} />,
     [],
   );
 
@@ -249,7 +249,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
           onChangeText={setName}
         />
         <Button title="Chụp ảnh" onPress={onTakeImage} />
-        <View style={{ height: sizes.s10 }} />
+        <View style={{height: sizes.s10}} />
         <Button type="bluePrimary" title="Gửi" onPress={onSubmit} />
       </View>
       <FlatList

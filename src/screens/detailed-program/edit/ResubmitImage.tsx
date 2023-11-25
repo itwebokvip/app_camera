@@ -1,5 +1,5 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { Alert, Text, View, ImageBackground } from 'react-native';
+import React, {useCallback, useRef, useState} from 'react';
+import {Alert, Text, View, ImageBackground} from 'react-native';
 
 import axios from 'axios';
 import moment from 'moment';
@@ -11,18 +11,18 @@ import {
 import ViewShot from 'react-native-view-shot';
 import GetLocation from 'react-native-get-location';
 
-import { Button, Loading } from 'components';
+import {Button, Loading} from 'components';
 
 import styles from '../styles';
-import { Style, sizes } from 'core';
+import {Style, sizes} from 'core';
 import ShowToast from 'helpers/ShowToast';
-import { goBack } from 'helpers/navigation';
+import {goBack} from 'helpers/navigation';
 import Permissions from 'utils/Permissions';
-import { getUTCTime, updateImageInfos } from 'service ';
-import { KeychainManager, STORAGE_KEYS } from 'helpers/keychain';
-import { GOOGLE_MAP_API_KEY, IMAGE_DOMAIN } from 'helpers/common';
+import {getUTCTime, updateImageInfos} from 'service ';
+import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
+import {GOOGLE_MAP_API_KEY, IMAGE_DOMAIN} from 'helpers/common';
 
-const Resubmit: React.FC<any> = ({ params }: any) => {
+const Resubmit: React.FC<any> = ({params}: any) => {
   const [data, setData] = useState<Asset>();
   const [address, setAddress] = React.useState<any>(null);
   const [utcTime, setUtcTime] = useState<UTCTimeResponse>();
@@ -175,12 +175,12 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
     <View style={Style.container}>
       <View style={Style.top20}>
         <Button title="Thay đổi Hình Ảnh" onPress={onTakeImage} />
-        <View style={{ height: sizes.s10 }} />
+        <View style={{height: sizes.s10}} />
         <Button type="bluePrimary" title="Submit" onPress={onSubmit} />
 
         <View style={styles.imageContainer}>
           <View style={styles.container}>
-            <ViewShot ref={viewShotRef} options={{ format: 'png', quality: 0.8 }}>
+            <ViewShot ref={viewShotRef} options={{format: 'png', quality: 0.8}}>
               <ImageBackground
                 resizeMode="cover"
                 resizeMethod="scale"

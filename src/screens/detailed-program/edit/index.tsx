@@ -1,12 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 
 import moment from 'moment';
 
-import { Style } from 'core';
+import {Style} from 'core';
 import Resubmit from './ResubmitImage';
 
-const UpdateImageProgram: React.FC<any> = ({ route }: any) => {
+const UpdateImageProgram: React.FC<any> = ({route}: any) => {
   return (
     <ScrollView style={Style.container}>
       <View style={styles.itemContainer}>
