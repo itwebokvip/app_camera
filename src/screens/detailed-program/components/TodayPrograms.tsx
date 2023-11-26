@@ -16,8 +16,10 @@ import {
   ImagePickerResponse,
   launchCamera,
 } from 'react-native-image-picker';
+
 import ViewShot from 'react-native-view-shot';
 import GetLocation from 'react-native-get-location';
+import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import styles from '../styles';
@@ -156,7 +158,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   );
 
   const onImagePickerResult = useCallback(
-    (response: ImagePickerResponse) => {
+    async (response: ImagePickerResponse) => {
       if (response?.assets) {
         let newData = [...data];
         newData = newData.concat(response?.assets);
@@ -180,7 +182,6 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
     Permissions.camera(() => {
       launchCamera(
         {
-          saveToPhotos: true,
           mediaType: 'photo',
           includeBase64: false,
           maxHeight: 600,
@@ -205,6 +206,9 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
           const ref = refsArray[i];
           const uri = await ref.current.capture();
           uriArr.push(uri);
+          CameraRoll.save(uri, {
+            type: 'photo',
+          });
         }
 
         const formData = new FormData();
