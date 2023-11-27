@@ -117,7 +117,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
                   {utcTime && (
                     <Text style={styles.detailedImageTxt}>
                       {moment(utcTime.data.data).format(
-                        'MMMM DD, YYYY hh:mm A',
+                        'YYYY-MM-DDTHH:mm:ss.SSSZ',
                       )}
                     </Text>
                   )}
@@ -175,6 +175,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
 
   const loadTimeImage = async () => {
     const uploadResponse = await getUTCTime();
+    console.log('TIME ' + JSON.stringify(uploadResponse));
     setUtcTime(uploadResponse.data);
   };
 

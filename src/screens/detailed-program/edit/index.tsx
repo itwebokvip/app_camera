@@ -14,7 +14,7 @@ const UpdateImageProgram: React.FC<any> = ({route}: any) => {
           <Text style={[Style.txt14_black, Style.p8]}>
             <Text style={Style.txt16_bold_blue}>Thời gian gửi: </Text>
             {moment(route.params.data.createdTime).format(
-              'MMMM DD, YYYY hh:mm A',
+              'YYYY-MM-DDTHH:mm:ss.SSSZ',
             )}
           </Text>
           <Text style={[Style.txt14_black, Style.p8]}>

@@ -87,12 +87,11 @@ const History: React.FC<ScreenProps<'detailedProgram'>> = () => {
             />
             <Text style={[Style.txt10_gray600, Style.pv8]}>
               Thời gian:{' '}
-              {moment(item.createdTime).format('MMMM DD, YYYY hh:mm A')}
+              {moment(item.createdTime).format('YYYY-MM-DDTHH:mm:ss.SSSZ')}
             </Text>
-            {/* {submittedTime && (<Text style={[Style.txt10_gray600, Style.pv8]}>Thời gian gửi: {moment(item.shootTime).format('MMMM DD, YYYY hh:mm A')}</Text>)} */}
             <Text style={[Style.txt10_gray600, Style.pv8]}>
               Thời gian gửi:{' '}
-              {moment(item.shootTime).format('MMMM DD, YYYY hh:mm:ss A')}
+              {moment(item.shootTime).format('YYYY-MM-DDTHH:mm:ss.SSSZ')}
             </Text>
           </View>
           {isEditable && (

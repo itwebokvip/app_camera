@@ -220,7 +220,7 @@ const FuncComponent: React.FC<ScreenProps<'createProgram'>> = () => {
             size: curUploadImage.fileSizeInBytes,
             path: curUploadImage.url,
             shootTime: moment(utcTime?.data.data).format(
-              'MMMM DD, YYYY hh:mm A',
+              'YYYY-MM-DDTHH:mm:ss.SSSZ',
             ),
           });
         }
