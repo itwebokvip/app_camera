@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Alert,
   Text,
@@ -17,19 +17,19 @@ import {
 } from 'react-native-image-picker';
 import ViewShot from 'react-native-view-shot';
 import GetLocation from 'react-native-get-location';
-import { CameraRoll } from '@react-native-camera-roll/camera-roll';
+import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import styles from '../styles';
-import { ImageInfoPayload } from 'models';
-import { Style, colors, sizes } from 'core';
+import {ImageInfoPayload} from 'models';
+import {Style, colors, sizes} from 'core';
 import ShowToast from 'helpers/ShowToast';
-import { Button, Loading } from 'components';
+import {Button, Loading} from 'components';
 import SubmitDate from 'common/submitDate';
 import Permissions from 'utils/Permissions';
-import { ScreenProps } from 'root-stack-params';
-import { GOOGLE_MAP_API_KEY, Sleep } from 'helpers/common';
-import { getUTCTime, uploadMultiFiles, uploadMultiImageInfo } from 'service ';
+import {ScreenProps} from 'root-stack-params';
+import {GOOGLE_MAP_API_KEY, Sleep} from 'helpers/common';
+import {getUTCTime, uploadMultiFiles, uploadMultiImageInfo} from 'service ';
 
 const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   const [data, setData] = useState<Asset[]>([]);
@@ -68,7 +68,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
           GOOGLE_MAP_API_KEY;
         axios
           .get(mapUrl)
-          .then(async (response) => {
+          .then(async response => {
             const mapData = response.data;
             const currentAddress =
               mapData.results[0].address_components[2].long_name +
@@ -100,12 +100,15 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   }, [timeZone]);
 
   const getTimeZone = (latitude: number, longitude: number) => {
-    const mapUrl = `https://maps.googleapis.com/maps/api/timezone/json?location=${latitude},${longitude}&timestamp=${Date.now() / 1000}&key=${GOOGLE_MAP_API_KEY}`;
+    const mapUrl = `https://maps.googleapis.com/maps/api/timezone/json?location=${latitude},${longitude}&timestamp=${
+      Date.now() / 1000
+    }&key=${GOOGLE_MAP_API_KEY}`;
     axios
       .get(mapUrl)
-      .then((response) => {
+      .then(response => {
         const responseData = response.data;
         const dataZone = responseData.timeZoneId as any;
+        console.log('dataZone: >>>', dataZone);
         setTimeZone(dataZone);
       })
       .catch((error: any) => {
@@ -124,34 +127,37 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
       if (timeZoneId == null) {
         return utcTime;
       } else {
-        const formattedDateTime = moment(dateTimeString).tz(timeZoneId).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+        const formattedDateTime = moment(dateTimeString)
+          .tz(timeZoneId)
+          .format('YYYY-MM-DDTHH:mm:ss.SSSZ');
         return formattedDateTime;
       }
-    }, [utcTime]
+    },
+    [utcTime],
   );
 
   const renderItem = useCallback(
     (info: ListRenderItemInfo<Asset>) => {
-      const { index, item } = info;
+      const {index, item} = info;
       return (
         <View key={index} style={styles.imageContainer}>
           <View style={styles.container}>
             <ViewShot
               ref={refsArray[index]}
-              options={{ format: 'png', quality: 0.8 }}>
+              options={{format: 'png', quality: 0.8}}>
               <ImageBackground
                 resizeMode="cover"
                 resizeMethod="scale"
                 style={styles.image}
-                source={{ uri: item.uri }}>
+                source={{uri: item.uri}}>
                 <View style={Style.p8}>
                   {timeFormat != null ? (
+                    <Text style={styles.detailedImageTxt}>{timeFormat}</Text>
+                  ) : (
                     <Text style={styles.detailedImageTxt}>
-                      {timeFormat}
+                      {utcTime?.data.data}
                     </Text>
-                  ) : (<Text style={styles.detailedImageTxt}>
-                    {utcTime?.data.data}
-                  </Text>)}
+                  )}
                   {addressImage && (
                     <Text style={styles.detailedImageTxt}>
                       {addressImage?.address_components[2].long_name}
@@ -184,25 +190,29 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   );
 
   const renderSeparator = useCallback(
-    () => <View style={{ height: sizes.s24 }} />,
+    () => <View style={{height: sizes.s24}} />,
     [],
   );
 
   const loadTimeImage = useCallback(async () => {
     try {
-      console.log('BEFORE loadTimeImage - TIMEZONE: ' + JSON.stringify(timeZone));
+      console.log(
+        'BEFORE loadTimeImage - TIMEZONE: ' + JSON.stringify(timeZone),
+      );
       if (timeZone == null) {
         Alert.alert('Thông báo', 'Sự cố trên hình ảnh của bạn!');
       } else {
         const uploadResponse = await getUTCTime();
         const apiDateTime = moment.utc(uploadResponse.data.data);
         const localDateTime = apiDateTime.utcOffset(deviceUtcOffset);
-        const formattedDateTime = formatDateWithTimeZone(localDateTime.toString(), timeZone);
+        const formattedDateTime = formatDateWithTimeZone(
+          localDateTime.toString(),
+          timeZone,
+        );
         console.log(formattedDateTime);
         setUtcTime(uploadResponse.data);
         setTimeFormat(formattedDateTime);
       }
-
     } catch (error) {
       console.log('ERROR:  ' + error);
     }
@@ -305,7 +315,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
     <View style={Style.container}>
       <View style={Style.top20}>
         <Button title="Chụp ảnh" onPress={onTakeImage} />
-        <View style={{ height: sizes.s10 }} />
+        <View style={{height: sizes.s10}} />
         <Button type="bluePrimary" title="Gửi" onPress={onSubmit} />
       </View>
       <FlatList
