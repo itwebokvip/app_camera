@@ -1,23 +1,24 @@
 import React from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
 import moment from 'moment';
 
-import {Style} from 'core';
+import { Style, colors } from 'core';
 import Resubmit from './ResubmitImage';
 
-const UpdateImageProgram: React.FC<any> = ({route}: any) => {
+const UpdateImageProgram: React.FC<any> = ({ route }: any) => {
+
   return (
     <ScrollView style={Style.container}>
       <View style={styles.itemContainer}>
         <View style={styles.infoContainer}>
-          <Text style={[Style.txt14_black, Style.p8]}>
+          <Text style={[Style.txt14_white, Style.p8]}>
             <Text style={Style.txt16_bold_blue}>Thời gian gửi: </Text>
             {moment(route.params.data.createdTime).format(
               'YYYY-MM-DDTHH:mm:ss.SSSZ',
             )}
           </Text>
-          <Text style={[Style.txt14_black, Style.p8]}>
+          <Text style={[Style.txt14_white, Style.p8]}>
             <Text style={Style.txt16_bold_blue}>Địa điểm: </Text>
             {route.params.data.location}.
           </Text>
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     borderWidth: 1,
-    borderColor: 'blue',
+    borderColor: colors.semanticsWarning,
     marginBottom: 16,
     marginTop: 10,
     padding: 20,

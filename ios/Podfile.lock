@@ -387,9 +387,13 @@ PODS:
   - React-jsinspector (0.72.6)
   - React-logger (0.72.6):
     - glog
+  - react-native-cameraroll (7.0.0):
+    - React-Core
   - react-native-geolocation-service (5.3.1):
     - React
-  - react-native-image-picker (7.0.2):
+  - react-native-image-marker (1.1.9):
+    - React-Core
+  - react-native-image-picker (7.0.3):
     - React-Core
   - react-native-pager-view (6.2.2):
     - React-Core
@@ -397,6 +401,8 @@ PODS:
     - React-Core
   - react-native-settings (1.0.0):
     - React
+  - react-native-tz (0.1.4):
+    - React-Core
   - react-native-view-shot (3.8.0):
     - React-Core
   - React-NativeModulesApple (0.72.6):
@@ -511,14 +517,16 @@ PODS:
     - React-perflogger (= 0.72.6)
   - ReactNativeGetLocation (4.0.0):
     - React-Core
-  - RNCAsyncStorage (1.19.4):
+  - RNCAsyncStorage (1.19.8):
     - React-Core
   - RNFastImage (8.6.3):
     - React-Core
     - SDWebImage (~> 5.11.1)
     - SDWebImageWebPCoder (~> 0.8.4)
-  - RNGestureHandler (2.13.4):
+  - RNGestureHandler (2.14.0):
     - RCT-Folly (= 2021.07.22.00)
+    - React-Core
+  - RNLocalize (3.0.4):
     - React-Core
   - RNPermissions (3.10.1):
     - React-Core
@@ -554,7 +562,7 @@ PODS:
   - RNScreens (3.27.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - RNVectorIcons (10.0.1):
+  - RNVectorIcons (10.0.2):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - SDWebImage (5.11.1):
@@ -614,11 +622,14 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - "react-native-cameraroll (from `../node_modules/@react-native-camera-roll/camera-roll`)"
   - react-native-geolocation-service (from `../node_modules/react-native-geolocation-service`)
+  - react-native-image-marker (from `../node_modules/react-native-image-marker`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-settings (from `../node_modules/react-native-settings`)
+  - react-native-tz (from `../node_modules/react-native-tz`)
   - react-native-view-shot (from `../node_modules/react-native-view-shot`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -641,6 +652,7 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNLocalize (from `../node_modules/react-native-localize`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -711,8 +723,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-cameraroll:
+    :path: "../node_modules/@react-native-camera-roll/camera-roll"
   react-native-geolocation-service:
     :path: "../node_modules/react-native-geolocation-service"
+  react-native-image-marker:
+    :path: "../node_modules/react-native-image-marker"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-pager-view:
@@ -721,6 +737,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-settings:
     :path: "../node_modules/react-native-settings"
+  react-native-tz:
+    :path: "../node_modules/react-native-tz"
   react-native-view-shot:
     :path: "../node_modules/react-native-view-shot"
   React-NativeModulesApple:
@@ -765,6 +783,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fast-image"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNLocalize:
+    :path: "../node_modules/react-native-localize"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
   RNReanimated:
@@ -811,11 +831,14 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 3bf18ff7cb03cd8dfdce08fbbc0d15058c1d71ae
   React-jsinspector: 194e32c6aab382d88713ad3dd0025c5f5c4ee072
   React-logger: cebf22b6cf43434e471dc561e5911b40ac01d289
+  react-native-cameraroll: b474e88bc3d27a85315115d26c796cef4586c5ab
   react-native-geolocation-service: 608e1da71a1ac31b4de64d9ef2815f697978c55b
-  react-native-image-picker: 2e2e82aba9b6a91a7c78f7d9afde341a2659c7b8
+  react-native-image-marker: f9d3b4db5c8ddfff89d3e2927b4b48fb461baad7
+  react-native-image-picker: 2381c008bbb09e72395a2d043c147b11bd1523d9
   react-native-pager-view: 02a5c4962530f7efc10dd51ee9cdabeff5e6c631
   react-native-safe-area-context: 2cd91d532de12acdb0a9cbc8d43ac72a8e4c897c
   react-native-settings: 39efb19c2842fdfa6fa0e32bc8e35f9f6e20071e
+  react-native-tz: 080ea2f64ac94771347e71b6e33f6587818038a3
   react-native-view-shot: 6b7ed61d77d88580fed10954d45fad0eb2d47688
   React-NativeModulesApple: 02e35e9a51e10c6422f04f5e4076a7c02243fff2
   React-perflogger: e3596db7e753f51766bceadc061936ef1472edc3
@@ -835,13 +858,14 @@ SPEC CHECKSUMS:
   React-utils: fa59c9a3375fb6f4aeb66714fd3f7f76b43a9f16
   ReactCommon: dd03c17275c200496f346af93a7b94c53f3093a4
   ReactNativeGetLocation: 87f83bee4dfecc88772de04afd076d9ae265cc42
-  RNCAsyncStorage: 3a8f7145d17cdd9f88e7b77666c94a09e4f759c8
+  RNCAsyncStorage: 687bb9e85dd3d45b966662440dcfc0cd962347e6
   RNFastImage: 5c9c9fed9c076e521b3f509fe79e790418a544e8
-  RNGestureHandler: 6e46dde1f87e5f018a54fe5d40cd0e0b942b49ee
+  RNGestureHandler: 32a01c29ecc9bb0b5bf7bc0a33547f61b4dc2741
+  RNLocalize: 1ce4263770515f53d3de442ce7657b3661b16a37
   RNPermissions: c355116790124654beb71c2e713f38d04ff21a48
   RNReanimated: ab2e96c6d5591c3dfbb38a464f54c8d17fb34a87
   RNScreens: 3c2d122f5e08c192e254c510b212306da97d2581
-  RNVectorIcons: ace237de89f1574ef3c963ae9d5da3bd6fbeb02a
+  RNVectorIcons: 23b6e11af4aaf104d169b1b0afa7e5cf96c676ce
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
@@ -850,4 +874,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 0ca6d6a31642af0c70f63a686d1bda35c52094ab
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.11.3

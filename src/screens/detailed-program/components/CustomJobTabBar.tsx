@@ -1,10 +1,10 @@
 import React from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
-import {MaterialTopTabBarProps} from '@react-navigation/material-top-tabs';
+import { MaterialTopTabBarProps } from '@react-navigation/material-top-tabs';
 
 import styles from '../styles';
-import {colors, Style} from 'core/index';
+import { colors, Style } from 'core/index';
 
 const MyTabBar: React.FC<MaterialTopTabBarProps> = ({
   state,
@@ -14,13 +14,13 @@ const MyTabBar: React.FC<MaterialTopTabBarProps> = ({
   return (
     <View style={styles.topTabContainer}>
       {state.routes.map((route, index) => {
-        const {options} = descriptors[route.key];
+        const { options } = descriptors[route.key];
         const label: any =
           options.tabBarLabel !== undefined
             ? options.tabBarLabel
             : options.title !== undefined
-            ? options.title
-            : route.name;
+              ? options.title
+              : route.name;
 
         const isFocused = state.index === index;
 
@@ -48,7 +48,7 @@ const MyTabBar: React.FC<MaterialTopTabBarProps> = ({
             key={index}
             activeOpacity={0.9}
             accessibilityRole="button"
-            accessibilityState={isFocused ? {selected: true} : {}}
+            accessibilityState={isFocused ? { selected: true } : {}}
             accessibilityLabel={options.tabBarAccessibilityLabel}
             testID={options.tabBarTestID}
             onPress={onPress}
@@ -58,7 +58,7 @@ const MyTabBar: React.FC<MaterialTopTabBarProps> = ({
               <Text
                 style={[
                   styles.label,
-                  isFocused && {color: colors.bluePrimary},
+                  isFocused && { color: colors.semanticsWarning },
                 ]}>
                 {label}
               </Text>

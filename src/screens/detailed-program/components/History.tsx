@@ -14,7 +14,7 @@ import ShowToast from 'helpers/ShowToast';
 import { Histories } from 'models';
 import { Style, sizes, colors } from 'core';
 import { goScreen } from 'helpers/navigation';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { EmptyList } from 'components';
 import { IMAGE_DOMAIN } from 'helpers/common';
@@ -28,18 +28,17 @@ const History: React.FC<ScreenProps<'detailedProgram'>> = () => {
   const { user } = useContext(UserContext);
   const [data, setData] = useState<Histories[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-
   const getData = useCallback(
     async (page: number = 1) => {
       try {
         if (!user?.id) return;
-
         setRefreshing(true);
         const response: any = await getImageWithUserId(
           user?.id!,
           page,
           PAGE_SIZE,
         );
+
         setData(response.data?.data);
       } catch (error) {
         ShowToast('error', 'Chú ý', 'Đã xảy ra lỗi!');
@@ -88,6 +87,7 @@ const History: React.FC<ScreenProps<'detailedProgram'>> = () => {
             <Text style={[Style.txt10_gray600, Style.pv8]}>
               Thời gian:{' '}
               {moment(item.createdTime).format('YYYY-MM-DDTHH:mm:ss.SSSZ')}
+              {/* {formatDateWithTimeZone(item.createdTime)} */}
             </Text>
             <Text style={[Style.txt10_gray600, Style.pv8]}>
               Thời gian gửi:{' '}
@@ -108,6 +108,7 @@ const History: React.FC<ScreenProps<'detailedProgram'>> = () => {
           )}
         </TouchableOpacity>
       );
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
   const renderSeparator = useCallback(
@@ -117,7 +118,7 @@ const History: React.FC<ScreenProps<'detailedProgram'>> = () => {
 
   return (
     <View style={stylesSheets.container}>
-      <View style={[Style.ph20, Style.pv10, Style.flex]}>
+      <View style={[Style.ph10, Style.pv10, Style.flex]}>
         <FlatList
           data={data}
           refreshing={refreshing}
@@ -143,12 +144,12 @@ export default History;
 const stylesSheets = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.backgroundScreen,
+    backgroundColor: colors.black,
   },
   itemList: {
     ...Style.row,
     ...Style.border,
-    paddingVertical: sizes.s20,
+    paddingVertical: sizes.s12,
     backgroundColor: colors.white,
     borderColor: colors.bluePrimary,
   },

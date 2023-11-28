@@ -1,5 +1,5 @@
-import {Style, colors, sizes} from 'core';
-import {StyleSheet, Dimensions} from 'react-native';
+import { Style, colors, sizes } from 'core';
+import { StyleSheet, Dimensions } from 'react-native';
 
 const win = Dimensions.get('window');
 const styles = StyleSheet.create({
@@ -16,17 +16,19 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopLeftRadius: sizes.s12,
     borderTopRightRadius: sizes.s12,
+    borderBottomLeftRadius: sizes.s12,
+    borderBottomRightRadius: sizes.s12,
   },
   label: {
     ...Style.txt16_bold,
-    color: colors.white,
+    color: colors.semanticsWarning,
   },
   topTabContainer: {
     overflow: 'hidden',
     flexDirection: 'row',
-    borderBottomLeftRadius: sizes.s12,
-    borderBottomRightRadius: sizes.s12,
-    backgroundColor: colors.bluePrimary,
+    // borderBottomLeftRadius: sizes.s12,
+    // borderBottomRightRadius: sizes.s12,
+    backgroundColor: colors.black,
   },
   imageContainer: {
     alignItems: 'center',

@@ -1,5 +1,5 @@
-import {Alert, Linking, PermissionsAndroid, Platform} from 'react-native';
-import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
+import { Alert, Linking, PermissionsAndroid, Platform } from 'react-native';
+import Geolocation, { GeoPosition } from 'react-native-geolocation-service';
 import {
   openSettings,
   PERMISSIONS,
@@ -10,7 +10,7 @@ import {
 } from 'react-native-permissions';
 import RNSettings from 'react-native-settings';
 import Device from './Device';
-import {LogUtils} from 'helpers/log';
+import { LogUtils } from 'helpers/log';
 
 class Permissions {
   async camera(callback?: () => void) {
@@ -23,7 +23,7 @@ class Permissions {
             'Notice',
             'Please accept application for camera to continue',
             [
-              {text: 'Cancel'},
+              { text: 'Cancel' },
               {
                 text: 'OK',
                 onPress: () => {
@@ -46,7 +46,7 @@ class Permissions {
             'Notice',
             'Please accept application for camera to continue',
             [
-              {text: 'Cancel'},
+              { text: 'Cancel' },
               {
                 text: 'OK',
                 onPress: () => {
@@ -56,7 +56,7 @@ class Permissions {
             ],
           );
         }
-      } catch (err) {}
+      } catch (err) { }
     }
   }
 
@@ -70,7 +70,7 @@ class Permissions {
             'Notice',
             'Please accept application for photo library to continue',
             [
-              {text: 'Cancel'},
+              { text: 'Cancel' },
               {
                 text: 'OK',
                 onPress: () => {
@@ -93,7 +93,7 @@ class Permissions {
               'Notice',
               'Please accept application for photo library to continue',
               [
-                {text: 'Cancel'},
+                { text: 'Cancel' },
                 {
                   text: 'OK',
                   onPress: () => {
@@ -104,7 +104,7 @@ class Permissions {
             );
           }
         });
-      } catch (err) {}
+      } catch (err) { }
     }
   }
 
@@ -118,7 +118,7 @@ class Permissions {
             'Notice',
             'Please accept application for microphone to continue',
             [
-              {text: 'Cancel'},
+              { text: 'Cancel' },
               {
                 text: 'OK',
                 onPress: () => {
@@ -137,7 +137,7 @@ class Permissions {
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           callback && callback();
         }
-      } catch (err) {}
+      } catch (err) { }
     }
   }
 
@@ -161,18 +161,18 @@ class Permissions {
           },
           (error: any) => {
             Alert.alert('Error', 'Please allow app for location in setting', [
-              {text: 'Cancel'},
+              { text: 'Cancel' },
               {
                 text: 'Turn on',
                 onPress: () => Linking.openSettings(), //open app setting
               },
             ]);
           },
-          {enableHighAccuracy: false, timeout: 15000, maximumAge: 10000},
+          { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 },
         );
       } else {
         Alert.alert('Error', 'Please turn on location service', [
-          {text: 'Cancel'},
+          { text: 'Cancel' },
           {
             text: 'Turn on',
             onPress: () => Linking.openURL('App-Prefs:Privacy&path=LOCATION'), //open location service on ios
@@ -191,7 +191,7 @@ class Permissions {
           statuses[PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION] !== 'granted'
         ) {
           Alert.alert('Error', 'Please allow app for location in setting', [
-            {text: 'Cancel'},
+            { text: 'Cancel' },
             {
               text: 'Turn on',
               onPress: () => Linking.openSettings(), //open app setting
@@ -204,7 +204,7 @@ class Permissions {
             },
             (error: any) => {
               Alert.alert('Error', 'Please turn on location', [
-                {text: 'Cancel'},
+                { text: 'Cancel' },
                 {
                   text: 'Turn on',
                   onPress: () =>
@@ -214,7 +214,7 @@ class Permissions {
                 },
               ]);
             },
-            {enableHighAccuracy: false, timeout: 15000, maximumAge: 10000},
+            { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 },
           );
         }
       });

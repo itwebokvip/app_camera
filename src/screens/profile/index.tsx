@@ -1,12 +1,12 @@
-import {Loading} from 'components';
-import {Style} from 'core';
+import { Loading } from 'components';
+import { Style } from 'core';
 import ShowToast from 'helpers/ShowToast';
-import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
-import {User} from 'models';
-import React, {useState, useEffect} from 'react';
-import {View, Text, TextInput, TouchableOpacity} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
-import {updateProfileUser} from 'service ';
+import { KeychainManager, STORAGE_KEYS } from 'helpers/keychain';
+import { User } from 'models';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
+import { updateProfileUser } from 'service ';
 
 const ProfileScreen: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -84,28 +84,28 @@ const ProfileScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView style={Style.p20}>
+    <ScrollView style={[Style.p20, Style.container]}>
       {dataUser && (
-        <View style={{marginBottom: 20}}>
-          <View style={{marginBottom: 10}}>
-            <Text style={Style.txt14_black}>
+        <View style={{ marginBottom: 20 }}>
+          <View style={{ marginBottom: 10 }}>
+            <Text style={Style.txt14_white}>
               Tên đăng nhập:{' '}
               {isEditing ? editedUserData?.username : dataUser.username}
             </Text>
           </View>
-          <View style={{marginBottom: 10}}>
-            <Text style={Style.txt14_black}>
+          <View style={{ marginBottom: 10 }}>
+            <Text style={Style.txt14_white}>
               Email: {isEditing ? editedUserData?.email : dataUser.email}
             </Text>
           </View>
-          <View style={{marginBottom: 10}}>
-            <Text style={Style.txt14_black}>
+          <View style={{ marginBottom: 10 }}>
+            <Text style={Style.txt14_white}>
               Họ và tên:{' '}
               {isEditing ? editedUserData?.fullName : dataUser.fullName}
             </Text>
           </View>
-          <View style={{marginBottom: 10}}>
-            <Text style={Style.txt14_black}>
+          <View style={{ marginBottom: 10 }}>
+            <Text style={Style.txt14_white}>
               Số điện thoại:{' '}
               {isEditing ? editedUserData?.phoneNumber : dataUser.phoneNumber}
             </Text>
@@ -115,7 +115,7 @@ const ProfileScreen: React.FC = () => {
 
       {isEditing && editedUserData && (
         <View>
-          <Text style={[Style.txt16_black_bold, Style.mv12]}>
+          <Text style={[Style.txt16_white_bold, Style.mv12]}>
             Chỉnh sửa thông tin
           </Text>
           <TextInput
@@ -175,7 +175,7 @@ const ProfileScreen: React.FC = () => {
                 borderRadius: 5,
                 alignItems: 'center',
               }}>
-              <Text style={{color: 'white'}}>Lưu</Text>
+              <Text style={{ color: 'white' }}>Lưu</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -190,7 +190,7 @@ const ProfileScreen: React.FC = () => {
               borderRadius: 5,
               alignItems: 'center',
             }}>
-            <Text style={{color: 'white'}}>
+            <Text style={{ color: 'white' }}>
               {isEditing ? 'Hủy' : 'Chỉnh sửa'}
             </Text>
           </View>

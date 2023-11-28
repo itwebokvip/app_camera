@@ -8,6 +8,7 @@ export enum STORAGE_KEYS {
   token = 'token',
   expired = 'expired',
   account = 'account',
+  timeZoneId = 'timeZoneId',
 }
 
 const setItem = async (key: STORAGE_KEYS, value: any) => {

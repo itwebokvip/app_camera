@@ -1,4 +1,4 @@
-import {Style, colors, sizes} from 'core';
+import { Style, colors, sizes } from 'core';
 import * as React from 'react';
 import {
   View,
@@ -7,21 +7,22 @@ import {
   ViewStyle,
   TextStyle,
   TouchableOpacity,
+  ImageBackground,
 } from 'react-native';
 import StatusBarView from './StatusBarView';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {goReset, goScreen} from 'helpers/navigation';
-import {UserContext} from 'contexts';
-import {Menu, MenuItem} from 'react-native-material-menu';
-import {KeychainManager} from 'helpers/keychain';
+import { goReset, goScreen } from 'helpers/navigation';
+import { UserContext } from 'contexts';
+import { Menu, MenuItem } from 'react-native-material-menu';
+import { KeychainManager } from 'helpers/keychain';
 
 interface Props {
   children: string;
 }
 
-export function DemoTitle({children}: Props) {
+export function DemoTitle({ children }: Props) {
   const [isDropdownVisible, setIsDropdownVisible] = React.useState(false);
-  const {user, logoutUser} = React.useContext(UserContext);
+  const { user, logoutUser } = React.useContext(UserContext);
   const handleDropdownPress = () => {
     setIsDropdownVisible(!isDropdownVisible);
   };
@@ -42,19 +43,11 @@ export function DemoTitle({children}: Props) {
 
   return (
     <View style={styles.container}>
-      <StatusBarView lightContent backgroundColor={colors.bluePrimary} />
+      <StatusBarView lightContent backgroundColor={colors.black} />
       <View style={[Style.w100, Style.block_center]}>
-        <Text style={styles.text}>{children}</Text>
-        {/* <TouchableOpacity
-          style={{ position: 'absolute', right: sizes.s30 }}
-          onPress={() => goScreen('createProgram')}>
-          <MaterialCommunityIcons
-            name="plus-box"
-            size={sizes.s30}
-            color={'white'}
-          />
-        </TouchableOpacity> */}
-        <View style={{position: 'absolute', right: 2}}>
+        {/* <Text style={styles.text}>{children}</Text> */}
+        <ImageBackground style={{ width: 120, height: 60 }} source={require('../assets/images/okvip-dark.jpg')} resizeMethod='resize' />
+        <View style={{ position: 'absolute', right: 2 }}>
           <Menu
             visible={isDropdownVisible}
             anchor={
@@ -113,7 +106,7 @@ const styles = StyleSheet.create<Styles>({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: sizes.s20,
-    backgroundColor: colors.bluePrimary,
+    backgroundColor: colors.black,
   },
   text: {
     fontSize: 24,
