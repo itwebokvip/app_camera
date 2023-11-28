@@ -33,8 +33,6 @@ import { getUTCTime, uploadMultiFiles, uploadMultiImageInfo } from 'service ';
 
 const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   const [data, setData] = useState<Asset[]>([]);
-  const [shouldLoadTimeImage, setShouldLoadTimeImage] = useState(true);
-
   const [refsArray, setRefsArray] = useState<any>([]);
   const [address, setAddress] = React.useState<any>(null);
   const [timeZone, setTimeZone] = React.useState<any>();
@@ -48,7 +46,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
     setRefsArray(data.map(() => React.createRef<any>()));
   }, [data]);
 
-  const requestLocation = async () => {
+  const requestLocation = useCallback(async () => {
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 30000,
@@ -91,21 +89,18 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
         console.error('Lỗi khi gửi yêu cầu:', error);
         ShowToast('error', 'Thông báo', 'Lỗi lấy vị trí hiện tại!');
       });
-  };
-
-  useEffect(() => {
-    requestLocation();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    console.log('LAY GIA TRI: ' + timeZone);
+    requestLocation();
+  }, [requestLocation]);
+
+  useEffect(() => {
+    console.log('LAY GIA TRI 111: ' + timeZone);
   }, [timeZone]);
 
   const getTimeZone = (latitude: number, longitude: number) => {
-    console.log(`THONG TIN ${latitude} VÀ ${longitude}`);
     const mapUrl = `https://maps.googleapis.com/maps/api/timezone/json?location=${latitude},${longitude}&timestamp=${Date.now() / 1000}&key=${GOOGLE_MAP_API_KEY}`;
-    console.log(mapUrl);
     axios
       .get(mapUrl)
       .then((response) => {
@@ -123,15 +118,17 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
     setData(oldData => oldData.filter((_, i) => i !== index));
   };
 
-  const formatDateWithTimeZone = async (dateTimeString: string, timeZoneId: string) => {
-    console.log(`TIME:  ${dateTimeString}  TIMEZONE:  ${timeZoneId}`);
-    if (timeZoneId == null) {
-      return utcTime;
-    } else {
-      const formattedDateTime = moment(dateTimeString).tz(timeZoneId).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
-      return formattedDateTime;
-    }
-  };
+  const formatDateWithTimeZone = useCallback(
+    async (dateTimeString: string, timeZoneId: string) => {
+      console.log(`TIME:  ${dateTimeString}  TIMEZONE:  ${timeZoneId}`);
+      if (timeZoneId == null) {
+        return utcTime;
+      } else {
+        const formattedDateTime = moment(dateTimeString).tz(timeZoneId).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+        return formattedDateTime;
+      }
+    }, [utcTime]
+  );
 
   const renderItem = useCallback(
     (info: ListRenderItemInfo<Asset>) => {
@@ -191,23 +188,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
     [],
   );
 
-  const onImagePickerResult = useCallback(
-    async (response: ImagePickerResponse) => {
-      if (response?.assets) {
-        let newData = [...data];
-        newData = newData.concat(response?.assets);
-        await loadTimeImage();
-        setData(newData);
-      } else if (response.errorCode) {
-        Alert.alert('Thông báo', response.errorCode);
-      } else if (response.errorMessage) {
-        Alert.alert('Thông báo', response.errorMessage);
-      }
-    },
-    [data],
-  );
-
-  const loadTimeImage = async () => {
+  const loadTimeImage = useCallback(async () => {
     try {
       console.log('BEFORE loadTimeImage - TIMEZONE: ' + JSON.stringify(timeZone));
       if (timeZone == null) {
@@ -225,7 +206,23 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
     } catch (error) {
       console.log('ERROR:  ' + error);
     }
-  };
+  }, [deviceUtcOffset, formatDateWithTimeZone, timeZone]);
+
+  const onImagePickerResult = useCallback(
+    async (response: ImagePickerResponse) => {
+      if (response?.assets) {
+        let newData = [...data];
+        newData = newData.concat(response?.assets);
+        await loadTimeImage();
+        setData(newData);
+      } else if (response.errorCode) {
+        Alert.alert('Thông báo', response.errorCode);
+      } else if (response.errorMessage) {
+        Alert.alert('Thông báo', response.errorMessage);
+      }
+    },
+    [data, loadTimeImage],
+  );
 
   const onTakeImage = useCallback(() => {
     Permissions.camera(() => {
