@@ -33,6 +33,7 @@ import {getUTCTime, uploadMultiFiles, uploadMultiImageInfo} from 'service ';
 
 const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   const [data, setData] = useState<Asset[]>([]);
+
   const [refsArray, setRefsArray] = useState<any>([]);
   const [address, setAddress] = React.useState<any>(null);
   const [timeZone, setTimeZone] = React.useState<any>();
@@ -46,7 +47,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
     setRefsArray(data.map(() => React.createRef<any>()));
   }, [data]);
 
-  const requestLocation = useCallback(async () => {
+  const requestLocation = async () => {
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 30000,
@@ -89,17 +90,19 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
         console.error('Lỗi khi gửi yêu cầu:', error);
         ShowToast('error', 'Thông báo', 'Lỗi lấy vị trí hiện tại!');
       });
-  }, []);
+  };
 
   useEffect(() => {
     requestLocation();
-  }, [requestLocation]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    console.log('LAY GIA TRI 111: ' + timeZone);
+    console.log('LAY GIA TRI: ' + timeZone);
   }, [timeZone]);
 
   const getTimeZone = (latitude: number, longitude: number) => {
+    console.log(`THONG TIN ${latitude} VÀ ${longitude}`);
     const mapUrl = `https://maps.googleapis.com/maps/api/timezone/json?location=${latitude},${longitude}&timestamp=${
       Date.now() / 1000
     }&key=${GOOGLE_MAP_API_KEY}`;
@@ -108,7 +111,6 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
       .then(response => {
         const responseData = response.data;
         const dataZone = responseData.timeZoneId as any;
-        console.log('dataZone: >>>', dataZone);
         setTimeZone(dataZone);
       })
       .catch((error: any) => {
@@ -205,7 +207,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
         const uploadResponse = await getUTCTime();
         const apiDateTime = moment.utc(uploadResponse.data.data);
         const localDateTime = apiDateTime.utcOffset(deviceUtcOffset);
-        const formattedDateTime = formatDateWithTimeZone(
+        const formattedDateTime = await formatDateWithTimeZone(
           localDateTime.toString(),
           timeZone,
         );
@@ -221,9 +223,9 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   const onImagePickerResult = useCallback(
     async (response: ImagePickerResponse) => {
       if (response?.assets) {
+        await loadTimeImage();
         let newData = [...data];
         newData = newData.concat(response?.assets);
-        await loadTimeImage();
         setData(newData);
       } else if (response.errorCode) {
         Alert.alert('Thông báo', response.errorCode);
