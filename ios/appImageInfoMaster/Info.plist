@@ -44,7 +44,7 @@
 	<key>NSCalendarsUsageDescription</key>
 	<string>Let me use your calendars</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Let me use the camera</string>
+	<string>Application requires access to your Camera in order to take pictures for the programme's content</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Let me use your contacts</string>
 	<key>NSFaceIDUsageDescription</key>
@@ -57,7 +57,7 @@
 		<string>Let me use your precise location temporarily</string>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>We use your location in order to identify the location you capture the daily programme's picture before uploading to programme's content.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Let me use the microphone</string>
 	<key>NSMotionUsageDescription</key>
