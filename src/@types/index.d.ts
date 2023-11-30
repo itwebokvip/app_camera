@@ -1,7 +1,7 @@
 declare module 'react-native-settings';
 declare module 'root-stack-params' {
-  import {Program} from 'models';
-  import {StackScreenProps} from '@react-navigation/stack';
+  import { Program } from 'models';
+  import { StackScreenProps } from '@react-navigation/stack';
 
   export type RootStackParamList = {
     auth: undefined;
@@ -20,6 +20,7 @@ declare module 'root-stack-params' {
       detailedProgram: Program;
     };
     editProgramImage: undefined;
+    detailImageZoom: undefined;
     profileScreen: undefined;
   };
 

@@ -88,24 +88,24 @@ const ProfileScreen: React.FC = () => {
       {dataUser && (
         <View style={{ marginBottom: 20 }}>
           <View style={{ marginBottom: 10 }}>
-            <Text style={Style.txt14_white}>
+            <Text style={Style.txt14_black}>
               Tên đăng nhập:{' '}
               {isEditing ? editedUserData?.username : dataUser.username}
             </Text>
           </View>
           <View style={{ marginBottom: 10 }}>
-            <Text style={Style.txt14_white}>
+            <Text style={Style.txt14_black}>
               Email: {isEditing ? editedUserData?.email : dataUser.email}
             </Text>
           </View>
           <View style={{ marginBottom: 10 }}>
-            <Text style={Style.txt14_white}>
+            <Text style={Style.txt14_black}>
               Họ và tên:{' '}
               {isEditing ? editedUserData?.fullName : dataUser.fullName}
             </Text>
           </View>
           <View style={{ marginBottom: 10 }}>
-            <Text style={Style.txt14_white}>
+            <Text style={Style.txt14_black}>
               Số điện thoại:{' '}
               {isEditing ? editedUserData?.phoneNumber : dataUser.phoneNumber}
             </Text>
@@ -115,7 +115,7 @@ const ProfileScreen: React.FC = () => {
 
       {isEditing && editedUserData && (
         <View>
-          <Text style={[Style.txt16_white_bold, Style.mv12]}>
+          <Text style={[Style.txt16_black_bold, Style.mv12]}>
             Chỉnh sửa thông tin
           </Text>
           <TextInput

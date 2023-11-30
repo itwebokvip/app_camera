@@ -58,7 +58,7 @@ const MyTabBar: React.FC<MaterialTopTabBarProps> = ({
               <Text
                 style={[
                   styles.label,
-                  isFocused && { color: colors.semanticsWarning },
+                  isFocused && { color: colors.white },
                 ]}>
                 {label}
               </Text>

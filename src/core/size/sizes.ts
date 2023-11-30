@@ -1,9 +1,21 @@
-import {Dimensions, Platform} from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 
 export let screenWidth: number = Dimensions.get('screen').width;
 export let screenHeight: number = Dimensions.get('screen').height;
 export let windowWidth: number = Dimensions.get('window').width;
 export let windowHeight: number = Dimensions.get('window').height;
+
+const { width: viewportWidth } = Dimensions.get('window');
+
+function wp(percentage: number) {
+  const value = (percentage * viewportWidth) / 100;
+  return Math.round(value);
+}
+const slideWidth = wp(75);
+const itemHorizontalMargin = wp(2);
+
+export const sliderWidth = viewportWidth;
+export const itemWidth = slideWidth + itemHorizontalMargin * 2;
 
 interface DefaultSize {
   width: number;

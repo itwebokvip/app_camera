@@ -144,7 +144,7 @@ export default History;
 const stylesSheets = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.black,
+    backgroundColor: colors.white,
   },
   itemList: {
     ...Style.row,

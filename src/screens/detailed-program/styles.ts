@@ -7,40 +7,48 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.backgroundScreen,
   },
+  containerDetail: {
+    flex: 1,
+    backgroundColor: colors.white,
+  },
   tabBar: {
     ...Style.flex,
     alignItems: 'center',
+    marginHorizontal: sizes.s18,
     paddingVertical: sizes.s13,
   },
   activeTabBar: {
-    backgroundColor: colors.white,
-    borderTopLeftRadius: sizes.s12,
-    borderTopRightRadius: sizes.s12,
-    borderBottomLeftRadius: sizes.s12,
-    borderBottomRightRadius: sizes.s12,
+    backgroundColor: colors.semanticsWarning,
+    borderRadius: sizes.s50,
   },
   label: {
     ...Style.txt16_bold,
-    color: colors.semanticsWarning,
+    fontWeight: '700',
+    color: colors.black,
   },
   topTabContainer: {
     overflow: 'hidden',
     flexDirection: 'row',
-    // borderBottomLeftRadius: sizes.s12,
-    // borderBottomRightRadius: sizes.s12,
-    backgroundColor: colors.black,
+    backgroundColor: colors.white,
+  },
+  containerImageRadius: {
+    borderRadius: sizes.s20,
+    elevation: 5,
+    shadowColor: colors.gray100,
   },
   imageContainer: {
+    justifyContent: 'center',
     alignItems: 'center',
     marginVertical: sizes.s14,
+    marginRight: sizes.s16,
   },
   image: {
-    width: 400,
+    width: 350,
     position: 'relative',
     height: win.width / 0.98,
   },
   detailedImageTxt: {
-    color: 'red',
+    color: 'white',
     padding: sizes.s14,
     fontWeight: '600',
   },
@@ -48,6 +56,13 @@ const styles = StyleSheet.create({
     top: sizes.s15,
     right: sizes.s25,
     position: 'absolute',
+  },
+
+  carouselContainer: {
+    marginTop: sizes.s10,
+  },
+  carouselContentContainer: {
+    paddingHorizontal: sizes.s10,
   },
 });
 

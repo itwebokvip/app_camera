@@ -1,12 +1,12 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Text,
   View,
-  FlatList,
   ImageBackground,
   TouchableOpacity,
   ListRenderItemInfo,
+  Animated,
 } from 'react-native';
 import axios from 'axios';
 import moment from 'moment-timezone';
@@ -17,19 +17,19 @@ import {
 } from 'react-native-image-picker';
 import ViewShot from 'react-native-view-shot';
 import GetLocation from 'react-native-get-location';
-import {CameraRoll} from '@react-native-camera-roll/camera-roll';
+import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
 import styles from '../styles';
-import {ImageInfoPayload} from 'models';
-import {Style, colors, sizes} from 'core';
+import { ImageInfoPayload } from 'models';
+import { Style, colors, sizes } from 'core';
 import ShowToast from 'helpers/ShowToast';
-import {Button, Loading} from 'components';
+import { Button, Loading } from 'components';
 import SubmitDate from 'common/submitDate';
 import Permissions from 'utils/Permissions';
-import {ScreenProps} from 'root-stack-params';
-import {GOOGLE_MAP_API_KEY, Sleep} from 'helpers/common';
-import {getUTCTime, uploadMultiFiles, uploadMultiImageInfo} from 'service ';
+import { ScreenProps } from 'root-stack-params';
+import { GOOGLE_MAP_API_KEY, Sleep } from 'helpers/common';
+import { getUTCTime, uploadMultiFiles, uploadMultiImageInfo } from 'service ';
+import { goScreen } from 'helpers/navigation';
 
 const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   const [data, setData] = useState<Asset[]>([]);
@@ -98,24 +98,27 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   }, []);
 
   useEffect(() => {
-    console.log('LAY GIA TRI: ' + timeZone);
+    console.log('GIA TRI: ' + timeZone);
   }, [timeZone]);
 
   const getTimeZone = (latitude: number, longitude: number) => {
+    Loading.show();
     console.log(`THONG TIN ${latitude} VÀ ${longitude}`);
-    const mapUrl = `https://maps.googleapis.com/maps/api/timezone/json?location=${latitude},${longitude}&timestamp=${
-      Date.now() / 1000
-    }&key=${GOOGLE_MAP_API_KEY}`;
+    const mapUrl = `https://maps.googleapis.com/maps/api/timezone/json?location=${latitude},${longitude}&timestamp=${Date.now() / 1000
+      }&key=${GOOGLE_MAP_API_KEY}`;
     axios
       .get(mapUrl)
       .then(response => {
         const responseData = response.data;
         const dataZone = responseData.timeZoneId as any;
         setTimeZone(dataZone);
+        ShowToast('success', 'Thông báo', 'Xác thực vùng vị trí!');
+        Loading.hide();
       })
       .catch((error: any) => {
         console.error('Lỗi khi gửi yêu cầu:', error);
         ShowToast('error', 'Thông báo', 'Lỗi lấy vị trí hiện tại!');
+        Loading.hide();
       });
   };
 
@@ -140,18 +143,24 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
 
   const renderItem = useCallback(
     (info: ListRenderItemInfo<Asset>) => {
-      const {index, item} = info;
+      const { index, item } = info;
+      const param = {
+        time: timeFormat,
+        currAdd: address,
+      };
       return (
-        <View key={index} style={styles.imageContainer}>
-          <View style={styles.container}>
+        <TouchableOpacity onPress={() => {
+          goScreen('detailImageZoom', { item, infos: param });
+        }}>
+          <View key={index} style={[styles.imageContainer, styles.containerImageRadius]}>
             <ViewShot
               ref={refsArray[index]}
-              options={{format: 'png', quality: 0.8}}>
+              options={{ format: 'png', quality: 0.8 }}>
               <ImageBackground
-                resizeMode="cover"
-                resizeMethod="scale"
-                style={styles.image}
-                source={{uri: item.uri}}>
+                resizeMode="contain"
+                resizeMethod="resize"
+                style={[styles.image]}
+                source={{ uri: item.uri }}>
                 <View style={Style.p8}>
                   {timeFormat != null ? (
                     <Text style={styles.detailedImageTxt}>{timeFormat}</Text>
@@ -185,14 +194,15 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
               </ImageBackground>
             </ViewShot>
           </View>
-        </View>
+        </TouchableOpacity >
+
       );
     },
-    [refsArray, timeFormat, utcTime?.data.data, addressImage, isSubmitted],
+    [timeFormat, address, refsArray, utcTime?.data.data, addressImage, isSubmitted],
   );
 
   const renderSeparator = useCallback(
-    () => <View style={{height: sizes.s24}} />,
+    () => <View style={{ height: sizes.s24 }} />,
     [],
   );
 
@@ -207,6 +217,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
         const uploadResponse = await getUTCTime();
         const apiDateTime = moment.utc(uploadResponse.data.data);
         const localDateTime = apiDateTime.utcOffset(deviceUtcOffset);
+        console.log('CHECK TIME:  ' + localDateTime.toString());
         const formattedDateTime = await formatDateWithTimeZone(
           localDateTime.toString(),
           timeZone,
@@ -214,6 +225,8 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
         console.log(formattedDateTime);
         setUtcTime(uploadResponse.data);
         setTimeFormat(formattedDateTime);
+
+
       }
     } catch (error) {
       console.log('ERROR:  ' + error);
@@ -223,10 +236,11 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   const onImagePickerResult = useCallback(
     async (response: ImagePickerResponse) => {
       if (response?.assets) {
-        await loadTimeImage();
         let newData = [...data];
         newData = newData.concat(response?.assets);
         setData(newData);
+
+        await loadTimeImage();
       } else if (response.errorCode) {
         Alert.alert('Thông báo', response.errorCode);
       } else if (response.errorMessage) {
@@ -312,16 +326,24 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
       }
     }
   }, [address, data, refsArray, utcTime?.data.data]);
-
+  const scrollX = useRef(new Animated.Value(0)).current;
   return (
     <View style={Style.container}>
       <View style={Style.top20}>
         <Button title="Chụp ảnh" onPress={onTakeImage} />
-        <View style={{height: sizes.s10}} />
-        <Button type="bluePrimary" title="Gửi" onPress={onSubmit} />
+        <View style={{ height: sizes.s10 }} />
+        {data && (<Button type="bluePrimary" title="Gửi" onPress={onSubmit} />)}
       </View>
-      <FlatList
+      <Animated.FlatList
         data={data}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        snapToInterval={200}
+        decelerationRate={'fast'}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+          { useNativeDriver: true }
+        )}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
         ItemSeparatorComponent={renderSeparator}
