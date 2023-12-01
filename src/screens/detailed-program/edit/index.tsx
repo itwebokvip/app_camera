@@ -12,14 +12,14 @@ const UpdateImageProgram: React.FC<any> = ({ route }: any) => {
     <ScrollView style={Style.container}>
       <View style={styles.itemContainer}>
         <View style={styles.infoContainer}>
-          <Text style={[Style.txt14_white, Style.p8]}>
-            <Text style={Style.txt16_bold_blue}>Thời gian gửi: </Text>
+          <Text style={[Style.txt10, Style.p8]}>
+            <Text style={Style.txt10}>Thời gian gửi: </Text>
             {moment(route.params.data.createdTime).format(
               'YYYY-MM-DDTHH:mm:ss.SSSZ',
             )}
           </Text>
-          <Text style={[Style.txt14_white, Style.p8]}>
-            <Text style={Style.txt16_bold_blue}>Địa điểm: </Text>
+          <Text style={[Style.txt10, Style.p8]}>
+            <Text style={Style.txt10}>Địa điểm: </Text>
             {route.params.data.location}.
           </Text>
         </View>

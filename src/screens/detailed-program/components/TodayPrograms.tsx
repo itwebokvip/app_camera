@@ -31,8 +31,12 @@ import { GOOGLE_MAP_API_KEY, Sleep } from 'helpers/common';
 import { getUTCTime, uploadMultiFiles, uploadMultiImageInfo } from 'service ';
 import { goScreen } from 'helpers/navigation';
 
+interface IsAsset extends Asset {
+  time?: string | any,
+}
+
 const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
-  const [data, setData] = useState<Asset[]>([]);
+  const [data, setData] = useState<IsAsset[]>([]);
 
   const [refsArray, setRefsArray] = useState<any>([]);
   const [address, setAddress] = React.useState<any>(null);
@@ -128,7 +132,6 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
 
   const formatDateWithTimeZone = useCallback(
     async (dateTimeString: string, timeZoneId: string) => {
-      console.log(`TIME:  ${dateTimeString}  TIMEZONE:  ${timeZoneId}`);
       if (timeZoneId == null) {
         return utcTime;
       } else {
@@ -142,12 +145,13 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   );
 
   const renderItem = useCallback(
-    (info: ListRenderItemInfo<Asset>) => {
+    (info: ListRenderItemInfo<IsAsset>) => {
       const { index, item } = info;
       const param = {
         time: timeFormat,
         currAdd: address,
       };
+
       return (
         <TouchableOpacity onPress={() => {
           goScreen('detailImageZoom', { item, infos: param });
@@ -163,7 +167,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
                 source={{ uri: item.uri }}>
                 <View style={Style.p8}>
                   {timeFormat != null ? (
-                    <Text style={styles.detailedImageTxt}>{timeFormat}</Text>
+                    <Text style={styles.detailedImageTxt}>{'time' in item ? item.time : ''}</Text>
                   ) : (
                     <Text style={styles.detailedImageTxt}>
                       {utcTime?.data.data}
@@ -206,7 +210,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
     [],
   );
 
-  const loadTimeImage = useCallback(async () => {
+  const loadTimeImage = useCallback(async (dataAsset: IsAsset[]) => {
     try {
       console.log(
         'BEFORE loadTimeImage - TIMEZONE: ' + JSON.stringify(timeZone),
@@ -225,22 +229,26 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
         console.log(formattedDateTime);
         setUtcTime(uploadResponse.data);
         setTimeFormat(formattedDateTime);
-
-
+        dataAsset[dataAsset.length - 1].time = formattedDateTime;
+        setData(dataAsset);
+        console.log('LOG DATA:  ' + JSON.stringify(data));
+        Loading.hide();
       }
     } catch (error) {
       console.log('ERROR:  ' + error);
+      Loading.hide();
     }
-  }, [deviceUtcOffset, formatDateWithTimeZone, timeZone]);
+  }, [deviceUtcOffset, formatDateWithTimeZone, timeZone, data]);
 
   const onImagePickerResult = useCallback(
     async (response: ImagePickerResponse) => {
       if (response?.assets) {
+        Loading.show();
         let newData = [...data];
         newData = newData.concat(response?.assets);
-        setData(newData);
+        //setData(newData);
 
-        await loadTimeImage();
+        await loadTimeImage(newData);
       } else if (response.errorCode) {
         Alert.alert('Thông báo', response.errorCode);
       } else if (response.errorMessage) {

@@ -147,8 +147,6 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
   );
 
   const loadTimeImage = async () => {
-    // const uploadResponse = await getUTCTime();
-    // setUtcTime(uploadResponse.data);
     const uploadResponse = await getUTCTime();
     const apiDateTime = moment.utc(uploadResponse.data.data);
     const localDateTime = apiDateTime.utcOffset(deviceUtcOffset);
@@ -233,9 +231,6 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
                       </Text>
                     ) : (
                       <Text style={styles.detailedImageTxt}>
-                        {/* {moment(params?.data?.createdTime).format(
-                          'YYYY-MM-DDTHH:mm:ss.SSSZ',
-                        )} */}
                         {formatDateWithTimeZone(params?.data?.createdTime, timeZone.timeZoneId)}
                       </Text>
                     )}

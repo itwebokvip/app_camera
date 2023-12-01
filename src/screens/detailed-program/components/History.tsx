@@ -15,7 +15,7 @@ import { Histories } from 'models';
 import { Style, sizes, colors } from 'core';
 import { goScreen } from 'helpers/navigation';
 import moment from 'moment-timezone';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Feather from 'react-native-vector-icons/Feather';
 import { EmptyList } from 'components';
 import { IMAGE_DOMAIN } from 'helpers/common';
 import { ScreenProps } from 'root-stack-params';
@@ -57,7 +57,7 @@ const History: React.FC<ScreenProps<'detailedProgram'>> = () => {
 
   const renderItem = useCallback(
     (info: ListRenderItemInfo<Histories>) => {
-      const { index, item } = info;
+      const { item } = info;
       const dataUpdate = {
         data: item,
       };
@@ -70,43 +70,30 @@ const History: React.FC<ScreenProps<'detailedProgram'>> = () => {
         date1.getTime() >= new Date(timeStampYesterday * 1000).getTime();
 
       return (
-        <TouchableOpacity style={stylesSheets.itemList} key={index}>
-          <View style={[Style.flex, Style.left10]}>
-            <Text numberOfLines={2} style={Style.txt14_blue}>
-              {item.location}
-            </Text>
-            <Image
-              style={{
-                width: sizes.s100,
-                height: sizes.s100,
-                marginTop: sizes.s10,
-              }}
-              source={{ uri: IMAGE_DOMAIN + '/' + item.path }}
-              resizeMode="contain"
-            />
-            <Text style={[Style.txt10_gray600, Style.pv8]}>
-              Thời gian:{' '}
-              {moment(item.createdTime).format('YYYY-MM-DDTHH:mm:ss.SSSZ')}
-              {/* {formatDateWithTimeZone(item.createdTime)} */}
-            </Text>
-            <Text style={[Style.txt10_gray600, Style.pv8]}>
-              Thời gian gửi:{' '}
-              {moment(item.shootTime).format('YYYY-MM-DDTHH:mm:ss.SSSZ')}
-            </Text>
+        <View style={stylesSheets.containers}>
+          <View style={{ flexDirection: 'row' }}>
+            <View style={{ flex: 1 }}>
+              <Image
+                style={{
+                  width: sizes.s100,
+                  height: sizes.s100,
+                  marginTop: sizes.s10,
+                }} source={{ uri: IMAGE_DOMAIN + '/' + item.path }} resizeMode="contain" />
+            </View>
+            <View style={{ flex: 2, padding: sizes.s2 }}>
+              <Text numberOfLines={2} style={Style.txt14_blue}>{item.location}</Text>
+              <Text style={stylesSheets.text}>Thời gian: {moment(item.createdTime).format('YYYY-MM-DDTHH:mm:ss.SSSZ')}</Text>
+              <Text style={stylesSheets.text}>Thời gian gửi: {moment(item.shootTime).format('YYYY-MM-DDTHH:mm:ss.SSSZ')}</Text>
+            </View>
           </View>
           {isEditable && (
-            <View style={[Style.row, Style.ph8, { gap: sizes.s15 }]}>
-              <TouchableOpacity
-                onPress={() => goScreen('editProgramImage', dataUpdate)}>
-                <MaterialCommunityIcons
-                  size={sizes.s20}
-                  name="pencil"
-                  color={colors.gray1000}
-                />
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity style={stylesSheets.editButton} onPress={() => goScreen('editProgramImage', dataUpdate)}>
+              <Feather name="edit" size={sizes.s13} color={colors.primaryE1} style={{ justifyContent: 'center', alignSelf: 'center', marginRight: sizes.s5 }} />
+              <Text style={{ color: colors.primaryE1 }}>Chỉnh sửa</Text>
+            </TouchableOpacity>
           )}
-        </TouchableOpacity>
+
+        </View>
       );
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -152,5 +139,33 @@ const stylesSheets = StyleSheet.create({
     paddingVertical: sizes.s12,
     backgroundColor: colors.white,
     borderColor: colors.bluePrimary,
+  },
+  containers: {
+    flexDirection: 'column',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderRadius: sizes.s8,
+    borderColor: colors.gray400,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+    marginRight: 16,
+  },
+  textContainer: {
+    flex: 1,
+  },
+  text: {
+    fontSize: sizes.s12,
+    marginBottom: 8,
+    color: colors.semanticsWarning,
+  },
+  editButton: {
+    flexDirection: 'row',
+    alignSelf: 'flex-end',
+    padding: 2,
   },
 });
