@@ -1,5 +1,5 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { Alert, Text, View, ImageBackground } from 'react-native';
+import React, {useCallback, useRef, useState} from 'react';
+import {Alert, Text, View, ImageBackground} from 'react-native';
 
 import axios from 'axios';
 import moment from 'moment-timezone';
@@ -11,18 +11,18 @@ import {
 import ViewShot from 'react-native-view-shot';
 import GetLocation from 'react-native-get-location';
 
-import { Button, Loading } from 'components';
+import {Button, Loading} from 'components';
 
 import styles from '../styles';
-import { Style, sizes } from 'core';
+import {Style, sizes} from 'core';
 import ShowToast from 'helpers/ShowToast';
-import { goBack } from 'helpers/navigation';
+import {goBack} from 'helpers/navigation';
 import Permissions from 'utils/Permissions';
-import { getUTCTime, updateImageInfos } from 'service ';
-import { KeychainManager, STORAGE_KEYS } from 'helpers/keychain';
-import { GOOGLE_MAP_API_KEY, IMAGE_DOMAIN } from 'helpers/common';
+import {getUTCTime, updateImageInfos} from 'service ';
+import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
+import {GOOGLE_MAP_API_KEY, IMAGE_DOMAIN} from 'helpers/common';
 
-const Resubmit: React.FC<any> = ({ params }: any) => {
+const Resubmit: React.FC<any> = ({params}: any) => {
   const [data, setData] = useState<Asset>();
   const [address, setAddress] = React.useState<any>(null);
   const [timeZone, setTimeZone] = useState<any>();
@@ -58,11 +58,11 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
           .then(response => {
             const mapData = response.data;
             const currentAddress =
-              mapData.results[0].address_components[2].long_name +
+              mapData.results[0].address_components[2]?.long_name +
               ',' +
-              mapData.results[0].address_components[3].long_name +
+              mapData.results[0].address_components[3]?.long_name +
               ',' +
-              mapData.results[0].address_components[4].long_name;
+              mapData.results[0].address_components[4]?.long_name;
             getTimeZone(latitude, longitude);
             setAddressImage(mapData.results[0]);
             setAddress(currentAddress);
@@ -79,7 +79,9 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
   };
 
   const getTimeZone = (latitude: number, longitude: number) => {
-    const mapUrl = `https://maps.googleapis.com/maps/api/timezone/json?location=${latitude},${longitude}&timestamp=${Date.now() / 1000}&key=${GOOGLE_MAP_API_KEY}`;
+    const mapUrl = `https://maps.googleapis.com/maps/api/timezone/json?location=${latitude},${longitude}&timestamp=${
+      Date.now() / 1000
+    }&key=${GOOGLE_MAP_API_KEY}`;
     axios
       .get(mapUrl)
       .then(response => {
@@ -92,9 +94,14 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
       });
   };
 
-  const formatDateWithTimeZone = (dateTimeString: string, timeZoneId: string) => {
+  const formatDateWithTimeZone = (
+    dateTimeString: string,
+    timeZoneId: string,
+  ) => {
     console.log(`Day la ${dateTimeString}  +  ${timeZoneId}`);
-    const formattedDateTime = moment(dateTimeString).tz(timeZoneId).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+    const formattedDateTime = moment(dateTimeString)
+      .tz(timeZoneId)
+      .format('YYYY-MM-DDTHH:mm:ss.SSSZ');
     return formattedDateTime;
   };
 
@@ -152,7 +159,10 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
     const localDateTime = apiDateTime.utcOffset(deviceUtcOffset);
     console.log('TIME API ' + JSON.stringify(uploadResponse));
     console.log('TIME COMPARE ZONE ' + JSON.stringify(localDateTime));
-    const formattedDateTime = formatDateWithTimeZone(localDateTime.toString(), timeZone.timeZoneId);
+    const formattedDateTime = formatDateWithTimeZone(
+      localDateTime.toString(),
+      timeZone.timeZoneId,
+    );
     console.log('FORMAT TIME:  ' + formattedDateTime);
     setUtcTime(uploadResponse.data);
     setTimeFormat(formattedDateTime);
@@ -208,12 +218,12 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
     <View style={Style.container}>
       <View style={Style.top20}>
         <Button title="Thay đổi Hình Ảnh" onPress={onTakeImage} />
-        <View style={{ height: sizes.s10 }} />
+        <View style={{height: sizes.s10}} />
         <Button type="bluePrimary" title="Submit" onPress={onSubmit} />
 
         <View style={styles.imageContainer}>
           <View style={styles.container}>
-            <ViewShot ref={viewShotRef} options={{ format: 'png', quality: 0.8 }}>
+            <ViewShot ref={viewShotRef} options={{format: 'png', quality: 0.8}}>
               <ImageBackground
                 resizeMode="cover"
                 resizeMethod="scale"
@@ -226,12 +236,13 @@ const Resubmit: React.FC<any> = ({ params }: any) => {
                 {data && (
                   <View style={Style.p8}>
                     {timeFormat ? (
-                      <Text style={styles.detailedImageTxt}>
-                        {timeFormat}
-                      </Text>
+                      <Text style={styles.detailedImageTxt}>{timeFormat}</Text>
                     ) : (
                       <Text style={styles.detailedImageTxt}>
-                        {formatDateWithTimeZone(params?.data?.createdTime, timeZone.timeZoneId)}
+                        {formatDateWithTimeZone(
+                          params?.data?.createdTime,
+                          timeZone.timeZoneId,
+                        )}
                       </Text>
                     )}
                     {addressImage ? (

@@ -1,5 +1,5 @@
-import { Style, colors, sizes } from 'core';
-import { StyleSheet, Dimensions } from 'react-native';
+import {Style, colors, sizes} from 'core';
+import {StyleSheet, Dimensions} from 'react-native';
 
 const win = Dimensions.get('window');
 const styles = StyleSheet.create({

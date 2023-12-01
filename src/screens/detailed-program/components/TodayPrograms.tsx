@@ -1,12 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Alert,
   Text,
   View,
   ImageBackground,
   TouchableOpacity,
-  ListRenderItemInfo,
-  Animated,
+  ScrollView,
 } from 'react-native';
 import axios from 'axios';
 import moment from 'moment-timezone';
@@ -17,22 +16,22 @@ import {
 } from 'react-native-image-picker';
 import ViewShot from 'react-native-view-shot';
 import GetLocation from 'react-native-get-location';
-import { CameraRoll } from '@react-native-camera-roll/camera-roll';
+import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import styles from '../styles';
-import { ImageInfoPayload } from 'models';
-import { Style, colors, sizes } from 'core';
+import {ImageInfoPayload} from 'models';
+import {Style, colors, sizes} from 'core';
 import ShowToast from 'helpers/ShowToast';
-import { Button, Loading } from 'components';
+import {Button, Loading} from 'components';
 import SubmitDate from 'common/submitDate';
 import Permissions from 'utils/Permissions';
-import { ScreenProps } from 'root-stack-params';
-import { GOOGLE_MAP_API_KEY, Sleep } from 'helpers/common';
-import { getUTCTime, uploadMultiFiles, uploadMultiImageInfo } from 'service ';
-import { goScreen } from 'helpers/navigation';
+import {ScreenProps} from 'root-stack-params';
+import {GOOGLE_MAP_API_KEY, Sleep} from 'helpers/common';
+import {getUTCTime, uploadMultiFiles, uploadMultiImageInfo} from 'service ';
+import {goScreen} from 'helpers/navigation';
 
 interface IsAsset extends Asset {
-  time?: string | any,
+  time?: string | any;
 }
 
 const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
@@ -52,6 +51,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   }, [data]);
 
   const requestLocation = async () => {
+    Loading.show();
     GetLocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: 30000,
@@ -75,12 +75,13 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
           .get(mapUrl)
           .then(async response => {
             const mapData = response.data;
+
             const currentAddress =
-              mapData.results[0].address_components[2].long_name +
+              mapData.results[0]?.address_components[2]?.long_name +
               ',' +
-              mapData.results[0].address_components[3].long_name +
+              mapData.results[0]?.address_components[3]?.long_name +
               ',' +
-              mapData.results[0].address_components[4].long_name;
+              mapData.results[0]?.address_components[4]?.long_name;
             getTimeZone(latitude, longitude);
             setAddressImage(mapData.results[0]);
             setAddress(currentAddress);
@@ -93,6 +94,9 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
       .catch((error: any) => {
         console.error('Lỗi khi gửi yêu cầu:', error);
         ShowToast('error', 'Thông báo', 'Lỗi lấy vị trí hiện tại!');
+      })
+      .finally(() => {
+        Loading.hide();
       });
   };
 
@@ -101,15 +105,12 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    console.log('GIA TRI: ' + timeZone);
-  }, [timeZone]);
-
   const getTimeZone = (latitude: number, longitude: number) => {
     Loading.show();
     console.log(`THONG TIN ${latitude} VÀ ${longitude}`);
-    const mapUrl = `https://maps.googleapis.com/maps/api/timezone/json?location=${latitude},${longitude}&timestamp=${Date.now() / 1000
-      }&key=${GOOGLE_MAP_API_KEY}`;
+    const mapUrl = `https://maps.googleapis.com/maps/api/timezone/json?location=${latitude},${longitude}&timestamp=${
+      Date.now() / 1000
+    }&key=${GOOGLE_MAP_API_KEY}`;
     axios
       .get(mapUrl)
       .then(response => {
@@ -145,29 +146,36 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   );
 
   const renderItem = useCallback(
-    (info: ListRenderItemInfo<IsAsset>) => {
-      const { index, item } = info;
+    (item: IsAsset, index: number) => {
       const param = {
         time: timeFormat,
         currAdd: address,
       };
 
       return (
-        <TouchableOpacity onPress={() => {
-          goScreen('detailImageZoom', { item, infos: param });
-        }}>
-          <View key={index} style={[styles.imageContainer, styles.containerImageRadius]}>
+        <TouchableOpacity
+          key={index}
+          onPress={() => {
+            goScreen('detailImageZoom', {item, infos: param});
+          }}>
+          <View
+            key={index}
+            style={[styles.imageContainer, styles.containerImageRadius]}>
             <ViewShot
               ref={refsArray[index]}
-              options={{ format: 'png', quality: 0.8 }}>
+              options={{format: 'png', quality: 0.8}}>
               <ImageBackground
                 resizeMode="contain"
                 resizeMethod="resize"
                 style={[styles.image]}
-                source={{ uri: item.uri }}>
+                source={{
+                  uri: item.uri,
+                }}>
                 <View style={Style.p8}>
                   {timeFormat != null ? (
-                    <Text style={styles.detailedImageTxt}>{'time' in item ? item.time : ''}</Text>
+                    <Text style={styles.detailedImageTxt}>
+                      {'time' in item ? item.time : ''}
+                    </Text>
                   ) : (
                     <Text style={styles.detailedImageTxt}>
                       {utcTime?.data.data}
@@ -175,12 +183,11 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
                   )}
                   {addressImage && (
                     <Text style={styles.detailedImageTxt}>
-                      {addressImage?.address_components[2].long_name}
+                      {addressImage?.address_components[2]?.long_name}
                       {'\n'}
+                      {addressImage?.address_components[3]?.long_name}
                       {'\n'}
-                      {addressImage?.address_components[3].long_name}
-                      {'\n'}
-                      {addressImage?.address_components[4].long_name}
+                      {addressImage?.address_components[4]?.long_name}
                     </Text>
                   )}
                 </View>
@@ -198,47 +205,50 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
               </ImageBackground>
             </ViewShot>
           </View>
-        </TouchableOpacity >
-
+        </TouchableOpacity>
       );
     },
-    [timeFormat, address, refsArray, utcTime?.data.data, addressImage, isSubmitted],
+    [
+      timeFormat,
+      address,
+      refsArray,
+      utcTime?.data.data,
+      addressImage,
+      isSubmitted,
+    ],
   );
 
-  const renderSeparator = useCallback(
-    () => <View style={{ height: sizes.s24 }} />,
-    [],
-  );
-
-  const loadTimeImage = useCallback(async (dataAsset: IsAsset[]) => {
-    try {
-      console.log(
-        'BEFORE loadTimeImage - TIMEZONE: ' + JSON.stringify(timeZone),
-      );
-      if (timeZone == null) {
-        Alert.alert('Thông báo', 'Sự cố trên hình ảnh của bạn!');
-      } else {
-        const uploadResponse = await getUTCTime();
-        const apiDateTime = moment.utc(uploadResponse.data.data);
-        const localDateTime = apiDateTime.utcOffset(deviceUtcOffset);
-        console.log('CHECK TIME:  ' + localDateTime.toString());
-        const formattedDateTime = await formatDateWithTimeZone(
-          localDateTime.toString(),
-          timeZone,
+  const loadTimeImage = useCallback(
+    async (dataAsset: IsAsset[]) => {
+      try {
+        console.log(
+          'BEFORE loadTimeImage - TIMEZONE: ' + JSON.stringify(timeZone),
         );
-        console.log(formattedDateTime);
-        setUtcTime(uploadResponse.data);
-        setTimeFormat(formattedDateTime);
-        dataAsset[dataAsset.length - 1].time = formattedDateTime;
-        setData(dataAsset);
-        console.log('LOG DATA:  ' + JSON.stringify(data));
+        if (timeZone == null) {
+          Alert.alert('Thông báo', 'Sự cố trên hình ảnh của bạn!');
+        } else {
+          const uploadResponse = await getUTCTime();
+          const apiDateTime = moment.utc(uploadResponse.data.data);
+          const localDateTime = apiDateTime.utcOffset(deviceUtcOffset);
+          const formattedDateTime = await formatDateWithTimeZone(
+            localDateTime.toString(),
+            timeZone,
+          );
+
+          setUtcTime(uploadResponse.data);
+          setTimeFormat(formattedDateTime);
+          dataAsset[dataAsset.length - 1].time = formattedDateTime;
+          setData(dataAsset);
+          console.log('LOG DATA:  ' + JSON.stringify(data));
+          Loading.hide();
+        }
+      } catch (error) {
+        console.log('ERROR:  ' + error);
         Loading.hide();
       }
-    } catch (error) {
-      console.log('ERROR:  ' + error);
-      Loading.hide();
-    }
-  }, [deviceUtcOffset, formatDateWithTimeZone, timeZone, data]);
+    },
+    [deviceUtcOffset, formatDateWithTimeZone, timeZone, data],
+  );
 
   const onImagePickerResult = useCallback(
     async (response: ImagePickerResponse) => {
@@ -314,6 +324,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
             ),
           });
         }
+
         const imageInfoResponse = await uploadMultiImageInfo(payload);
 
         if (!imageInfoResponse.success) {
@@ -334,28 +345,17 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
       }
     }
   }, [address, data, refsArray, utcTime?.data.data]);
-  const scrollX = useRef(new Animated.Value(0)).current;
+
   return (
     <View style={Style.container}>
       <View style={Style.top20}>
         <Button title="Chụp ảnh" onPress={onTakeImage} />
-        <View style={{ height: sizes.s10 }} />
-        {data && (<Button type="bluePrimary" title="Gửi" onPress={onSubmit} />)}
+        <View style={{height: sizes.s10}} />
+        {data && <Button type="bluePrimary" title="Gửi" onPress={onSubmit} />}
       </View>
-      <Animated.FlatList
-        data={data}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        snapToInterval={200}
-        decelerationRate={'fast'}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          { useNativeDriver: true }
-        )}
-        renderItem={renderItem}
-        showsVerticalScrollIndicator={false}
-        ItemSeparatorComponent={renderSeparator}
-      />
+      <ScrollView contentContainerStyle={{flexGrow: 1}}>
+        {data.map((item, index) => renderItem(item, index))}
+      </ScrollView>
     </View>
   );
 };
