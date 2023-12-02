@@ -43,9 +43,10 @@ const styles = StyleSheet.create({
     marginRight: sizes.s16,
   },
   image: {
-    width: 350,
+    width: Dimensions.get('screen').width,
     position: 'relative',
     height: win.width / 0.98,
+    backgroundColor:'red'
   },
   detailedImageTxt: {
     color: 'white',

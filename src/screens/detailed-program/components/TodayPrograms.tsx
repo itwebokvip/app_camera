@@ -167,16 +167,18 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
               ref={refsArray[index]}
               options={{format: 'png', quality: 0.8}}>
               <ImageBackground
-                resizeMode="contain"
+                resizeMode="cover"
                 resizeMethod="resize"
                 style={[styles.image]}
                 source={{
                   uri: item.uri,
                 }}>
-                <View style={Style.p8}>
+                <View style={[Style.p8, {margin: 10}]}>
                   {timeFormat != null ? (
                     <Text style={styles.detailedImageTxt}>
                       {'time' in item ? item.time : ''}
+                      {`\n`}
+                      {moment(item.time).format('hh:mm:ss DD/MM/YYYY')}
                     </Text>
                   ) : (
                     <Text style={styles.detailedImageTxt}>
@@ -185,7 +187,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
                   )}
                   {addressImage && (
                     <Text style={styles.detailedImageTxt}>
-                      {address}
+                      {address} {'\n'}
                       {addressImage?.address_components[2]?.long_name}
                       {'\n'}
                       {addressImage?.address_components[3]?.long_name}
