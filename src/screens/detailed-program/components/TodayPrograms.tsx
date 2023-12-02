@@ -75,6 +75,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
           .get(mapUrl)
           .then(async response => {
             const mapData = response.data;
+            console.log('ookfkkf', mapData.results);
 
             const currentAddress =
               mapData.results[0]?.address_components[2]?.long_name +
@@ -84,7 +85,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
               mapData.results[0]?.address_components[4]?.long_name;
             getTimeZone(latitude, longitude);
             setAddressImage(mapData.results[0]);
-            setAddress(currentAddress);
+            setAddress(mapData.results[0].formatted_address);
           })
           .catch((error: any) => {
             console.error('Lỗi khi gửi yêu cầu:', error);
@@ -127,7 +128,6 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
         // Loading.hide();
       });
   };
-  console.log('timezoen', timeZone);
 
   const onDeleteImg = (index: number) => {
     setData(oldData => oldData.filter((_, i) => i !== index));
@@ -185,6 +185,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
                   )}
                   {addressImage && (
                     <Text style={styles.detailedImageTxt}>
+                      {address}
                       {addressImage?.address_components[2]?.long_name}
                       {'\n'}
                       {addressImage?.address_components[3]?.long_name}
