@@ -2,7 +2,7 @@ module.exports = {
   presets: ['module:metro-react-native-babel-preset'],
   plugins: [
     '@babel/plugin-transform-strict-mode',
-    'react-native-reanimated/plugin',
+    // 'react-native-reanimated/plugin',
     [
       'babel-plugin-inline-import',
       {

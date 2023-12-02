@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "npx react-native run-android --devices='RFCT508SYEV'",
+    "android": "npx react-native run-android",
     "ios": "npx react-native run-ios --simulator='iPhone 14 Pro'",
     "lint": "eslint .",
     "start": "react-native start",
@@ -42,7 +42,6 @@
     "react-native-material-menu": "^2.0.0",
     "react-native-pager-view": "^6.2.2",
     "react-native-permissions": "^3.10.1",
-    "react-native-reanimated": "^3.5.4",
     "react-native-safe-area-context": "^4.7.4",
     "react-native-screens": "^3.27.0",
     "react-native-settings": "^1.0.0",

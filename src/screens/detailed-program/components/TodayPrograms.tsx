@@ -94,19 +94,18 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
       .catch((error: any) => {
         console.error('Lỗi khi gửi yêu cầu:', error);
         ShowToast('error', 'Thông báo', 'Lỗi lấy vị trí hiện tại!');
-      })
-      .finally(() => {
-        Loading.hide();
       });
   };
-
+  useEffect(() => {
+    if (timeZone) Loading.hide();
+  }, [timeZone]);
   useEffect(() => {
     requestLocation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getTimeZone = (latitude: number, longitude: number) => {
-    Loading.show();
+    // Loading.show();
     console.log(`THONG TIN ${latitude} VÀ ${longitude}`);
     const mapUrl = `https://maps.googleapis.com/maps/api/timezone/json?location=${latitude},${longitude}&timestamp=${
       Date.now() / 1000
@@ -116,16 +115,19 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
       .then(response => {
         const responseData = response.data;
         const dataZone = responseData.timeZoneId as any;
+        console.log('ggg', dataZone);
+
         setTimeZone(dataZone);
         ShowToast('success', 'Thông báo', 'Xác thực vùng vị trí!');
-        Loading.hide();
+        // Loading.hide();
       })
       .catch((error: any) => {
         console.error('Lỗi khi gửi yêu cầu:', error);
         ShowToast('error', 'Thông báo', 'Lỗi lấy vị trí hiện tại!');
-        Loading.hide();
+        // Loading.hide();
       });
   };
+  console.log('timezoen', timeZone);
 
   const onDeleteImg = (index: number) => {
     setData(oldData => oldData.filter((_, i) => i !== index));
@@ -349,7 +351,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   return (
     <View style={Style.container}>
       <View style={Style.top20}>
-        <Button title="Chụp ảnh" onPress={onTakeImage} />
+        <Button isReady={timeZone} title="Chụp ảnh" onPress={onTakeImage} />
         <View style={{height: sizes.s10}} />
         {data && <Button type="bluePrimary" title="Gửi" onPress={onSubmit} />}
       </View>
