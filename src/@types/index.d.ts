@@ -1,7 +1,7 @@
 declare module 'react-native-settings';
 declare module 'root-stack-params' {
-  import { Program } from 'models';
-  import { StackScreenProps } from '@react-navigation/stack';
+  import {Program} from 'models';
+  import {StackScreenProps} from '@react-navigation/stack';
 
   export type RootStackParamList = {
     auth: undefined;
@@ -11,6 +11,7 @@ declare module 'root-stack-params' {
   export type AuthStackParamList = {
     welcome: undefined;
     login: undefined;
+    register: undefined;
   };
 
   export type MainStackParamList = {

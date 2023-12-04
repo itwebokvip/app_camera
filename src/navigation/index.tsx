@@ -1,20 +1,20 @@
-import React, { useContext } from 'react';
+import React, {useContext} from 'react';
 
-import { createStackNavigator } from '@react-navigation/stack';
-import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 
-import { Loading } from 'components';
+import {Loading} from 'components';
 
-import { colors } from 'core';
-import { UserContext } from 'contexts';
-import { screenOptionsStack } from 'common';
-import { RootStackParamList } from 'root-stack-params';
-import { goReset, setTopLevelNavigator } from 'helpers/navigation';
+import {colors} from 'core';
+import {UserContext} from 'contexts';
+import {screenOptionsStack} from 'common';
+import {RootStackParamList} from 'root-stack-params';
+import {goReset, setTopLevelNavigator} from 'helpers/navigation';
 
 import HomeNavigator from './MainStack';
 import AuthNavigator from './AuthNavigator';
-import { SetTokenToGetWay } from 'service /GetWay';
-import { KeychainManager, STORAGE_KEYS } from 'helpers/keychain';
+import {SetTokenToGetWay} from 'service /GetWay';
+import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
 
 const theme = {
   ...DefaultTheme,
@@ -25,7 +25,7 @@ const theme = {
 };
 
 export default function Navigation() {
-  const { loginUser, logoutUser } = useContext(UserContext);
+  const {loginUser, logoutUser} = useContext(UserContext);
 
   const initScreen = async () => {
     const data: any = await KeychainManager.multiGet([
@@ -39,7 +39,7 @@ export default function Navigation() {
       const isTokenExpired = checkTokenExpiration(expired);
       if (!isTokenExpired) {
         console.log('Token expired false');
-        SetTokenToGetWay({ token });
+        SetTokenToGetWay({token});
         loginUser(user);
         goReset('main');
       } else {

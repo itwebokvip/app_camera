@@ -21,6 +21,14 @@ interface SignInData {
   logedInUser: User;
 }
 
+interface SignUpPayload {
+  username: string;
+  email: string;
+  fullname: string;
+  phoneNumber: string;
+  password: string;
+}
+
 const UPLOAD_API = 'https://api-camera.okvip.dev/api/files/upload';
 
 export const SignIn = async (
@@ -65,6 +73,40 @@ export const SignIn = async (
 
     return {
       Success: false,
+      errors: error,
+    };
+  }
+};
+
+export const SignUp = async (payload: SignUpPayload) => {
+  try {
+    const response: any = await Api_1.post(ConstantUrl.register, payload);
+
+    if (response.status === StatusCode.OK) {
+      const {status, message, data} = response.data;
+      if (status === StatusCode.OK) {
+        return {
+          success: true,
+          data,
+        };
+      } else {
+        return {
+          success: false,
+          errors: message,
+        };
+      }
+    } else {
+      console.error('ERROR ====> ', JSON.stringify(response.error));
+      return {
+        success: false,
+        errors: response.data.message,
+      };
+    }
+  } catch (error) {
+    console.error('ERROR ====> ', JSON.stringify(error));
+
+    return {
+      success: false,
       errors: error,
     };
   }

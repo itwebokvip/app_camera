@@ -1,6 +1,5 @@
-import React, { ReactNode, useState } from 'react';
-import { User } from 'models';
-import { KeychainManager, STORAGE_KEYS } from 'helpers/keychain';
+import React, {ReactNode, useState} from 'react';
+import {User} from 'models';
 
 interface UserContextType {
   user: User | null;
@@ -16,7 +15,7 @@ export const UserContext = React.createContext<UserContextType>(
   {} as UserContextType,
 );
 
-export const UserProvider = ({ children }: UserProviderProps) => {
+export const UserProvider = ({children}: UserProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
 
   const loginUser = (userInfo: User) => {
@@ -28,7 +27,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, loginUser, logoutUser }}>
+    <UserContext.Provider value={{user, loginUser, logoutUser}}>
       {children}
     </UserContext.Provider>
   );

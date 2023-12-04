@@ -1,4 +1,4 @@
-import { Style, colors, sizes } from 'core';
+import {Style, colors, sizes} from 'core';
 import * as React from 'react';
 import {
   View,
@@ -11,18 +11,15 @@ import {
 } from 'react-native';
 import StatusBarView from './StatusBarView';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { goReset, goScreen } from 'helpers/navigation';
-import { UserContext } from 'contexts';
-import { Menu, MenuItem } from 'react-native-material-menu';
-import { KeychainManager } from 'helpers/keychain';
+import {goReset, goScreen} from 'helpers/navigation';
+import {UserContext} from 'contexts';
+import {Menu, MenuItem} from 'react-native-material-menu';
+import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
 const win = Dimensions.get('window');
-interface Props {
-  children: string;
-}
 
-export function DemoTitle({ children }: Props) {
+export function DemoTitle() {
   const [isDropdownVisible, setIsDropdownVisible] = React.useState(false);
-  const { user, logoutUser } = React.useContext(UserContext);
+  const {user, logoutUser} = React.useContext(UserContext);
   const handleDropdownPress = () => {
     setIsDropdownVisible(!isDropdownVisible);
   };
@@ -32,9 +29,14 @@ export function DemoTitle({ children }: Props) {
     if (option === 'Tài Khoản') {
       goScreen('profileScreen');
     } else if (option === 'Đăng xuất') {
-      if (!user?.id) {
-        await KeychainManager.clear();
-        return logoutUser();
+      if (user?.id) {
+        KeychainManager.multiRemove([
+          STORAGE_KEYS.account,
+          STORAGE_KEYS.expired,
+          STORAGE_KEYS.timeZoneId,
+          STORAGE_KEYS.token,
+        ]);
+        logoutUser();
       }
       goReset('auth');
     }
@@ -45,8 +47,12 @@ export function DemoTitle({ children }: Props) {
     <View style={styles.container}>
       <StatusBarView lightContent backgroundColor={colors.white} />
       <View style={[Style.w100, Style.block_center]}>
-        <ImageBackground style={{ width: 130, height: win.width * 0.2 }} source={require('../assets/images/logo-okvip-group.png')} resizeMethod='resize' />
-        <View style={{ position: 'absolute', right: 2 }}>
+        <ImageBackground
+          style={{width: 130, height: win.width * 0.2}}
+          source={require('../assets/images/logo-okvip-group.png')}
+          resizeMethod="resize"
+        />
+        <View style={{position: 'absolute', right: 2}}>
           <Menu
             visible={isDropdownVisible}
             anchor={

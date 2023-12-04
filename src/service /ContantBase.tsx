@@ -1,5 +1,6 @@
 export const ConstantUrl = {
   login: 'api/users/login',
+  register: 'api/users/register',
   postImage: 'api/imageInfos',
   updateImage: 'api/imageInfos',
   parseImageLink: 'api/files/upload',
