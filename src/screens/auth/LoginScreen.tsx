@@ -1,16 +1,23 @@
-import React, { useCallback, useContext, useState } from 'react';
-import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, {useCallback, useContext, useState} from 'react';
+import {
+  ImageBackground,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
-import { Loading, AppTextInput } from 'components';
+import {Loading, AppTextInput} from 'components';
 
-import { SignIn } from '../../service ';
+import {SignIn} from '../../service ';
 import ShowToast from 'helpers/ShowToast';
-import { goReset } from 'helpers/navigation';
-import { Style, colors, fonts, fontsizes, sizes } from 'core';
-import { UserContext } from 'contexts';
+import {goReset} from 'helpers/navigation';
+import {Style, colors, fonts, fontsizes, sizes} from 'core';
+import {UserContext} from 'contexts';
+import GetLocation from 'react-native-get-location';
 
 const LoginScreen: React.FC = () => {
-  const { loginUser } = useContext(UserContext);
+  const {loginUser} = useContext(UserContext);
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
@@ -37,8 +44,20 @@ const LoginScreen: React.FC = () => {
       const [result] = await Promise.all([SignIn(username, password)]);
 
       if (result.Success === true) {
-        goReset('main');
-        result?.data && loginUser(result?.data);
+        await GetLocation.getCurrentPosition({
+          enableHighAccuracy: true,
+          timeout: 30000,
+          rationale: {
+            title: 'Quyền vị trí',
+            message: 'Ứng dụng cần có quyền để yêu cầu vị trí của bạn.',
+            buttonPositive: 'Ok',
+          },
+        });
+
+        setTimeout(() => {
+          goReset('main');
+          result?.data && loginUser(result?.data);
+        }, 1000);
       } else {
         ShowToast('error', 'Notice', result.errors);
       }
@@ -51,18 +70,24 @@ const LoginScreen: React.FC = () => {
 
   return (
     <View style={[styles.container, styles.containerCenter]}>
-
-      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <ImageBackground style={{ width: 300, height: 100, marginVertical: sizes.s20 }} source={require('../../assets/images/OKVIP-LOGO-VECTOR-02.png')} resizeMode="cover"
-          resizeMethod="scale" />
+      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <ImageBackground
+          style={{width: 300, height: 100, marginVertical: sizes.s20}}
+          source={require('../../assets/images/OKVIP-LOGO-VECTOR-02.png')}
+          resizeMode="cover"
+          resizeMethod="scale"
+        />
       </View>
-      <View style={{
-        padding: 20, justifyContent: 'center', backgroundColor: '#fff',
-        borderWidth: 2,
-        borderColor: colors.semanticsWarning,
-        borderRadius: sizes.s30,
-        elevation: 2,
-      }}>
+      <View
+        style={{
+          padding: 20,
+          justifyContent: 'center',
+          backgroundColor: '#fff',
+          borderWidth: 2,
+          borderColor: colors.semanticsWarning,
+          borderRadius: sizes.s30,
+          elevation: 2,
+        }}>
         <Text style={styles.title}>Đăng nhập</Text>
         <View style={Style.pv36}>
           <AppTextInput
@@ -80,8 +105,6 @@ const LoginScreen: React.FC = () => {
           <Text style={styles.signInTxt}>Đăng nhập</Text>
         </TouchableOpacity>
       </View>
-
-
     </View>
   );
 };
