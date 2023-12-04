@@ -22,9 +22,9 @@ import {Button, Loading} from 'components';
 import styles from '../styles';
 import {Style, sizes, colors} from 'core';
 import ShowToast from 'helpers/ShowToast';
-import {goBack} from 'helpers/navigation';
+import {goBack, goScreen} from 'helpers/navigation';
 import Permissions from 'utils/Permissions';
-import {getUTCTime, updateImageInfos} from 'service ';
+import {deleteImg, getUTCTime, updateImageInfos} from 'service ';
 import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
 import {GOOGLE_MAP_API_KEY, IMAGE_DOMAIN} from 'helpers/common';
 import TodayPrograms from '../components/TodayPrograms';
@@ -166,6 +166,19 @@ const Resubmit: React.FC<any> = ({params}: any) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
+  const onDeleteImg = async (id: string) => {
+    Loading.show();
+    const imageInfoResponse = await deleteImg(id);
+
+    if (!imageInfoResponse?.success) {
+      ShowToast('error', 'Thông báo', imageInfoResponse.error);
+      Loading.hide();
+    } else {
+      ShowToast('success', 'Thông báo', 'Xoá thành công!');
+      Loading.hide();
+      goScreen('detailedProgram');
+    }
+  };
 
   const loadTimeImage = async () => {
     const uploadResponse = await getUTCTime();
@@ -290,8 +303,7 @@ const Resubmit: React.FC<any> = ({params}: any) => {
                     )}
                     <TouchableOpacity
                       style={styles.btnDelete}
-                      //onPress={() => onDeleteImg(index)}
-                    >
+                      onPress={() => onDeleteImg(params.data.id)}>
                       <MaterialCommunityIcons
                         name="delete-circle"
                         size={sizes.s30}

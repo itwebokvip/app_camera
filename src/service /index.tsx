@@ -275,6 +275,36 @@ export const uploadMultiImageInfo = async (data: ImageInfoPayload[]) => {
     };
   }
 };
+export const deleteImg = async (id: string) => {
+  try {
+    const response = await Api_1.delete(`api/imageInfos/${id}`);
+    if (response.status !== StatusCode.OK) {
+      return {
+        success: false,
+        error: 'Server error!',
+      };
+    }
+
+    const {status, message} = response.data;
+
+    if (status === StatusCode.OK) {
+      return {
+        success: true,
+      };
+    } else {
+      return {
+        success: false,
+        error: message,
+      };
+    }
+  } catch (error) {
+    console.error('ERROR ====> ', JSON.stringify(error));
+    return {
+      success: false,
+      error,
+    };
+  }
+};
 
 export const deleteProgram = async (id: string) => {
   try {
