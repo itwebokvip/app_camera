@@ -7,7 +7,7 @@ import { fonts } from './fonts';
 export const Style = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: sizes.s20,
+    paddingHorizontal: 20,
     backgroundColor: colors.white,
   },
   flex: {

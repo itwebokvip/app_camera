@@ -27,14 +27,22 @@ import SubmitDate from 'common/submitDate';
 import Permissions from 'utils/Permissions';
 import {ScreenProps} from 'root-stack-params';
 import {GOOGLE_MAP_API_KEY, Sleep} from 'helpers/common';
-import {getUTCTime, uploadMultiFiles, uploadMultiImageInfo} from 'service ';
+import {
+  getUTCTime,
+  updateImageInfos,
+  uploadMultiFiles,
+  uploadMultiImageInfo,
+} from 'service ';
 import {goScreen} from 'helpers/navigation';
 
 interface IsAsset extends Asset {
   time?: string | any;
 }
 
-const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
+const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = (
+  props: any,
+) => {
+  const {isEditing = false, getdata, id, dataFromEdit} = props;
   const [data, setData] = useState<IsAsset[]>([]);
 
   const [refsArray, setRefsArray] = useState<any>([]);
@@ -75,8 +83,6 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
           .get(mapUrl)
           .then(async response => {
             const mapData = response.data;
-            console.log('ookfkkf', mapData.results);
-
             const currentAddress =
               mapData.results[0]?.address_components[2]?.long_name +
               ',' +
@@ -98,12 +104,14 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
       });
   };
   useEffect(() => {
-    if (timeZone) Loading.hide();
+    if (timeZone !== undefined) Loading.hide();
   }, [timeZone]);
   useEffect(() => {
+    Loading.show();
     requestLocation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  console.log('dataFromEdit', dataFromEdit);
 
   const getTimeZone = (latitude: number, longitude: number) => {
     // Loading.show();
@@ -244,12 +252,15 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
           setTimeFormat(formattedDateTime);
           dataAsset[dataAsset.length - 1].time = formattedDateTime;
           setData(dataAsset);
+          console.log('vxcvxc', dataAsset);
+
+         //getdata(dataAsset[0]);
           console.log('LOG DATA:  ' + JSON.stringify(data));
-          Loading.hide();
+          //Loading.hide();
         }
       } catch (error) {
         console.log('ERROR:  ' + error);
-        Loading.hide();
+        //Loading.hide();
       }
     },
     [deviceUtcOffset, formatDateWithTimeZone, timeZone, data],
@@ -258,7 +269,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   const onImagePickerResult = useCallback(
     async (response: ImagePickerResponse) => {
       if (response?.assets) {
-        Loading.show();
+        //Loading.show();
         let newData = [...data];
         newData = newData.concat(response?.assets);
         //setData(newData);
@@ -320,19 +331,33 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
         const payload: ImageInfoPayload[] = [];
         for (let i = 0; i < uploadResponse.data.length; i++) {
           const curUploadImage = uploadResponse.data[i];
-          payload.push({
-            location: address,
-            size: curUploadImage.fileSizeInBytes,
-            path: curUploadImage.url,
-            shootTime: moment(utcTime?.data.data).format(
-              'MMMM DD, YYYY hh:mm A',
-            ),
-          });
+          payload.push(
+            !isEditing
+              ? {
+                  location: address,
+                  size: curUploadImage.fileSizeInBytes,
+                  path: curUploadImage.url,
+                  shootTime: moment(utcTime?.data.data).format(
+                    'MMMM DD, YYYY hh:mm A',
+                  ),
+                }
+              : {
+                  location: address,
+                  size: curUploadImage.fileSizeInBytes,
+                  path: curUploadImage.url,
+                  shootTime: moment(utcTime?.data.data).format(
+                    'MMMM DD, YYYY hh:mm A',
+                  ),
+                  id: id,
+                },
+          );
         }
 
-        const imageInfoResponse = await uploadMultiImageInfo(payload);
+        const imageInfoResponse = isEditing
+          ? await updateImageInfos(payload[0])
+          : await uploadMultiImageInfo(payload);
 
-        if (!imageInfoResponse.success) {
+        if (!imageInfoResponse?.success) {
           ShowToast('error', 'Thông báo', imageInfoResponse.error);
         } else {
           ShowToast('success', 'Thông báo', 'Gửi thành công!');
@@ -352,9 +377,13 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = () => {
   }, [address, data, refsArray, utcTime?.data.data]);
 
   return (
-    <View style={Style.container}>
+    <View style={[Style.container, {paddingHorizontal: isEditing ? -5 : 20}]}>
       <View style={Style.top20}>
-        <Button isReady={timeZone} title="Chụp ảnh" onPress={onTakeImage} />
+        <Button
+          isReady={timeZone}
+          title={isEditing ? 'Thay đổi hình ảnh' : 'Chụp ảnh'}
+          onPress={onTakeImage}
+        />
         <View style={{height: sizes.s10}} />
         {data && <Button type="bluePrimary" title="Gửi" onPress={onSubmit} />}
       </View>

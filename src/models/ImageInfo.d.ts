@@ -3,4 +3,5 @@ export interface ImageInfoPayload {
   path: string;
   location: string;
   shootTime: string;
+  id?: string
 }

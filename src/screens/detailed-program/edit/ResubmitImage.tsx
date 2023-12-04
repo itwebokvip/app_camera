@@ -1,5 +1,11 @@
-import React, {useCallback, useRef, useState} from 'react';
-import {Alert, Text, View, ImageBackground} from 'react-native';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {
+  Alert,
+  Text,
+  View,
+  ImageBackground,
+  TouchableOpacity,
+} from 'react-native';
 
 import axios from 'axios';
 import moment from 'moment-timezone';
@@ -14,13 +20,15 @@ import GetLocation from 'react-native-get-location';
 import {Button, Loading} from 'components';
 
 import styles from '../styles';
-import {Style, sizes} from 'core';
+import {Style, sizes, colors} from 'core';
 import ShowToast from 'helpers/ShowToast';
 import {goBack} from 'helpers/navigation';
 import Permissions from 'utils/Permissions';
 import {getUTCTime, updateImageInfos} from 'service ';
 import {KeychainManager, STORAGE_KEYS} from 'helpers/keychain';
 import {GOOGLE_MAP_API_KEY, IMAGE_DOMAIN} from 'helpers/common';
+import TodayPrograms from '../components/TodayPrograms';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Resubmit: React.FC<any> = ({params}: any) => {
   const [data, setData] = useState<Asset>();
@@ -77,6 +85,10 @@ const Resubmit: React.FC<any> = ({params}: any) => {
         ShowToast('error', 'Thông báo', 'Lỗi lấy vị trí hiện tại!');
       });
   };
+  useEffect(() => {
+    if (timeZone) Loading.hide();
+  }, [timeZone]);
+  console.log('cvxcv', timeZone);
 
   const getTimeZone = (latitude: number, longitude: number) => {
     const mapUrl = `https://maps.googleapis.com/maps/api/timezone/json?location=${latitude},${longitude}&timestamp=${
@@ -142,6 +154,8 @@ const Resubmit: React.FC<any> = ({params}: any) => {
       if (response?.assets) {
         await loadTimeImage();
         requestLocation();
+        console.log('cookl', response);
+
         setData(response?.assets[0]);
       } else if (response.errorCode) {
         Alert.alert('Notice', response.errorCode);
@@ -215,63 +229,83 @@ const Resubmit: React.FC<any> = ({params}: any) => {
     .split(',')
     .map((part: any) => part.trim());
   return (
-    <View style={Style.container}>
-      <View style={Style.top20}>
-        <Button title="Thay đổi Hình Ảnh" onPress={onTakeImage} />
-        <View style={{height: sizes.s10}} />
-        <Button type="bluePrimary" title="Submit" onPress={onSubmit} />
-
-        <View style={styles.imageContainer}>
-          <View style={styles.container}>
-            <ViewShot ref={viewShotRef} options={{format: 'png', quality: 0.8}}>
-              <ImageBackground
-                resizeMode="cover"
-                resizeMethod="scale"
-                style={styles.image}
-                source={{
-                  uri: data
-                    ? data.uri
-                    : IMAGE_DOMAIN + '/' + params?.data?.path,
-                }}>
-                {data && (
-                  <View style={Style.p8}>
-                    {timeFormat ? (
-                      <Text style={styles.detailedImageTxt}>{timeFormat}</Text>
-                    ) : (
-                      <Text style={styles.detailedImageTxt}>
-                        {formatDateWithTimeZone(
-                          params?.data?.createdTime,
-                          timeZone.timeZoneId,
+    <>
+      <TodayPrograms
+        dataFromEdit={[data]}
+        isEditing={true}
+        getdata={setData}
+        id={params.data.id}
+      />
+      {data == undefined && (
+        <View style={Style.container}>
+          <View style={Style.top20}>
+            <View style={styles.imageContainer}>
+              <View style={styles.container}>
+                <ViewShot
+                  ref={viewShotRef}
+                  options={{format: 'png', quality: 0.8}}>
+                  <ImageBackground
+                    resizeMode="cover"
+                    resizeMethod="scale"
+                    style={styles.image}
+                    source={{
+                      uri: data
+                        ? data.uri
+                        : IMAGE_DOMAIN + '/' + params?.data?.path,
+                    }}>
+                    {data && (
+                      <View style={Style.p8}>
+                        {timeFormat ? (
+                          <Text style={styles.detailedImageTxt}>
+                            {timeFormat}
+                          </Text>
+                        ) : (
+                          <Text style={styles.detailedImageTxt}>
+                            {formatDateWithTimeZone(
+                              params?.data?.createdTime,
+                              timeZone?.timeZoneId,
+                            )}
+                          </Text>
                         )}
-                      </Text>
+                        {addressImage ? (
+                          <Text style={styles.detailedImageTxt}>
+                            {addressImage?.address_components[2].long_name}
+                            {'\n'}
+                            {'\n'}
+                            {addressImage?.address_components[3].long_name}
+                            {'\n'}
+                            {addressImage?.address_components[4].long_name}
+                          </Text>
+                        ) : (
+                          <Text style={styles.detailedImageTxt}>
+                            {parts[0]}
+                            {'\n'}
+                            {'\n'}
+                            {parts[1]}
+                            {'\n'}
+                            {parts[2]}
+                          </Text>
+                        )}
+                      </View>
                     )}
-                    {addressImage ? (
-                      <Text style={styles.detailedImageTxt}>
-                        {addressImage?.address_components[2].long_name}
-                        {'\n'}
-                        {'\n'}
-                        {addressImage?.address_components[3].long_name}
-                        {'\n'}
-                        {addressImage?.address_components[4].long_name}
-                      </Text>
-                    ) : (
-                      <Text style={styles.detailedImageTxt}>
-                        {parts[0]}
-                        {'\n'}
-                        {'\n'}
-                        {parts[1]}
-                        {'\n'}
-                        {parts[2]}
-                      </Text>
-                    )}
-                  </View>
-                )}
-              </ImageBackground>
-            </ViewShot>
+                    <TouchableOpacity
+                      style={styles.btnDelete}
+                      //onPress={() => onDeleteImg(index)}
+                    >
+                      <MaterialCommunityIcons
+                        name="delete-circle"
+                        size={sizes.s30}
+                        color={colors.error}
+                      />
+                    </TouchableOpacity>
+                  </ImageBackground>
+                </ViewShot>
+              </View>
+            </View>
           </View>
         </View>
-      </View>
-    </View>
+      )}
+    </>
   );
 };
 

@@ -33,7 +33,7 @@ const LoginScreen: React.FC = () => {
       const isValid = validationForm();
       if (!isValid) return;
 
-      Loading.show();
+     // Loading.show();
       const [result] = await Promise.all([SignIn(username, password)]);
 
       if (result.Success === true) {
@@ -45,7 +45,7 @@ const LoginScreen: React.FC = () => {
     } catch (error) {
       ShowToast('error', 'Notice', 'Something went wrong!');
     } finally {
-      Loading.hide();
+     // Loading.hide();
     }
   }, [validationForm, username, password, loginUser]);
 
