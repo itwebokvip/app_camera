@@ -111,7 +111,6 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = (
     requestLocation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  console.log('dataFromEdit', dataFromEdit);
 
   const getTimeZone = (latitude: number, longitude: number) => {
     // Loading.show();
@@ -124,7 +123,6 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = (
       .then(response => {
         const responseData = response.data;
         const dataZone = responseData.timeZoneId as any;
-        console.log('ggg', dataZone);
 
         setTimeZone(dataZone);
         ShowToast('success', 'Thông báo', 'Xác thực vùng vị trí!');
@@ -254,7 +252,7 @@ const TodayPrograms: React.FC<ScreenProps<'detailedProgram'>> = (
           setData(dataAsset);
           console.log('vxcvxc', dataAsset);
 
-         //getdata(dataAsset[0]);
+          //getdata(dataAsset[0]);
           console.log('LOG DATA:  ' + JSON.stringify(data));
           //Loading.hide();
         }

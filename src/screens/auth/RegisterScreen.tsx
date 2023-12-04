@@ -76,6 +76,13 @@ const RegisterScreen: React.FC = () => {
 
       if (result.success === true) {
         ShowToast('success', 'Chúc mừng', 'Đã tạo tài khoản thành công!');
+
+        setUsername('');
+        setEmail('');
+        setFullname('');
+        setPhoneNumber('');
+        setPassword('');
+
         setTimeout(() => {
           goBack();
         }, 1000);
