@@ -1,6 +1,7 @@
-import React, {useCallback, useContext, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   ImageBackground,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -9,21 +10,43 @@ import {
 
 import {Loading, AppTextInput} from 'components';
 
-import {SignIn} from '../../service ';
+import {SignUp} from '../../service ';
 import ShowToast from 'helpers/ShowToast';
-import {goReset, goScreen} from 'helpers/navigation';
+import {goBack} from 'helpers/navigation';
 import {Style, colors, fonts, fontsizes, sizes} from 'core';
-import {UserContext} from 'contexts';
-import GetLocation from 'react-native-get-location';
 
-const LoginScreen: React.FC = () => {
-  const {loginUser} = useContext(UserContext);
+const EMAIL_REGEX =
+  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+const RegisterScreen: React.FC = () => {
   const [username, setUsername] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [fullname, setFullname] = useState<string>('');
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
   const validationForm = useCallback(() => {
     if (username.length === 0) {
       ShowToast('error', 'Thông báo', 'Xin hãy nhập tên đăng nhập!');
+      return false;
+    }
+    if (email.length === 0) {
+      ShowToast('error', 'Thông báo', 'Xin hãy nhập email!');
+      return false;
+    }
+
+    if (!email.match(EMAIL_REGEX)) {
+      ShowToast('error', 'Thông báo', 'Xin hãy nhập email hợp lệ!');
+      return false;
+    }
+
+    if (fullname.length === 0) {
+      ShowToast('error', 'Thông báo', 'Xin hãy nhập họ và tên!');
+      return false;
+    }
+
+    if (phoneNumber.length === 0) {
+      ShowToast('error', 'Thông báo', 'Xin hãy nhập số điện thoại!');
       return false;
     }
 
@@ -33,30 +56,28 @@ const LoginScreen: React.FC = () => {
     }
 
     return true;
-  }, [username, password.length]);
+  }, [
+    username.length,
+    email,
+    fullname.length,
+    phoneNumber.length,
+    password.length,
+  ]);
 
-  const handleLogin = useCallback(async () => {
+  const handleRegister = useCallback(async () => {
     try {
       const isValid = validationForm();
       if (!isValid) return;
 
       Loading.show();
-      const [result] = await Promise.all([SignIn(username, password)]);
+      const [result] = await Promise.all([
+        SignUp({username, email, fullname, phoneNumber, password}),
+      ]);
 
-      if (result.Success === true) {
-        await GetLocation.getCurrentPosition({
-          enableHighAccuracy: true,
-          timeout: 30000,
-          rationale: {
-            title: 'Quyền vị trí',
-            message: 'Ứng dụng cần có quyền để yêu cầu vị trí của bạn.',
-            buttonPositive: 'Ok',
-          },
-        });
-
+      if (result.success === true) {
+        ShowToast('success', 'Chúc mừng', 'Đã tạo tài khoản thành công!');
         setTimeout(() => {
-          goReset('main');
-          result?.data && loginUser(result?.data);
+          goBack();
         }, 1000);
       } else {
         ShowToast('error', 'Notice', result.errors);
@@ -66,10 +87,11 @@ const LoginScreen: React.FC = () => {
     } finally {
       Loading.hide();
     }
-  }, [validationForm, username, password, loginUser]);
+  }, [validationForm, username, email, fullname, phoneNumber, password]);
 
   return (
-    <View style={[styles.container, styles.containerCenter]}>
+    <ScrollView
+      contentContainerStyle={[styles.container, styles.containerCenter]}>
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
         <ImageBackground
           style={{width: 300, height: 100, marginVertical: sizes.s20}}
@@ -88,12 +110,28 @@ const LoginScreen: React.FC = () => {
           borderRadius: sizes.s30,
           elevation: 2,
         }}>
-        <Text style={styles.title}>Đăng nhập</Text>
-        <View style={Style.pv36}>
+        <Text style={styles.title}>Đăng ký</Text>
+        <View style={Style.pv10}>
           <AppTextInput
             autoCapitalize="none"
             placeholder="Tên đăng nhập"
             onChangeText={setUsername}
+          />
+          <AppTextInput
+            autoCapitalize="none"
+            placeholder="Email"
+            onChangeText={setEmail}
+          />
+          <AppTextInput
+            autoCapitalize="none"
+            placeholder="Họ và tên"
+            onChangeText={setFullname}
+          />
+          <AppTextInput
+            autoCapitalize="none"
+            placeholder="Số điện thoại"
+            onChangeText={setPhoneNumber}
+            keyboardType="number-pad"
           />
           <AppTextInput
             placeholder="Mật khẩu"
@@ -101,20 +139,18 @@ const LoginScreen: React.FC = () => {
             onChangeText={setPassword}
           />
         </View>
-        <TouchableOpacity onPress={handleLogin} style={styles.btnSignIn}>
-          <Text style={styles.signInTxt}>Đăng nhập</Text>
+        <TouchableOpacity onPress={handleRegister} style={styles.btnSignIn}>
+          <Text style={styles.signInTxt}>Hoàn thành</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => goScreen('register')}
-          style={styles.btnSignUp}>
-          <Text style={styles.signUpTxt}>Đăng ký</Text>
+        <TouchableOpacity onPress={() => goBack()} style={styles.btnSignUp}>
+          <Text style={styles.signUpTxt}>Quay lại</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
-export default LoginScreen;
+export default RegisterScreen;
 
 const styles = StyleSheet.create({
   container: {
